@@ -35,11 +35,10 @@ const KeyWord kNumbers[] = {
 
 const size_t kLineBufferSize = 1024;
 
-const char* input_file = "day_01.input";  // 55017 (part 1)
+// const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
 // const char* input_file = "day_01.test_input1";  // 142 (part 1)
-// const char* input_file = "day_01.test_input2";
+const char* input_file = "day_01.test_input2";  // 281 (part 2)
 
-// 53551 wrong
 
 bool MatchNumberKeyword(const char* line, int start_index, KeyWord keyword)
 {
@@ -71,6 +70,7 @@ int GetCalibrationValueFromLine(const char* line, ssize_t line_size, int current
         switch (current_char) {
             case '\n': {
                 end_of_line = true;
+                index_advance = 0;
                 break;
             }
                 
@@ -98,7 +98,6 @@ int GetCalibrationValueFromLine(const char* line, ssize_t line_size, int current
                 for (int nindex = 0; nindex < 10; ++nindex) {
                     if (MatchNumberKeyword(line, index, kNumbers[nindex])) {
                         digit = nindex;
-                        index_advance = kNumbers[nindex].length;
                         break;
                     }
                 }
