@@ -35,9 +35,9 @@ const KeyWord kNumbers[] = {
 
 const size_t kLineBufferSize = 1024;
 
-// const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
+const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
 // const char* input_file = "day_01.test_input1";  // 142 (part 1)
-const char* input_file = "day_01.test_input2";  // 281 (part 2)
+// const char* input_file = "day_01.test_input2";  // 281 (part 2)
 
 
 bool MatchNumberKeyword(const char* line, int start_index, KeyWord keyword)
@@ -129,7 +129,7 @@ int GetCalibrationValueFromLine(const char* line, ssize_t line_size, int current
 }
 
 
-int main(int argc, const char* argv[])
+void Day01()
 {
     FILE* f = fopen(input_file, "r");
     if (!f) {
@@ -157,6 +157,4 @@ int main(int argc, const char* argv[])
     delete [] line_buffer;
     
     fclose(f);
-
-    return 0;
 }
