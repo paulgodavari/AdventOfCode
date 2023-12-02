@@ -5,3 +5,6 @@
 
 
 void Day01();
+void Day02();
+
+
