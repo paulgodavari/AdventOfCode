@@ -1,4 +1,4 @@
-// main.cpp
+// day_03.cpp
 // AdventOfCode
 //
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
@@ -7,11 +7,8 @@
 #include "advent_of_code.h"
 
 
-int main(int argc, char* argv[])
+void Day03()
 {
-    // Day01();
-    // Day02();
-    Day03();
-    
-    return 0;
+    fprintf(stdout, "Day 03\n");
 }
+

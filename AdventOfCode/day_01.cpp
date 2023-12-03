@@ -6,8 +6,6 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include <stdio.h>
-
 #include "advent_of_code.h"
 
 

@@ -4,6 +4,9 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
 
 
+#include <stdio.h>
+
+
 struct KeyWord
 {
     char* start;
@@ -19,5 +22,5 @@ bool MatchNumberKeyword(const char* line, int line_index, KeyWord keyword);
 
 void Day01();
 void Day02();
-
+void Day03();
 

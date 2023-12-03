@@ -6,7 +6,6 @@
 
 #include "advent_of_code.h"
 
-#include <stdio.h>
 
 static const char* input_file = "day_02.input";  // Sum: 2006, Fewest: 84911
 // static const char* input_file = "day_02.test_input1";  // Sum: 8, Fewest: 2286
