@@ -8,15 +8,7 @@
 
 #include <stdio.h>
 
-
-struct KeyWord
-{
-    char* start;
-    int length;
-};
-
-
-#define KEYWORD(x) { (char*) x, sizeof(x) - 1 }
+#include "advent_of_code.h"
 
 
 const KeyWord kNumbers[] = {
@@ -35,24 +27,9 @@ const KeyWord kNumbers[] = {
 
 const size_t kLineBufferSize = 1024;
 
-const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
-// const char* input_file = "day_01.test_input1";  // 142 (part 1)
-// const char* input_file = "day_01.test_input2";  // 281 (part 2)
-
-
-bool MatchNumberKeyword(const char* line, int start_index, KeyWord keyword)
-{
-    bool match = true;
-    
-    for (int index = 0; index < keyword.length; ++index, ++start_index) {
-        if (line[start_index] != keyword.start[index]) {
-            match = false;
-            break;
-        }
-    }
-    
-    return match;
-}
+static const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
+// static const char* input_file = "day_01.test_input1";  // 142 (part 1)
+// static const char* input_file = "day_01.test_input2";  // 281 (part 2)
 
 
 int GetCalibrationValueFromLine(const char* line, ssize_t line_size, int current_line_count)
