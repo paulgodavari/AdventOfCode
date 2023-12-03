@@ -8,19 +8,27 @@
 
 #include <stdio.h>
 
-// static const char* input_file = "day_02.input";
-static const char* input_file = "day_02.test_input1";
+static const char* input_file = "day_02.input";  // Sum: 
+// static const char* input_file = "day_02.test_input1";  // Sum: 8
 // static const char* input_file = "day_02.test_input2";
 
 const int kLineSize = 1024;
+const int kMaxGamesList = 16;
 
 
 struct Game
 {
-    int id;
     int red;
     int green;
     int blue;
+};
+
+
+struct GameList
+{
+    int id;
+    int count;
+    Game games[kMaxGamesList];
 };
 
 
@@ -28,9 +36,13 @@ static KeyWord kRed = KEYWORD("red");
 static KeyWord kGreen = KEYWORD("green");
 static KeyWord kBlue = KEYWORD("blue");
 
+Game test_case = { 12, 13, 14 };
 
-void ParseLine(const char* line, size_t line_length)
+
+GameList ParseLine(const char* line, size_t line_length)
 {
+    GameList results = {};
+    
     // Parse the game number.
     int game_id = 0;
     bool found_game_id = false;
@@ -60,11 +72,12 @@ void ParseLine(const char* line, size_t line_length)
         current_char++;
     }
     
+    results.id = game_id;
+    
     // Parse each game.
     bool end_of_line = false;
     while (!end_of_line) {       
         Game game = {};
-        game.id = game_id;
         bool game_complete = false;
         int value = 0;
         while (current_char && !game_complete) {
@@ -126,8 +139,29 @@ void ParseLine(const char* line, size_t line_length)
             current_char += advance;
         }
         
-        fprintf(stdout, "id: %d, r: %d, g: %d, b: %d\n", game.id, game.red, game.green, game.blue);
+        results.games[results.count] = game;
+        results.count++;
     }
+    
+    return results;
+}
+
+
+bool GamesListIsPossible(GameList* game_list, Game test_case)
+{
+    bool result = true;
+    
+    for (int index = 0; index < game_list->count; ++index) {
+        Game current = game_list->games[index];
+        if (current.red > test_case.red ||
+            current.green > test_case.green ||
+            current.blue > test_case.blue) {
+            result = false;
+            break;
+        }
+    }
+    
+    return result;
 }
 
 
@@ -142,14 +176,25 @@ void Day02()
     char* line = new char[kLineSize];
     size_t line_size = kLineSize;
     
+    int game_id_sum = 0;
+    
     ssize_t bytes_read = 0;
     while (bytes_read >= 0) {
         bytes_read = getline(&line, &line_size, f);
         if (bytes_read >= 0) {
-            ParseLine(line, bytes_read);
+            GameList results = ParseLine(line, bytes_read);
+            // for (int i = 0; i < results.count; ++i) {
+            //    Game game = results.games[i];
+            //    fprintf(stdout, "id: %d, r: %d, g: %d, b: %d\n", results.id, game.red, game.green, game.blue);
+            // }
+            if (GamesListIsPossible(&results, test_case)) {
+                game_id_sum += results.id;
+            }
         }
     }
-        
+    
+    fprintf(stdout, "Sum: %d\n", game_id_sum);
+    
     delete [] line;
     fclose(f);
 }
