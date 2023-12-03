@@ -32,8 +32,6 @@ static KeyWord kBlue = KEYWORD("blue");
 void ParseLine(const char* line, size_t line_length)
 {
     // Parse the game number.
-    Game game = {};
-
     int game_id = 0;
     bool found_game_id = false;
     const char* current_char = line;
@@ -62,66 +60,74 @@ void ParseLine(const char* line, size_t line_length)
         current_char++;
     }
     
-    game.id = game_id;
-    
     // Parse each game.
-    
-    bool game_complete = false;
-    int value = 0;
-    while (current_char && !game_complete) {
-        int advance = 1;
-        switch (*current_char) {
-            case ';': {
-                game_complete = true;
-                break;
-            }
-            case ',': {
-                value = 0;
-                break;
-            }
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                int digit = *current_char - '0';
-                value = value * 10 + digit;
-                break;
-            }
-            case 'r': {
-                if (MatchNumberKeyword(current_char, 0, kRed)) {
-                    advance = kRed.length;
-                    game.red = value;
+    bool end_of_line = false;
+    while (!end_of_line) {       
+        Game game = {};
+        game.id = game_id;
+        bool game_complete = false;
+        int value = 0;
+        while (current_char && !game_complete) {
+            int advance = 1;
+            switch (*current_char) {
+                case ';': {
+                    game_complete = true;
+                    break;
                 }
-                break;
-            }
-            case 'g': {
-                if (MatchNumberKeyword(current_char, 0, kGreen)) {
-                    advance = kGreen.length;
-                    game.green = value;
+                case ',': {
+                    value = 0;
+                    break;
                 }
-                break;
-            }
-            case 'b': {
-                if (MatchNumberKeyword(current_char, 0, kBlue)) {
-                    advance = kBlue.length;
-                    game.blue = value;
+                case '\n': {
+                    game_complete = true;
+                    end_of_line = true;
+                    advance = 0;
+                    break;
                 }
-                break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9': {
+                    int digit = *current_char - '0';
+                    value = value * 10 + digit;
+                    break;
+                }
+                case 'r': {
+                    if (MatchNumberKeyword(current_char, 0, kRed)) {
+                        advance = kRed.length;
+                        game.red = value;
+                    }
+                    break;
+                }
+                case 'g': {
+                    if (MatchNumberKeyword(current_char, 0, kGreen)) {
+                        advance = kGreen.length;
+                        game.green = value;
+                    }
+                    break;
+                }
+                case 'b': {
+                    if (MatchNumberKeyword(current_char, 0, kBlue)) {
+                        advance = kBlue.length;
+                        game.blue = value;
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
-            default:
-                break;
+            
+            current_char += advance;
         }
         
-        current_char += advance;
+        fprintf(stdout, "id: %d, r: %d, g: %d, b: %d\n", game.id, game.red, game.green, game.blue);
     }
-    
-    fprintf(stdout, "id: %d, r: %d, g: %d, b: %d\n", game.id, game.red, game.green, game.blue);
 }
 
 
