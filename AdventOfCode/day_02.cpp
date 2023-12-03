@@ -8,9 +8,8 @@
 
 #include <stdio.h>
 
-static const char* input_file = "day_02.input";  // Sum: 
-// static const char* input_file = "day_02.test_input1";  // Sum: 8
-// static const char* input_file = "day_02.test_input2";
+static const char* input_file = "day_02.input";  // Sum: 2006, Fewest: 84911
+// static const char* input_file = "day_02.test_input1";  // Sum: 8, Fewest: 2286
 
 const int kLineSize = 1024;
 const int kMaxGamesList = 16;
@@ -165,6 +164,31 @@ bool GamesListIsPossible(GameList* game_list, Game test_case)
 }
 
 
+int FindMinimumValues(GameList* game_list)
+{
+    int result = 0;
+    
+    Game mins = {};
+    
+    for (int index = 0; index < game_list->count; ++index) {
+        Game current = game_list->games[index];
+        if (current.red > mins.red) {
+            mins.red = current.red;
+        }
+        if (current.green > mins.green) {
+            mins.green = current.green;
+        }
+        if (current.blue > mins.blue) {
+            mins.blue = current.blue;
+        }
+    }
+    
+    result = mins.red * mins.green * mins.blue;
+    
+    return result;
+}
+
+
 void Day02()
 {
     FILE* f = fopen(input_file, "r");
@@ -177,6 +201,7 @@ void Day02()
     size_t line_size = kLineSize;
     
     int game_id_sum = 0;
+    int fewest_sum = 0;
     
     ssize_t bytes_read = 0;
     while (bytes_read >= 0) {
@@ -190,10 +215,11 @@ void Day02()
             if (GamesListIsPossible(&results, test_case)) {
                 game_id_sum += results.id;
             }
+            fewest_sum += FindMinimumValues(&results);
         }
     }
     
-    fprintf(stdout, "Sum: %d\n", game_id_sum);
+    fprintf(stdout, "Sum: %d, fewest: %d\n", game_id_sum, fewest_sum);
     
     delete [] line;
     fclose(f);
