@@ -10,9 +10,8 @@
 #include <sys/stat.h>
 
 
-// static const char* input_file = "day_03.test_input";
-// static const char* input_file = "day_03.test_input2";
-static const char* input_file = "day_03.input";  // Part 1 sum = 544433, Part 2 sum = ?
+// static const char* input_file = "day_03.test_input";  // Part 1 sum = 4361, Part 2 sum = 467835
+static const char* input_file = "day_03.input";  // Part 1 sum = 544433, Part 2 sum = 76314915
 
 
 struct File
@@ -28,6 +27,44 @@ struct Table
     const char* data;
     int rows;
     int cols;
+};
+
+
+struct Number
+{
+    int value;
+    int row;
+    int col_start;
+    int col_end;
+};
+
+
+struct Star
+{
+    int row;
+    int col;
+    int num1;
+    int num2;
+};
+
+
+// These were determined by counting through the input data. In real code,
+// I'd need to use a dynamic array.
+static const int kMaxStars = 512;
+static const int kMaxNumbers = 1300;
+
+
+struct StarTable
+{
+    int count;
+    Star stars[kMaxStars];
+};
+
+
+struct NumberTable
+{
+    int count;
+    Number numbers[kMaxNumbers];
 };
 
 
@@ -126,6 +163,39 @@ bool IsSymbolAdjacent(Table t, int row_start, int col_start, int col_end)
 }
 
 
+bool IsAdjacent(Table* table, Star star, Number num)
+{
+    bool result = false;
+    
+    int row_min = num.row - 1;
+    if (row_min < 0) {
+        row_min = 0;
+    }
+    
+    int row_max = num.row + 1;
+    if (row_max >= table->rows) {
+        row_max = num.row;
+    }
+    
+    int col_min = num.col_start - 1;
+    if (col_min < 0) {
+        col_min = 0;
+    }
+    
+    int col_max = num.col_end + 1;
+    if (col_max >= table->cols) {
+        col_max = num.col_end;
+    }
+    
+    if ((star.row >= row_min && star.row <= row_max) &&
+        (star.col >= col_min && star.col <= col_max)) {
+        result = true;
+    }
+    
+    return result;
+}
+
+
 void Day03()
 {
     File file_data = ReadFile(input_file);
@@ -160,8 +230,10 @@ void Day03()
     
     int number_sum = 0;
     
-    int star_count = 0;
     int number_count = 0;
+    
+    StarTable stars = {};
+    NumberTable numbers = {};
     
     for (int row = 0; row < row_count; ++row) {
         const char* row_data = file_data.data + row * (column_count + 1);
@@ -195,11 +267,14 @@ void Day03()
                 }
                 default: {
                     if (current_char == '*') {
-                        star_count++;
+                        stars.stars[stars.count] = { row, col };
+                        stars.count++;
                     }
                     if (num_start_col >= 0 && num_end_col >= 0) {
                         fprintf(stdout, "Found %d at row: %d, col: %d..%d",
                                 num_value, row, num_start_col, num_end_col);
+                        numbers.numbers[numbers.count] = { num_value, row, num_start_col, num_end_col };
+                        numbers.count++;
                         if (IsSymbolAdjacent(table, row, num_start_col, num_end_col)) {
                             number_sum += num_value;
                             fprintf(stdout, " symbol adjacent");
@@ -216,8 +291,36 @@ void Day03()
         }
     }
     
-    fprintf(stdout, "Sum: %d (stars: %d, numbers: %d)\n", number_sum, star_count, number_count);
     
+    // Part 2
+    int gear_ratio_sum = 0;
+    
+    for (int star_index = 0; star_index < stars.count; ++star_index) {
+        Star star = stars.stars[star_index];
+        int adjacent_count = 0;
+        for (int num_index = 0; num_index < numbers.count; ++num_index) {
+            Number num = numbers.numbers[num_index];
+            if (IsAdjacent(&table, star, num)) {
+                adjacent_count++;
+                if (adjacent_count == 1) {
+                    star.num1 = num.value;
+                } else if (adjacent_count == 2) {
+                    star.num2 = num.value;
+                } else if (adjacent_count > 2) {
+                    break;
+                }
+            }
+        }
+        if (adjacent_count == 2) {
+            gear_ratio_sum += star.num1 * star.num2;
+        }
+    }
+    
+    
+    fprintf(stdout, "Found %d stars, %d numbers\n", stars.count, numbers.count);
+    fprintf(stdout, "Part 1 sum: %d\n", number_sum);
+    fprintf(stdout, "Part 2 sum: %d\n", gear_ratio_sum);
+
     CloseFile(&file_data);
 }
 
