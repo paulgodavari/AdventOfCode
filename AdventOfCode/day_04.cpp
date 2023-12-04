@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file = "day_04.test_input";
-// static const char* input_file = "day_04.input";
+static const char* input_file = "day_04.test_input";  // Part 1: 13, part 2:
+// static const char* input_file = "day_04.input";  // Part 1: 20829, part 2:
 
 
 void Day04()
@@ -21,13 +21,15 @@ void Day04()
         return;
     }
     
-    bool end_of_line = false;
+    int total_points = 0;
+    
     int index = 0;
-    
-    
     while (index < input.size) {
         int game = 0;
-
+        int game_points = 0;
+        int winning[100] = {};
+        int numbers[100] = {};
+        
         bool done_parsing_game = false;
         while (!done_parsing_game) {
             char current_char = input.data[index];
@@ -85,6 +87,7 @@ void Day04()
                 case ' ': {
                     if (num > 0) {
                         fprintf(stdout, " %2d", num);
+                        winning[num] = 1;
                         num = 0;
                     }
                     break;
@@ -123,6 +126,7 @@ void Day04()
                 case ' ': {
                     if (num > 0) {
                         fprintf(stdout, " %2d", num);
+                        numbers[num] = 1;
                         num = 0;
                     }
                     break;
@@ -133,8 +137,24 @@ void Day04()
             index++;
         }
         
-        fprintf(stdout, "\n");
+        int wins = 0;
+        for (int i = 0; i < 100; ++i) {
+            if (numbers[i] && winning[i]) {
+                wins++;
+            }
+        }
+        if (wins) {
+            game_points = 1;
+            for (int i = 1; i < wins; i++) {
+                game_points *= 2;
+            }
+        }
+                
+        total_points += game_points;
+        fprintf(stdout, " | points: %d\n", game_points);
     }
+    
+    fprintf(stdout, "Total points: %d\n", total_points);
 }
 
 
