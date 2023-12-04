@@ -20,6 +20,18 @@ struct KeyWord
 bool MatchNumberKeyword(const char* line, int line_index, KeyWord keyword);
 
 
+struct File
+{
+    FILE* handle;
+    char* data;
+    size_t size;
+};
+
+
+void CloseFile(File* file);
+File ReadFile(const char* file_name);
+
+
 void Day01();
 void Day02();
 void Day03();

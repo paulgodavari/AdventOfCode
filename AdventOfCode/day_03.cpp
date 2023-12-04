@@ -6,20 +6,14 @@
 
 #include "advent_of_code.h"
 
-#include <errno.h>
-#include <sys/stat.h>
-
 
 // static const char* input_file = "day_03.test_input";  // Part 1 sum = 4361, Part 2 sum = 467835
 static const char* input_file = "day_03.input";  // Part 1 sum = 544433, Part 2 sum = 76314915
 
-
-struct File
-{
-    FILE* handle;
-    char* data;
-    size_t size;
-};
+// These were determined by counting through the input data. In real code,
+// I'd need to use a dynamic array.
+static const int kMaxStars = 512;
+static const int kMaxNumbers = 1300;
 
 
 struct Table
@@ -46,12 +40,6 @@ struct Star
     int num1;
     int num2;
 };
-
-
-// These were determined by counting through the input data. In real code,
-// I'd need to use a dynamic array.
-static const int kMaxStars = 512;
-static const int kMaxNumbers = 1300;
 
 
 struct StarTable
@@ -110,45 +98,6 @@ Box ComputeBoundingBox(int row, int col_start, int col_end, int row_max, int col
 }
 
 
-void CloseFile(File* file)
-{
-    if (file) {
-        if (file->handle) {
-            fclose(file->handle);
-        }
-        if (file->data) {
-            delete [] file->data;
-        }
-        *file = {};
-    }
-}
-
-
-File ReadFile(const char* file_name)
-{
-    File result;
-    struct stat file_info = {};
-    if (!stat(file_name, &file_info)) {
-        FILE* f = fopen(file_name, "r");
-        if (f) {
-            result.handle = f;
-            result.size = file_info.st_size;
-            result.data = new char[result.size];
-            size_t bytes_read = fread(result.data, 1, result.size, result.handle);
-            if (bytes_read != result.size ) {
-                fprintf(stderr, "Error reading %s: read: %zu bytes, expecting: %zu bytes\n",
-                        file_name, bytes_read, result.size);
-                CloseFile(&result);
-            }
-        } else {
-            fprintf(stderr, "Error opening %s (errno: %d)\n", file_name, errno);
-        }
-    } else {
-        fprintf(stderr, "Error stat'ing %s (errno: %d)\n", file_name, errno);
-    }
-    
-    return result;
-}
 
 
 bool IsSymbolAdjacent(Table t, int row_start, int col_start, int col_end)
