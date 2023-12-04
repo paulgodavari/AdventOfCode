@@ -37,7 +37,7 @@
 		66E7E8022B1BDBA30098BABD /* day_02.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_02.cpp; sourceTree = "<group>"; };
 		66E7E8042B1BDD560098BABD /* day_02.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_02.input; path = input/day_02.input; sourceTree = "<group>"; };
 		66E7E8052B1BDD560098BABD /* day_02.test_input1 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_02.test_input1; path = input/day_02.test_input1; sourceTree = "<group>"; };
-		66E7E8062B1C2DD90098BABD /* advent_of_code.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = AdventOfCode/advent_of_code.cpp; sourceTree = "<group>"; };
+		66E7E8062B1C2DD90098BABD /* advent_of_code.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = advent_of_code.cpp; sourceTree = "<group>"; };
 		66E7E8082B1D3C700098BABD /* day_03.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_03.cpp; sourceTree = "<group>"; };
 		66E7E80A2B1D3CE30098BABD /* day_03.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_03.test_input; path = input/day_03.test_input; sourceTree = "<group>"; };
 		66E7E80B2B1D3CE30098BABD /* day_03.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_03.input; path = input/day_03.input; sourceTree = "<group>"; };
@@ -57,7 +57,6 @@
 		66612A762B1A3A6E0056154B = {
 			isa = PBXGroup;
 			children = (
-				66E7E8062B1C2DD90098BABD /* advent_of_code.cpp */,
 				66612A892B1A415A0056154B /* Input Data */,
 				66612A812B1A3A6E0056154B /* AdventOfCode */,
 				66612A802B1A3A6E0056154B /* Products */,
@@ -75,6 +74,7 @@
 		66612A812B1A3A6E0056154B /* AdventOfCode */ = {
 			isa = PBXGroup;
 			children = (
+				66E7E8062B1C2DD90098BABD /* advent_of_code.cpp */,
 				66E7E8012B1BD68B0098BABD /* advent_of_code.h */,
 				66E7E7FF2B1BD6700098BABD /* main.cpp */,
 				66612A822B1A3A6E0056154B /* day_01.cpp */,

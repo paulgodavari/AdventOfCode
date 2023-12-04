@@ -11,6 +11,7 @@
 
 
 static const char* input_file = "day_03.test_input";
+// static const char* input_file = "day_03.test_input2";
 // static const char* input_file = "day_03.input";
 
 
@@ -71,9 +72,56 @@ File ReadFile(const char* file_name)
 }
 
 
-bool IsSymbolAdjacent(Table t, int row, int col_start, int col_end)
+bool IsSymbolAdjacent(Table t, int row_start, int col_start, int col_end)
 {
     bool found_symbol = false;
+    
+    int row_min = row_start - 1;
+    if (row_min < 0) {
+        row_min = 0;
+    }
+    
+    int row_max = row_start + 1;
+    if (row_max >= t.rows) {
+        row_max = row_start;
+    }
+    
+    int col_min = col_start - 1;
+    if (col_min < 0) {
+        col_min = 0;
+    }
+    
+    int col_max = col_end + 1;
+    if (col_max >= t.cols) {
+        col_max = col_end;
+    }
+    
+    for (int row = row_min; row <= row_max; ++row) {
+        const char* data = t.data + row * t.cols;
+        for (int col = col_min; col <= col_max; ++col) {
+            char c = data[col];
+            switch (c) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '\n':
+                case '.': {
+                    break;
+                }
+                default:
+                    return true;
+                    break;
+            }
+        }
+    }
+    
     return found_symbol;
 }
 
@@ -106,7 +154,7 @@ void Day03()
     
     int row_count = (int) file_data.size / (column_count + 1);
     
-    Table table = { file_data.data, row_count, column_count };
+    Table table = { file_data.data, row_count, column_count + 1 };
     
     fprintf(stdout, "Rows: %d, columns: %d\n", row_count, column_count);
     
@@ -117,7 +165,10 @@ void Day03()
         int num_start_col = -1;
         int num_end_col = -1;
         int num_value = 0;
-        for (int col = 0; col < column_count; ++col) {
+        // Have to search for 1 past the column count (which is the column that
+        // contains the '\n' characters) to terminate numbers that end at the
+        // end of the row.
+        for (int col = 0; col <= column_count; ++col) {
             char current_char = row_data[col];
             switch (current_char) {
                 case '0':
@@ -142,10 +193,11 @@ void Day03()
                     if (num_start_col >= 0 && num_end_col >= 0) {
                         fprintf(stdout, "Found %d at row: %d, col: %d..%d",
                                 num_value, row, num_start_col, num_end_col);
-                        if (!IsSymbolAdjacent(table, row, num_start_col, num_end_col)) {
+                        if (IsSymbolAdjacent(table, row, num_start_col, num_end_col)) {
                             number_sum += num_value;
-                            fprintf(stdout, " not adjacent");
+                            fprintf(stdout, " symbol adjacent");
                         } else {
+                            // fprintf(stdout, " not adjacent");
                         }
                         fprintf(stdout, "\n");
                         num_start_col = -1;
