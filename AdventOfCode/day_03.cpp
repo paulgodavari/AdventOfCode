@@ -22,6 +22,14 @@ struct File
 };
 
 
+struct Table
+{
+    const char* data;
+    int rows;
+    int cols;
+};
+
+
 void CloseFile(File* file)
 {
     if (file) {
@@ -63,9 +71,15 @@ File ReadFile(const char* file_name)
 }
 
 
+bool IsSymbolAdjacent(Table t, int row, int col_start, int col_end)
+{
+    bool found_symbol = false;
+    return found_symbol;
+}
+
+
 void Day03()
 {
-    fprintf(stdout, "Day 03\n");
     File file_data = ReadFile(input_file);
     
     if (!file_data.handle) {
@@ -92,15 +106,19 @@ void Day03()
     
     int row_count = (int) file_data.size / (column_count + 1);
     
+    Table table = { file_data.data, row_count, column_count };
+    
     fprintf(stdout, "Rows: %d, columns: %d\n", row_count, column_count);
     
+    int number_sum = 0;
+        
     for (int row = 0; row < row_count; ++row) {
-        const char* rowp = file_data.data + row * (column_count + 1);
+        const char* row_data = file_data.data + row * (column_count + 1);
         int num_start_col = -1;
         int num_end_col = -1;
         int num_value = 0;
         for (int col = 0; col < column_count; ++col) {
-            char current_char = rowp[col];
+            char current_char = row_data[col];
             switch (current_char) {
                 case '0':
                 case '1':
@@ -122,8 +140,14 @@ void Day03()
                 }
                 default: {
                     if (num_start_col >= 0 && num_end_col >= 0) {
-                        fprintf(stdout, "Found %d at row: %d, col: %d..%d\n",
+                        fprintf(stdout, "Found %d at row: %d, col: %d..%d",
                                 num_value, row, num_start_col, num_end_col);
+                        if (!IsSymbolAdjacent(table, row, num_start_col, num_end_col)) {
+                            number_sum += num_value;
+                            fprintf(stdout, " not adjacent");
+                        } else {
+                        }
+                        fprintf(stdout, "\n");
                         num_start_col = -1;
                         num_end_col = -1;
                         num_value = 0;
@@ -132,6 +156,8 @@ void Day03()
             }
         }
     }
+    
+    fprintf(stdout, "Sum: %d\n", number_sum);
     
     CloseFile(&file_data);
 }
