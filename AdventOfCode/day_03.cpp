@@ -10,9 +10,9 @@
 #include <sys/stat.h>
 
 
-static const char* input_file = "day_03.test_input";
+// static const char* input_file = "day_03.test_input";
 // static const char* input_file = "day_03.test_input2";
-// static const char* input_file = "day_03.input";
+static const char* input_file = "day_03.input";  // Part 1 sum = 544433, Part 2 sum = ?
 
 
 struct File
@@ -159,7 +159,10 @@ void Day03()
     fprintf(stdout, "Rows: %d, columns: %d\n", row_count, column_count);
     
     int number_sum = 0;
-        
+    
+    int star_count = 0;
+    int number_count = 0;
+    
     for (int row = 0; row < row_count; ++row) {
         const char* row_data = file_data.data + row * (column_count + 1);
         int num_start_col = -1;
@@ -184,12 +187,16 @@ void Day03()
                     int digit = current_char - '0';
                     if (num_start_col < 0) {
                         num_start_col = col;
+                        number_count++;
                     }
                     num_end_col = col;
                     num_value = num_value * 10 + digit;
                     break;
                 }
                 default: {
+                    if (current_char == '*') {
+                        star_count++;
+                    }
                     if (num_start_col >= 0 && num_end_col >= 0) {
                         fprintf(stdout, "Found %d at row: %d, col: %d..%d",
                                 num_value, row, num_start_col, num_end_col);
@@ -209,7 +216,7 @@ void Day03()
         }
     }
     
-    fprintf(stdout, "Sum: %d\n", number_sum);
+    fprintf(stdout, "Sum: %d (stars: %d, numbers: %d)\n", number_sum, star_count, number_count);
     
     CloseFile(&file_data);
 }
