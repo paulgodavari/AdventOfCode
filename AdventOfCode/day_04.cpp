@@ -7,14 +7,30 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file = "day_04.test_input";  // Part 1: 13, part 2:
-// static const char* input_file = "day_04.input";  // Part 1: 20829, part 2:
+// static const char* input_file = "day_04.test_input";  // Part 1: 13, part 2: 30
+static const char* input_file = "day_04.input";  // Part 1: 20829, part 2: 12648035
+
+
+static const int kMaxGames = 256;
+
+
+struct Game
+{
+    int number;
+    int wins;
+    int copies;
+};
+
+
+struct Games
+{
+    int count;
+    Game games[kMaxGames];
+};
 
 
 void Day04()
 {
-    fprintf(stdout, "Day04\n");
-    
     File input = ReadFile(input_file);
     if (!input.handle) {
         fprintf(stderr, "Error reading file\n");
@@ -22,10 +38,11 @@ void Day04()
     }
     
     int total_points = 0;
+    Games games = {};
     
     int index = 0;
     while (index < input.size) {
-        int game = 0;
+        int game_id = 0;
         int game_points = 0;
         int winning[100] = {};
         int numbers[100] = {};
@@ -46,7 +63,7 @@ void Day04()
                 case '8':
                 case '9': {
                     int digit = current_char - '0';
-                    game = game * 10 + digit;
+                    game_id = game_id * 10 + digit;
                     break;
                 }
                 case ':': {
@@ -59,7 +76,7 @@ void Day04()
             index++;
         }
 
-        fprintf(stdout, "Game %d: ", game);
+        fprintf(stdout, "Game %d: ", game_id);
 
         bool done_parsing_win = false;
         int num = 0;
@@ -98,7 +115,7 @@ void Day04()
             index++;
         }
 
-        fprintf(stdout, " | ");
+        fprintf(stdout, " |");
 
         bool done_parsing_num = false;
         num = 0;
@@ -149,12 +166,38 @@ void Day04()
                 game_points *= 2;
             }
         }
+        
+        Game* game = &games.games[games.count];
+        game->number = game_id;
+        game->wins = wins;
+        game->copies = 1;
+        
+        games.count++;
                 
         total_points += game_points;
-        fprintf(stdout, " | points: %d\n", game_points);
+        fprintf(stdout, " | points: %d, wins: %d, copies: %d\n", game_points, game->wins, game->copies);
     }
     
-    fprintf(stdout, "Total points: %d\n", total_points);
+    fprintf(stdout, "Part 1 points: %d\n", total_points);
+    
+    for (int i = 0; i < games.count; ++i) {
+        Game* game = &games.games[i];
+        if (game->wins > 0) {
+            for (int copy = 0; copy < game->copies; ++copy) {
+                int index_base = i+1;
+                for (int w = index_base; w < index_base + game->wins; ++w) {
+                    games.games[w].copies++;
+                }
+            }
+        }
+    }
+    
+    int copies = 0;
+    for (int i = 0; i < games.count; ++i) {
+        copies += games.games[i].copies;
+    }
+
+    fprintf(stdout, "Part 2 copies: %d\n", copies);
 }
 
 
