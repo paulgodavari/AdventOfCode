@@ -68,6 +68,48 @@ struct NumberTable
 };
 
 
+struct Point
+{
+    int row;
+    int col;
+};
+
+
+struct Box
+{
+    Point min;
+    Point max;
+};
+
+
+Box ComputeBoundingBox(int row, int col_start, int col_end, int row_max, int col_max)
+{
+    Box result = {};
+
+    result.min.row = row - 1;
+    if (result.min.row < 0) {
+        result.min.row = 0;
+    }
+    
+    result.max.row = row + 1;
+    if (result.max.row >= row_max) {
+        result.max.row = row;
+    }
+    
+    result.min.col = col_start - 1;
+    if (result.min.col < 0) {
+        result.min.col = 0;
+    }
+    
+    result.max.col = col_end + 1;
+    if (result.max.col >= col_max) {
+        result.max.col = col_end;
+    }
+
+    return result;
+}
+
+
 void CloseFile(File* file)
 {
     if (file) {
@@ -113,29 +155,11 @@ bool IsSymbolAdjacent(Table t, int row_start, int col_start, int col_end)
 {
     bool found_symbol = false;
     
-    int row_min = row_start - 1;
-    if (row_min < 0) {
-        row_min = 0;
-    }
+    Box box = ComputeBoundingBox(row_start, col_start, col_end, t.rows, t.cols);
     
-    int row_max = row_start + 1;
-    if (row_max >= t.rows) {
-        row_max = row_start;
-    }
-    
-    int col_min = col_start - 1;
-    if (col_min < 0) {
-        col_min = 0;
-    }
-    
-    int col_max = col_end + 1;
-    if (col_max >= t.cols) {
-        col_max = col_end;
-    }
-    
-    for (int row = row_min; row <= row_max; ++row) {
+    for (int row = box.min.row; row <= box.max.row; ++row) {
         const char* data = t.data + row * t.cols;
-        for (int col = col_min; col <= col_max; ++col) {
+        for (int col = box.min.col; col <= box.max.col; ++col) {
             char c = data[col];
             switch (c) {
                 case '0':
@@ -167,28 +191,9 @@ bool IsAdjacent(Table* table, Star star, Number num)
 {
     bool result = false;
     
-    int row_min = num.row - 1;
-    if (row_min < 0) {
-        row_min = 0;
-    }
-    
-    int row_max = num.row + 1;
-    if (row_max >= table->rows) {
-        row_max = num.row;
-    }
-    
-    int col_min = num.col_start - 1;
-    if (col_min < 0) {
-        col_min = 0;
-    }
-    
-    int col_max = num.col_end + 1;
-    if (col_max >= table->cols) {
-        col_max = num.col_end;
-    }
-    
-    if ((star.row >= row_min && star.row <= row_max) &&
-        (star.col >= col_min && star.col <= col_max)) {
+    Box box = ComputeBoundingBox(num.row, num.col_start, num.col_end, table->rows, table->cols);
+    if ((star.row >= box.min.row && star.row <= box.max.row) &&
+        (star.col >= box.min.col && star.col <= box.max.col)) {
         result = true;
     }
     
@@ -291,7 +296,6 @@ void Day03()
         }
     }
     
-    
     // Part 2
     int gear_ratio_sum = 0;
     
@@ -315,7 +319,6 @@ void Day03()
             gear_ratio_sum += star.num1 * star.num2;
         }
     }
-    
     
     fprintf(stdout, "Found %d stars, %d numbers\n", stars.count, numbers.count);
     fprintf(stdout, "Part 1 sum: %d\n", number_sum);
