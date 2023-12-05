@@ -123,7 +123,7 @@ void Day05()
     int seed_count = 0;
     int seeds[64] = {};
     
-    if (!ConsumeString(&parse_state, CONST_STRING("seeds:"))) {
+    if (!ConsumeString(&parse_state, CONST_STRING("seeds: "))) {
         fprintf(stderr, "Bad format\n");
         return;
     }
@@ -133,15 +133,13 @@ void Day05()
         seeds[seed_count] = number;
         seed_count++;
     }
+    Advance(&parse_state, 2);  // End of seed number line + following blank line
 
     fprintf(stdout, "Found %d seeds\n", seed_count);
     for (int i = 0; i < seed_count; ++i) {
         fprintf(stdout, "%d ", seeds[i]);
     }
     fprintf(stdout, "\n");
-
-    Advance(&parse_state);
-    Advance(&parse_state);
 
     if (!ConsumeString(&parse_state, CONST_STRING("seed-to-soil map:\n"))) {
         fprintf(stderr, "Bad format\n");
