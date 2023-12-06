@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file = "day_05.test_input";  // Part 1: 35
-static const char* input_file = "day_05.input";  // Part 1: 51752125
+// static const char* input_file = "day_05.test_input";  // Part 1: 35, Part 2: 46
+static const char* input_file = "day_05.input";  // Part 1: 51752125, Part 2: 12634632
 
 static const int kRangeRows = 64;
 static const int kMapCount = 7;
@@ -195,6 +195,8 @@ void Day05()
         Advance(&parse_state);  // Blank line
     }
     
+    // TODO: Parallelize this, since part 2 takes a lot of time.
+    
     // Look up the seed to location index
     u32 min_location = 0xffffffff;
     for (int i = 0; i < seed_count; ++ i) {
@@ -209,14 +211,42 @@ void Day05()
                 }
             }
         }
-        fprintf(stdout, "Seed: %u, location: %u\n", seeds[i], index);
+        // fprintf(stdout, "Seed: %u, location: %u\n", seeds[i], index);
         if (min_location > index) {
             min_location = index;
         }
     }
     
-    fprintf(stdout, "Min location: %u\n", min_location);
+    fprintf(stdout, "Part 1 min location: %u\n", min_location);
     
+    min_location = 0xffffffff;
+    int seed_index = 0;
+    while (seed_index < seed_count) {
+        u32 seed_start = seeds[seed_index];
+        u32 seed_end = seed_start + seeds[seed_index + 1] - 1;
+        fprintf(stdout, "Part 2 start: %u, end: %u\n", seed_start, seed_end);
+        for (u32 seed = seed_start; seed <= seed_end; ++seed) {
+            u32 index = seed;
+            for (int map_index = 0; map_index < kMapCount; ++map_index) {
+                Map map = maps[map_index];
+                for (int row = 0; row < map.row_count; ++row) {
+                    Range r = map.ranges[row];
+                    if (index >= r.start && index <= r.end) {
+                        index += r.offset;
+                        break;
+                    }
+                }
+            }
+            // fprintf(stdout, "Seed: %u, location: %u\n", seed, index);
+            if (min_location > index) {
+                min_location = index;
+            }
+        }
+        seed_index += 2;
+    }
+
+    fprintf(stdout, "Part 2 min location: %u\n", min_location);
+
     CloseFile(&input_data);
 }
 
