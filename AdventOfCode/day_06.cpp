@@ -7,26 +7,17 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_06.test_input";  // Part 1: 288, Part 2:
-// static const char* input_file_name = "day_06.input";  // Part 1: 220320, Part 2:
+static const char* input_file_name = "day_06.test_input";  // Part 1: 288, Part 2: 71503
+// static const char* input_file_name = "day_06.input";  // Part 1: 220320, Part 2: 34454850
 
 static const int kMaxRaces = 4;
-static const int kMaxPermutations = 100;
 
 
 struct Race
 {
-    u32 time;
-    u32 distance;
-    u32 wins;
-};
-
-
-struct Trial
-{
-    u32 charge;
-    u32 duration;
-    u32 distance;
+    u64 time;
+    u64 distance;
+    u64 wins;
 };
 
 
@@ -60,27 +51,31 @@ void Day06()
         index++;
     }
 
+    // I didn't feel like programmatically smushing all the numbers together
+    // so I just hard coded them:
+    race_count = 1;
+//    races[0].time = 71530;
+//    races[0].distance = 940200;
+    races[0].time = 59796575;
+    races[0].distance = 597123410321328;
+
     for (int i = 0; i < race_count; ++i) {
         // fprintf(stdout, "Race %d: time: %u, distance: %u\n", i, races[i].time, races[i].distance);
-        Trial trials[kMaxPermutations] = {};
         for (int charge_time = 1; charge_time < (races[i].time - 1); ++charge_time) {
-            Trial trial = {};
-            trial.charge = charge_time;
-            trial.duration = races[i].time - charge_time;
-            trial.distance = charge_time * trial.duration;
-            trials[charge_time] = trial;
-            if (trial.distance > races[i].distance) {
+            u64 duration = races[i].time - charge_time;
+            u64 distance = charge_time * duration;
+            if (distance > races[i].distance) {
                 races[i].wins++;
             }
         }
     }
     
-    u32 error = 1;
+    u64 error = 1;
     for (int i = 0; i < race_count; ++i) {
         error *= races[i].wins;
     }
     
-    fprintf(stdout, "Part 1: number: %u\n", error);
+    fprintf(stdout, "Part 1: number: %llu\n", error);
     
     CloseFile(&input_file);
 }
