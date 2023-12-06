@@ -35,6 +35,9 @@ struct ParseState
 };
 
 
+// Consumes leading non-digit characters, converts digit characters into a number,
+// returns the number. Parser will be pointing 1 character past the last digit.
+
 int ParseNumber(ParseState* parse_state)
 {
     int number = -1;
@@ -75,6 +78,10 @@ int ParseNumber(ParseState* parse_state)
     return number;
 }
 
+
+// Attempts to match the provided string. If there is a complete match, the parser
+// is advanced 1 character past the match. The state is not updated if there is no
+// match, or a partial match.
 
 bool ConsumeString(ParseState* parser_state, String match)
 {
