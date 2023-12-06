@@ -14,16 +14,6 @@ static const int kRangeRows = 64;
 static const int kMapCount = 7;
 
 
-struct String
-{
-    const char* start;
-    size_t size;
-};
-
-
-#define CONST_STRING(x) { (x), sizeof(x) - 1 }
-
-
 struct Range
 {
     u32 start;
@@ -38,96 +28,6 @@ struct Map
     u32 row_count;
     Range ranges[kRangeRows];
 };
-
-
-struct ParseState
-{
-    const char* data;
-    size_t size;
-    i32 offset;
-};
-
-
-// Consumes leading non-digit characters, converts digit characters into a number,
-// returns the number. Parser will be pointing 1 character past the last digit.
-
-u32 ParseNumber(ParseState* parse_state)
-{
-    u32 number = 0;
-    bool number_found = false;
-    bool done = false;
-    while (!done && (parse_state->offset < parse_state->size)) {
-        int advance = 1;
-        char current = parse_state->data[parse_state->offset];
-        switch (current) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                u32 digit = current - '0';
-                if (number_found) {
-                    number = number * 10 + digit;
-                } else {
-                    number_found = true;
-                    number = digit;
-                }
-                break;
-            }
-            default: {
-                if (number_found) {
-                    done = true;
-                    advance = 0;
-                }
-            }
-        }
-        parse_state->offset += advance;
-    }
-    
-    return number;
-}
-
-
-// Attempts to match the provided string. If there is a complete match, the parser
-// is advanced 1 character past the match. The state is not updated if there is no
-// match, or a partial match.
-
-bool ConsumeString(ParseState* parser_state, String match)
-{
-    bool result = false;
-    
-    if ((parser_state->offset + match.size) < parser_state->size) {
-        for (int index = 0; index < match.size; ++index) {
-            int parser_index = parser_state->offset + index;
-            if (parser_state->data[parser_index] != match.start[index]) {
-                return result;
-            }
-        }
-        result = true;
-        parser_state->offset += match.size;
-    }
-    
-    return result;
-}
-
-
-bool AtEndOfLine(ParseState* parse_state)
-{
-    return parse_state->data[parse_state->offset] == '\n';
-}
-
-
-void Advance(ParseState* parse_state, int by = 1)
-{
-    if (parse_state->offset < (parse_state->size - 1)) {
-        parse_state->offset += by;
-    }
-}
 
 
 void Day05()
