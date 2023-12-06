@@ -49,3 +49,4 @@ void Day02();
 void Day03();
 void Day04();
 void Day05();
+void Day06();

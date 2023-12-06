@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file = "day_05.test_input";  // Part 1: 35, Part 2: 46
-static const char* input_file = "day_05.input";  // Part 1: 51752125, Part 2: 12634632
+static const char* input_file = "day_05.test_input";  // Part 1: 35, Part 2: 46
+// static const char* input_file = "day_05.input";  // Part 1: 51752125, Part 2: 12634632
 
 static const int kRangeRows = 64;
 static const int kMapCount = 7;
