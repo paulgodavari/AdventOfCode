@@ -6,15 +6,11 @@
 
 #include "advent_of_code.h"
 
-#define TESTING 1
 
-#ifdef TESTING
-    static const char* input_file = "day_05.test_input";
-    static const int kMapSize = 100;
-#else
-    static const char* input_file = "day_05.input";
-    static const int kMapSize = 1000000000;
-#endif
+static const char* input_file = "day_05.test_input";
+// static const char* input_file = "day_05.input";
+
+static const int kRangeRows = 64;
 
 
 struct String
@@ -27,21 +23,37 @@ struct String
 #define CONST_STRING(x) { (x), sizeof(x) - 1 }
 
 
+struct Range
+{
+    u32 start;
+    u32 end;
+    i32 offset;
+};
+
+
+struct Map
+{
+    String name;
+    u32 rows;
+    Range ranges[kRangeRows];
+};
+
+
 struct ParseState
 {
     const char* data;
     size_t size;
-    int offset;
+    i32 offset;
 };
 
 
 // Consumes leading non-digit characters, converts digit characters into a number,
 // returns the number. Parser will be pointing 1 character past the last digit.
 
-int ParseNumber(ParseState* parse_state)
+u32 ParseNumber(ParseState* parse_state)
 {
-    int number = -1;
-    
+    u32 number = 0;
+    bool number_found = false;
     bool done = false;
     while (!done && (parse_state->offset < parse_state->size)) {
         int advance = 1;
@@ -57,16 +69,17 @@ int ParseNumber(ParseState* parse_state)
             case '7':
             case '8':
             case '9': {
-                int digit = current - '0';
-                if (number < 0) {
-                    number = digit;
-                } else {
+                u32 digit = current - '0';
+                if (number_found) {
                     number = number * 10 + digit;
+                } else {
+                    number_found = true;
+                    number = digit;
                 }
                 break;
             }
             default: {
-                if (number >= 0) {
+                if (number_found) {
                     done = true;
                     advance = 0;
                 }
@@ -128,7 +141,7 @@ void Day05()
     
     // Parse the seed numbers
     int seed_count = 0;
-    int seeds[64] = {};
+    u32 seeds[64] = {};
     
     if (!ConsumeString(&parse_state, CONST_STRING("seeds: "))) {
         fprintf(stderr, "Bad format\n");
@@ -136,7 +149,7 @@ void Day05()
     }
     
     while (!AtEndOfLine(&parse_state)) {
-        int number = ParseNumber(&parse_state);
+        u32 number = ParseNumber(&parse_state);
         seeds[seed_count] = number;
         seed_count++;
     }
@@ -144,101 +157,42 @@ void Day05()
 
     fprintf(stdout, "Found %d seeds\n", seed_count);
     for (int i = 0; i < seed_count; ++i) {
-        fprintf(stdout, "%d ", seeds[i]);
+        fprintf(stdout, "%u ", seeds[i]);
     }
     fprintf(stdout, "\n");
 
-    if (!ConsumeString(&parse_state, CONST_STRING("seed-to-soil map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
+    Map maps[] = {
+        { CONST_STRING("seed-to-soil map:") },
+        { CONST_STRING("soil-to-fertilizer map:") },
+        { CONST_STRING("fertilizer-to-water map:") },
+        { CONST_STRING("water-to-light map:") },
+        { CONST_STRING("light-to-temperature map:") },
+        { CONST_STRING("temperature-to-humidity map:") },
+        { CONST_STRING("humidity-to-location map:") }
+    };
     
-    if (!ConsumeString(&parse_state, CONST_STRING("soil-to-fertilizer map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
+    for (int i = 0; i < 7; ++i) {
+        if (!ConsumeString(&parse_state, maps[i].name)) {
+            fprintf(stderr, "Bad name\n");
+            return;
+        }
         Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
+        while (!AtEndOfLine(&parse_state)) {
+            u32 dest_index = ParseNumber(&parse_state);
+            u32 src_index = ParseNumber(&parse_state);
+            u32 range = ParseNumber(&parse_state);
+            Range r = { src_index, src_index + range - 1, (i32)(dest_index - src_index) };
+            maps[i].ranges[maps[i].rows] = r;
+            maps[i].rows++;
+            Advance(&parse_state);
 
-    if (!ConsumeString(&parse_state, CONST_STRING("fertilizer-to-water map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
+            // fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
+            fprintf(stdout, "start: %u, end: %u, offset: %d\n", r.start, r.end, r.offset);
+        }
+        fprintf(stdout, "%.*s %u rows\n", (int) maps[i].name.size, maps[i].name.start, maps[i].rows);
+        Advance(&parse_state);  // Blank line        
     }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
-
-    if (!ConsumeString(&parse_state, CONST_STRING("water-to-light map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
-
-    if (!ConsumeString(&parse_state, CONST_STRING("light-to-temperature map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
-
-    if (!ConsumeString(&parse_state, CONST_STRING("temperature-to-humidity map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
-
-    if (!ConsumeString(&parse_state, CONST_STRING("humidity-to-location map:\n"))) {
-        fprintf(stderr, "Bad format\n");
-        return;
-    }
-    while (!AtEndOfLine(&parse_state)) {
-        int dest_index = ParseNumber(&parse_state);
-        int src_index = ParseNumber(&parse_state);
-        int range = ParseNumber(&parse_state);
-        Advance(&parse_state);
-        fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-    }
-    Advance(&parse_state);  // Blank line
-
+    
 }
 
 
