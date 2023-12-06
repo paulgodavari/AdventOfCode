@@ -7,10 +7,11 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file = "day_05.test_input";
-// static const char* input_file = "day_05.input";
+// static const char* input_file = "day_05.test_input";  // Part 1: 35
+static const char* input_file = "day_05.input";  // Part 1: 51752125
 
 static const int kRangeRows = 64;
+static const int kMapCount = 7;
 
 
 struct String
@@ -34,7 +35,7 @@ struct Range
 struct Map
 {
     String name;
-    u32 rows;
+    u32 row_count;
     Range ranges[kRangeRows];
 };
 
@@ -155,13 +156,13 @@ void Day05()
     }
     Advance(&parse_state, 2);  // End of seed number line + following blank line
 
-    fprintf(stdout, "Found %d seeds\n", seed_count);
-    for (int i = 0; i < seed_count; ++i) {
-        fprintf(stdout, "%u ", seeds[i]);
-    }
-    fprintf(stdout, "\n");
+//    fprintf(stdout, "Found %d seeds\n", seed_count);
+//    for (int i = 0; i < seed_count; ++i) {
+//        fprintf(stdout, "%u ", seeds[i]);
+//    }
+//    fprintf(stdout, "\n");
 
-    Map maps[] = {
+    Map maps[kMapCount] = {
         { CONST_STRING("seed-to-soil map:") },
         { CONST_STRING("soil-to-fertilizer map:") },
         { CONST_STRING("fertilizer-to-water map:") },
@@ -171,7 +172,8 @@ void Day05()
         { CONST_STRING("humidity-to-location map:") }
     };
     
-    for (int i = 0; i < 7; ++i) {
+    // Parse the ranges
+    for (int i = 0; i < kMapCount; ++i) {
         if (!ConsumeString(&parse_state, maps[i].name)) {
             fprintf(stderr, "Bad name\n");
             return;
@@ -182,17 +184,40 @@ void Day05()
             u32 src_index = ParseNumber(&parse_state);
             u32 range = ParseNumber(&parse_state);
             Range r = { src_index, src_index + range - 1, (i32)(dest_index - src_index) };
-            maps[i].ranges[maps[i].rows] = r;
-            maps[i].rows++;
+            maps[i].ranges[maps[i].row_count] = r;
+            maps[i].row_count++;
             Advance(&parse_state);
 
             // fprintf(stdout, "d: %d, i: %d, r: %d\n", dest_index, src_index, range);
-            fprintf(stdout, "start: %u, end: %u, offset: %d\n", r.start, r.end, r.offset);
+            // fprintf(stdout, "start: %u, end: %u, offset: %d\n", r.start, r.end, r.offset);
         }
-        fprintf(stdout, "%.*s %u rows\n", (int) maps[i].name.size, maps[i].name.start, maps[i].rows);
-        Advance(&parse_state);  // Blank line        
+        // fprintf(stdout, "%.*s %u rows\n", (int) maps[i].name.size, maps[i].name.start, maps[i].row_count);
+        Advance(&parse_state);  // Blank line
     }
     
+    // Look up the seed to location index
+    u32 min_location = 0xffffffff;
+    for (int i = 0; i < seed_count; ++ i) {
+        u32 index = seeds[i];
+        for (int map_index = 0; map_index < kMapCount; ++map_index) {
+            Map map = maps[map_index];
+            for (int row = 0; row < map.row_count; ++row) {
+                Range r = map.ranges[row];
+                if (index >= r.start && index <= r.end) {
+                    index += r.offset;
+                    break;
+                }
+            }
+        }
+        fprintf(stdout, "Seed: %u, location: %u\n", seeds[i], index);
+        if (min_location > index) {
+            min_location = index;
+        }
+    }
+    
+    fprintf(stdout, "Min location: %u\n", min_location);
+    
+    CloseFile(&input_data);
 }
 
 
