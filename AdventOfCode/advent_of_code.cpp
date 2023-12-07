@@ -66,14 +66,14 @@ File ReadFile(const char* file_name)
 }
 
 
-u32 ParseNumber(ParseState* parse_state)
+u32 ParseNumber(ParseState* parser)
 {
     u32 number = 0;
     bool number_found = false;
     bool done = false;
-    while (!done && (parse_state->offset < parse_state->size)) {
+    while (!done && !AtEndOfFile(parser)) {
         int advance = 1;
-        char current = parse_state->data[parse_state->offset];
+        char current = parser->data[parser->offset];
         switch (current) {
             case '0':
             case '1':
@@ -101,42 +101,80 @@ u32 ParseNumber(ParseState* parse_state)
                 }
             }
         }
-        parse_state->offset += advance;
+        parser->offset += advance;
     }
     
     return number;
 }
 
 
-bool ConsumeString(ParseState* parser_state, String match)
+String ParseWord(ParseState* parser)
 {
-    bool result = false;
+    String result = {};
     
-    if ((parser_state->offset + match.size) < parser_state->size) {
-        for (int index = 0; index < match.size; ++index) {
-            int parser_index = parser_state->offset + index;
-            if (parser_state->data[parser_index] != match.start[index]) {
-                return result;
+    bool found_word_start = false;
+    bool done = false;
+    
+    while (!done && !AtEndOfFile(parser)) {
+        int advance_by = 1;
+        char current_char = parser->data[parser->offset];
+        bool is_digit = current_char >= '0' && current_char <= '9';
+        bool is_char = (current_char >= 'A' && current_char <= 'Z') || (current_char >= 'a' && current_char <= 'z');
+        if (is_char || is_digit) {
+            if (!found_word_start) {
+                found_word_start = true;
+                result.start = parser->data + parser->offset;
+            }
+            result.size++;
+        } else {
+            if (found_word_start) {
+                done = true;
+                advance_by = 0;
             }
         }
-        result = true;
-        parser_state->offset += match.size;
+        Advance(parser, advance_by);
     }
     
     return result;
 }
 
 
-bool AtEndOfLine(ParseState* parse_state)
+bool ConsumeString(ParseState* parser, String match)
 {
-    return parse_state->data[parse_state->offset] == '\n';
+    bool result = false;
+    
+    if ((parser->offset + match.size) < parser->size) {
+        for (int index = 0; index < match.size; ++index) {
+            int parser_index = parser->offset + index;
+            if (parser->data[parser_index] != match.start[index]) {
+                return result;
+            }
+        }
+        result = true;
+        parser->offset += match.size;
+    }
+    
+    return result;
 }
 
 
-void Advance(ParseState* parse_state, int by)
+bool AtEndOfLine(ParseState* parser)
 {
-    if (parse_state->offset < (parse_state->size - 1)) {
-        parse_state->offset += by;
+    return parser->data[parser->offset] == '\n';
+}
+
+
+bool AtEndOfFile(ParseState* parser)
+{
+    return parser->offset == parser->size;
+}
+
+
+void Advance(ParseState* parser, i32 by)
+{
+    parser->offset += by;
+    if (parser->offset > parser->size) {
+        parser->offset = (i32) parser->size;
     }
 }
 

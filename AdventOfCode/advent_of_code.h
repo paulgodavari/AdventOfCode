@@ -4,6 +4,7 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
 
 
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -60,19 +61,27 @@ struct ParseState
 
 // Consumes leading non-digit characters, converts digit characters into a number,
 // returns the number. Parser will be pointing 1 character past the last digit.
-u32 ParseNumber(ParseState* parse_state);
+u32 ParseNumber(ParseState* parser);
+
+// Consumes leading non-alpha-digit characters. Parser will be pointing 1 character
+// past the last alpha-digit.
+String ParseWord(ParseState* parser);
 
 // Attempts to match the provided string. If there is a complete match, the parser
 // is advanced 1 character past the match. The state is not updated if there is no
 // match, or a partial match.
-bool ConsumeString(ParseState* parser_state, String match);
+bool ConsumeString(ParseState* parser, String match);
 
-// Returns true if the parse_state's current offset is a '\n' character.
-bool AtEndOfLine(ParseState* parse_state);
+// Returns true if the parser's current offset is a '\n' character.
+bool AtEndOfLine(ParseState* parser);
 
-// Moves the parse_state ahead by the specified number of bytes. It will not
+// Returns true if the parser's current offset equal to the data size
+// (1 character beyond the last character).
+bool AtEndOfFile(ParseState* parser);
+
+// Moves the parser ahead by the specified number of bytes. It will not
 // advance if 'by' takes it beyond 'size'.
-void Advance(ParseState* parse_state, int by = 1);
+void Advance(ParseState* parser, i32 by = 1);
 
 
 void Day01();
