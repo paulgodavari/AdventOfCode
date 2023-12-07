@@ -9,8 +9,8 @@
 #include <stdlib.h>
 
 
-// static const char* input_file_name = "day_07.test_input";  // Part 1 winnings: 6440, Part 2:
-static const char* input_file_name = "day_07.input";  // Part 1 winnings: 241344943, Part 2:
+// static const char* input_file_name = "day_07.test_input";  // Part 1 winnings: 6440, Part 2: 5905
+static const char* input_file_name = "day_07.input";  // Part 1 winnings: 241344943, Part 2: 243101568
 
 
 static const u32 kHandSize = 5;
@@ -31,7 +31,8 @@ enum HandType
 
 enum CardType
 {
-    kCardType2 = 0,
+    kCardTypeJ = 0,
+    kCardType2,
     kCardType3,
     kCardType4,
     kCardType5,
@@ -40,7 +41,6 @@ enum CardType
     kCardType8,
     kCardType9,
     kCardTypeT,
-    kCardTypeJ,
     kCardTypeQ,
     kCardTypeK,
     kCardTypeA,
@@ -74,11 +74,12 @@ HandType ClassifyHand(Hand hand)
         cards[card_type]++;
     }
     
+    u32 js = cards[kCardTypeJ];
     u32 twos = 0;
     u32 threes = 0;
     u32 fours = 0;
     u32 fives = 0;
-    for (int i = 0; i < kCardTypeSize; ++i) {
+    for (int i = kCardType2; i < kCardTypeSize; ++i) {
         switch (cards[i]) {
             case 2:
                 twos++;
@@ -100,11 +101,43 @@ HandType ClassifyHand(Hand hand)
     if (fives) {
         result = kHandTypeFive;
     } else if (fours) {
-        result = kHandTypeFour;
+        result = (js > 0) ? kHandTypeFive : kHandTypeFour;
     } else if (threes) {
-        result = (twos > 0) ? kHandTypeFullHouse : kHandTypeThree;
+        if (js == 2) {
+            result = kHandTypeFive;
+        } else if (js == 1) {
+            result = kHandTypeFour;
+        } else {
+            result = (twos > 0) ? kHandTypeFullHouse : kHandTypeThree;
+        }
     } else if (twos) {
-        result = (twos == 2) ? kHandTypeTwoPair : kHandTypeOnePair;
+        if (js == 3) {
+            result = kHandTypeFive;
+        } else if (js == 2) {
+            result = kHandTypeFour;
+        } else if (js == 1) {
+            result = (twos == 2) ? kHandTypeFullHouse : kHandTypeThree;
+        } else {
+            result = (twos == 2) ? kHandTypeTwoPair : kHandTypeOnePair;
+        }
+    } else if (js) {
+        switch (js) {
+            case 1:
+                result = kHandTypeOnePair;
+                break;
+            case 2:
+                result = kHandTypeThree;
+                break;
+            case 3:
+                result = kHandTypeFour;
+                break;
+            case 4:
+                result = kHandTypeFive;
+                break;
+            case 5:
+                result = kHandTypeFive;
+                break;
+        }
     }
     
     return result;
@@ -250,7 +283,7 @@ void Day07()
         winnings += rank * games[i].bid;
     }
 
-    fprintf(stdout, "Part 1 winnings: %u\n", winnings);
+    fprintf(stdout, "Winnings: %u\n", winnings);
 
     CloseFile(&input_file);
 }
