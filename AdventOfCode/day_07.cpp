@@ -6,9 +6,11 @@
 
 #include "advent_of_code.h"
 
+#include <stdlib.h>
 
-static const char* input_file_name = "day_07.test_input";
-// static const char* input_file_name = "day_07.input";
+
+// static const char* input_file_name = "day_07.test_input";  // Part 1 winnings: 6440, Part 2:
+static const char* input_file_name = "day_07.input";  // Part 1 winnings: 241344943, Part 2:
 
 
 static const u32 kHandSize = 5;
@@ -174,6 +176,31 @@ Hand StringToHand(String input)
 }
 
 
+int CardCompare(const void* lhs, const void* rhs)
+{
+    Game* g1 = (Game*) lhs;
+    Game* g2 = (Game*) rhs;
+    
+    if (g1->type < g2->type) {
+        return -1;
+    } else if (g1->type > g2->type) {
+        return 1;
+    } else {
+        for (int i = 0; i < kHandSize; ++i) {
+            if (g1->hand.cards[i] < g2->hand.cards[i]) {
+                return -1;
+            } else if (g1->hand.cards[i] > g2->hand.cards[i]) {
+                return 1;
+            }
+        }
+        // Hands are equal
+        assert(0);
+    }
+    
+    return 0;
+}
+
+
 void Day07()
 {
     File input_file = ReadFile(input_file_name);
@@ -200,12 +227,31 @@ void Day07()
     }
     
     fprintf(stdout, "Game count: %u\n", game_count);
-    for (int i = 0; i < game_count; ++i) {
-        Game g = games[i];
-        fprintf(stdout, "Game %u: %.*s -> %u (%u)\n",
-                i, (int) g.hand_str.size, g.hand_str.start, g.bid, g.type);
-    }
+//    for (int i = 0; i < game_count; ++i) {
+//        Game g = games[i];
+//        fprintf(stdout, "Game %u: %.*s -> %u (%u)\n",
+//                i, (int) g.hand_str.size, g.hand_str.start, g.bid, g.type);
+//    }
     
+    // Sort the hands.
+    
+    qsort(&games, game_count, sizeof(Game), CardCompare);
+
+//    fprintf(stdout, "Sorted\n");
+//    for (int i = 0; i < game_count; ++i) {
+//        Game g = games[i];
+//        fprintf(stdout, "Game %u: %.*s -> %u (%u)\n",
+//                i, (int) g.hand_str.size, g.hand_str.start, g.bid, g.type);
+//    }
+
+    u32 rank = 1;
+    u32 winnings = 0;
+    for (int i = 0; i < game_count; ++i, ++rank) {
+        winnings += rank * games[i].bid;
+    }
+
+    fprintf(stdout, "Part 1 winnings: %u\n", winnings);
+
     CloseFile(&input_file);
 }
 
