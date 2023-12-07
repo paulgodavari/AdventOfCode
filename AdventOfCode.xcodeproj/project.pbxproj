@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		66612A832B1A3A6E0056154B /* day_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66612A822B1A3A6E0056154B /* day_01.cpp */; };
+		6667B8822B22456F00A528B5 /* day_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6667B8802B22456F00A528B5 /* day_07.cpp */; };
 		66C3F1DB2B1E6C1B00016D2F /* day_04.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */; };
 		66C3F1DF2B1F981B00016D2F /* day_05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66C3F1DE2B1F981B00016D2F /* day_05.cpp */; };
 		66C3F1E52B20B4BE00016D2F /* day_06.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66C3F1E42B20B4BE00016D2F /* day_06.cpp */; };
@@ -35,6 +36,9 @@
 		66612A8A2B1A41890056154B /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = input/day_01.input; sourceTree = "<group>"; };
 		66612A8B2B1A41890056154B /* day_01.test_input1 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input1; path = input/day_01.test_input1; sourceTree = "<group>"; };
 		66612A8C2B1A499A0056154B /* day_01.test_input2 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input2; path = input/day_01.test_input2; sourceTree = "<group>"; };
+		6667B87E2B22452900A528B5 /* day_07.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_07.test_input; path = input/day_07.test_input; sourceTree = "<group>"; };
+		6667B87F2B22452900A528B5 /* day_07.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_07.input; path = input/day_07.input; sourceTree = "<group>"; };
+		6667B8802B22456F00A528B5 /* day_07.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_07.cpp; sourceTree = "<group>"; };
 		66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_04.cpp; sourceTree = "<group>"; };
 		66C3F1DC2B1E6C6A00016D2F /* day_04.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_04.input; path = input/day_04.input; sourceTree = "<group>"; };
 		66C3F1DD2B1E6C6A00016D2F /* day_04.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_04.test_input; path = input/day_04.test_input; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 				66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */,
 				66C3F1DE2B1F981B00016D2F /* day_05.cpp */,
 				66C3F1E42B20B4BE00016D2F /* day_06.cpp */,
+				6667B8802B22456F00A528B5 /* day_07.cpp */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -115,6 +120,8 @@
 				66C3F1E12B1FB02E00016D2F /* day_05.test_input */,
 				66C3F1E32B20B4A500016D2F /* day_06.input */,
 				66C3F1E22B20B4A500016D2F /* day_06.test_input */,
+				6667B87F2B22452900A528B5 /* day_07.input */,
+				6667B87E2B22452900A528B5 /* day_07.test_input */,
 			);
 			name = "Input Data";
 			sourceTree = "<group>";
@@ -180,6 +187,7 @@
 				66E7E8032B1BDBA30098BABD /* day_02.cpp in Sources */,
 				66E7E8002B1BD6700098BABD /* main.cpp in Sources */,
 				66612A832B1A3A6E0056154B /* day_01.cpp in Sources */,
+				6667B8822B22456F00A528B5 /* day_07.cpp in Sources */,
 				66E7E8092B1D3C700098BABD /* day_03.cpp in Sources */,
 				66C3F1DB2B1E6C1B00016D2F /* day_04.cpp in Sources */,
 				66C3F1E52B20B4BE00016D2F /* day_06.cpp in Sources */,
