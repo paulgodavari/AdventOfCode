@@ -91,3 +91,4 @@ void Day04();
 void Day05();
 void Day06();
 void Day07();
+void Day08();
