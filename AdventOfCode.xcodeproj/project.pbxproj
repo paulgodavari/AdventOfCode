@@ -43,6 +43,7 @@
 		6667B8832B2371B300A528B5 /* day_08.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_08.cpp; sourceTree = "<group>"; };
 		6667B8852B2371F800A528B5 /* day_08.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_08.test_input; path = input/day_08.test_input; sourceTree = "<group>"; };
 		6667B8862B2371F800A528B5 /* day_08.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_08.input; path = input/day_08.input; sourceTree = "<group>"; };
+		6667B8872B237C8D00A528B5 /* day_08.test_input2 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_08.test_input2; path = input/day_08.test_input2; sourceTree = "<group>"; };
 		66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_04.cpp; sourceTree = "<group>"; };
 		66C3F1DC2B1E6C6A00016D2F /* day_04.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_04.input; path = input/day_04.input; sourceTree = "<group>"; };
 		66C3F1DD2B1E6C6A00016D2F /* day_04.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_04.test_input; path = input/day_04.test_input; sourceTree = "<group>"; };
@@ -129,6 +130,7 @@
 				6667B87E2B22452900A528B5 /* day_07.test_input */,
 				6667B8862B2371F800A528B5 /* day_08.input */,
 				6667B8852B2371F800A528B5 /* day_08.test_input */,
+				6667B8872B237C8D00A528B5 /* day_08.test_input2 */,
 			);
 			name = "Input Data";
 			sourceTree = "<group>";

@@ -7,8 +7,9 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_08.test_input";  // Part 1: , Part 2:
-// static const char* input_file_name = "day_08.input";  // Part 1: , Part 2:
+static const char* input_file_name = "day_08.test_input";  // Part 1: 2, Part 2:
+// static const char* input_file_name = "day_08.test_input2";  // Part 1: 6, Part 2:
+// static const char* input_file_name = "day_08.input";  // Part 1: 19199, Part 2:
 
 
 static const u32 kMaxIndexValue = 26*26*26;
@@ -70,17 +71,44 @@ void Day08()
         assert(table[i].right == 0);
         table[i] = p;
         
-        fprintf(stdout, "%u: %.*s -> [%.*s, %.*s]",
-                index_count,
-                (int) index.size, index.start,
-                (int) left.size, left.start,
-                (int) right.size, right.start);
-        fprintf(stdout, "   (%u -> [%u, %u])", i, p.left, p.right);
-        fprintf(stdout, "\n");
+//        fprintf(stdout, "%u: %.*s -> [%.*s, %.*s]",
+//                index_count,
+//                (int) index.size, index.start,
+//                (int) left.size, left.start,
+//                (int) right.size, right.start);
+//        fprintf(stdout, "   (%u -> [%u, %u])", i, p.left, p.right);
+//        fprintf(stdout, "\n");
 
         index_count++;
         Advance(&parser);
     }
+
+    u32 current_index = StringToIndex(CONST_STRING("AAA"));
+    u32 final_index = StringToIndex(CONST_STRING("ZZZ"));
+    u32 steps = 0;
+    
+    bool done = false;
+    while (!done) {
+        for (int i = 0; i < directions.size; ++i) {
+            if (directions.start[i] == 'L') {
+                current_index = table[current_index].left;
+            } else {
+                assert(directions.start[i] == 'R');
+                current_index = table[current_index].right;
+            }
+            steps++;
+            if (current_index == final_index) {
+                done = true;
+                break;
+            }
+        }
+        
+        if (!done) {
+            fprintf(stdout, "Restarting directions\n");
+        }
+    }
+    
+    fprintf(stdout, "Steps: %u\n", steps);
 }
 
 
