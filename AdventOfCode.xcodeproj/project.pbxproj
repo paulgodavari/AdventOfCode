@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		665399FD2B2520D200613227 /* day_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665399FC2B2520D200613227 /* day_09.cpp */; };
 		66612A832B1A3A6E0056154B /* day_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66612A822B1A3A6E0056154B /* day_01.cpp */; };
 		6667B8822B22456F00A528B5 /* day_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6667B8802B22456F00A528B5 /* day_07.cpp */; };
 		6667B8842B2371B300A528B5 /* day_08.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6667B8832B2371B300A528B5 /* day_08.cpp */; };
@@ -32,6 +33,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		665399FC2B2520D200613227 /* day_09.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_09.cpp; sourceTree = "<group>"; };
+		665399FE2B25211A00613227 /* day_09.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.input; path = input/day_09.input; sourceTree = "<group>"; };
+		665399FF2B25211A00613227 /* day_09.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.test_input; path = input/day_09.test_input; sourceTree = "<group>"; };
 		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
 		66612A822B1A3A6E0056154B /* day_01.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_01.cpp; sourceTree = "<group>"; };
 		66612A8A2B1A41890056154B /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = input/day_01.input; sourceTree = "<group>"; };
@@ -100,6 +104,7 @@
 				66E7E8012B1BD68B0098BABD /* advent_of_code.h */,
 				66E7E7FF2B1BD6700098BABD /* main.cpp */,
 				66612A822B1A3A6E0056154B /* day_01.cpp */,
+				665399FC2B2520D200613227 /* day_09.cpp */,
 				66E7E8022B1BDBA30098BABD /* day_02.cpp */,
 				66E7E8082B1D3C700098BABD /* day_03.cpp */,
 				66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */,
@@ -133,6 +138,8 @@
 				6667B8852B2371F800A528B5 /* day_08.test_input */,
 				6667B8872B237C8D00A528B5 /* day_08.test_input2 */,
 				6667B8882B237E7000A528B5 /* day_08.test_input3 */,
+				665399FE2B25211A00613227 /* day_09.input */,
+				665399FF2B25211A00613227 /* day_09.test_input */,
 			);
 			name = "Input Data";
 			sourceTree = "<group>";
@@ -197,6 +204,7 @@
 				66C3F1DF2B1F981B00016D2F /* day_05.cpp in Sources */,
 				66E7E8032B1BDBA30098BABD /* day_02.cpp in Sources */,
 				66E7E8002B1BD6700098BABD /* main.cpp in Sources */,
+				665399FD2B2520D200613227 /* day_09.cpp in Sources */,
 				66612A832B1A3A6E0056154B /* day_01.cpp in Sources */,
 				6667B8822B22456F00A528B5 /* day_07.cpp in Sources */,
 				66E7E8092B1D3C700098BABD /* day_03.cpp in Sources */,
