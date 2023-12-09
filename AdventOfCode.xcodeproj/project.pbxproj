@@ -104,7 +104,6 @@
 				66E7E8012B1BD68B0098BABD /* advent_of_code.h */,
 				66E7E7FF2B1BD6700098BABD /* main.cpp */,
 				66612A822B1A3A6E0056154B /* day_01.cpp */,
-				665399FC2B2520D200613227 /* day_09.cpp */,
 				66E7E8022B1BDBA30098BABD /* day_02.cpp */,
 				66E7E8082B1D3C700098BABD /* day_03.cpp */,
 				66C3F1DA2B1E6C1B00016D2F /* day_04.cpp */,
@@ -112,6 +111,7 @@
 				66C3F1E42B20B4BE00016D2F /* day_06.cpp */,
 				6667B8802B22456F00A528B5 /* day_07.cpp */,
 				6667B8832B2371B300A528B5 /* day_08.cpp */,
+				665399FC2B2520D200613227 /* day_09.cpp */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
