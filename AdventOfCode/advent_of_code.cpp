@@ -10,11 +10,11 @@
 #include <sys/stat.h>
 
 
-bool MatchNumberKeyword(const char* line, int line_index, KeyWord keyword)
+bool MatchNumberKeyword(const char* line, int line_index, String keyword)
 {
     bool match = true;
     
-    for (int index = 0; index < keyword.length; ++index, ++line_index) {
+    for (int index = 0; index < keyword.size; ++index, ++line_index) {
         if (line[line_index] != keyword.start[index]) {
             match = false;
             break;

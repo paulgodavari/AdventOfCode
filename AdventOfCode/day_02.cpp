@@ -30,9 +30,9 @@ struct GameList
 };
 
 
-static KeyWord kRed = KEYWORD("red");
-static KeyWord kGreen = KEYWORD("green");
-static KeyWord kBlue = KEYWORD("blue");
+static String kRed = CONST_STRING("red");
+static String kGreen = CONST_STRING("green");
+static String kBlue = CONST_STRING("blue");
 
 Game test_case = { 12, 13, 14 };
 
@@ -111,21 +111,21 @@ GameList ParseLine(const char* line, size_t line_length)
                 }
                 case 'r': {
                     if (MatchNumberKeyword(current_char, 0, kRed)) {
-                        advance = kRed.length;
+                        advance = (int) kRed.size;
                         game.red = value;
                     }
                     break;
                 }
                 case 'g': {
                     if (MatchNumberKeyword(current_char, 0, kGreen)) {
-                        advance = kGreen.length;
+                        advance = (int) kGreen.size;
                         game.green = value;
                     }
                     break;
                 }
                 case 'b': {
                     if (MatchNumberKeyword(current_char, 0, kBlue)) {
-                        advance = kBlue.length;
+                        advance = (int) kBlue.size;
                         game.blue = value;
                     }
                     break;

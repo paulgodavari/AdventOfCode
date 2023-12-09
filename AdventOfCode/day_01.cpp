@@ -9,17 +9,17 @@
 #include "advent_of_code.h"
 
 
-const KeyWord kNumbers[] = {
-    KEYWORD("zero"),
-    KEYWORD("one"),
-    KEYWORD("two"),
-    KEYWORD("three"),
-    KEYWORD("four"),
-    KEYWORD("five"),
-    KEYWORD("six"),
-    KEYWORD("seven"),
-    KEYWORD("eight"),
-    KEYWORD("nine")
+const String kNumbers[] = {
+    CONST_STRING("zero"),
+    CONST_STRING("one"),
+    CONST_STRING("two"),
+    CONST_STRING("three"),
+    CONST_STRING("four"),
+    CONST_STRING("five"),
+    CONST_STRING("six"),
+    CONST_STRING("seven"),
+    CONST_STRING("eight"),
+    CONST_STRING("nine")
 };
 
 

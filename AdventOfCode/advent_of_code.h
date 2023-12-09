@@ -20,15 +20,15 @@ typedef uint32_t  u32;
 typedef uint64_t  u64;
 
 
-struct KeyWord
+struct String
 {
-    char* start;
-    int length;
+    const char* start;
+    size_t size;
 };
-#define KEYWORD(x) { (char*) x, sizeof(x) - 1 }
+#define CONST_STRING(x) { (x), sizeof(x) - 1 }
 
 
-bool MatchNumberKeyword(const char* line, int line_index, KeyWord keyword);
+bool MatchNumberKeyword(const char* line, int line_index, String keyword);
 
 
 struct File
@@ -41,14 +41,6 @@ struct File
 
 void CloseFile(File* file);
 File ReadFile(const char* file_name);
-
-
-struct String
-{
-    const char* start;
-    size_t size;
-};
-#define CONST_STRING(x) { (x), sizeof(x) - 1 }
 
 
 struct ParseState
