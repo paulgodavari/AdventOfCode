@@ -66,15 +66,22 @@ File ReadFile(const char* file_name)
 }
 
 
-u32 ParseNumber(ParseState* parser)
+i32 ParseNumberInternal(ParseState* parser, bool allow_sign)
 {
     u32 number = 0;
     bool number_found = false;
     bool done = false;
+    bool is_negative = false;
     while (!done && !AtEndOfFile(parser)) {
         int advance = 1;
         char current = parser->data[parser->offset];
         switch (current) {
+            case '-': {
+                if (allow_sign) {
+                    is_negative = true;
+                }
+                break;
+            }
             case '0':
             case '1':
             case '2':
@@ -96,8 +103,14 @@ u32 ParseNumber(ParseState* parser)
             }
             default: {
                 if (number_found) {
+                    if (is_negative) {
+                        number *= -1;
+                    }
                     done = true;
                     advance = 0;
+                }
+                if (is_negative) {
+                    is_negative = false;
                 }
             }
         }
@@ -105,6 +118,20 @@ u32 ParseNumber(ParseState* parser)
     }
     
     return number;
+}
+
+
+u32 ParseNumber(ParseState* parser)
+{
+    u32 number = (u32) ParseNumberInternal(parser, false);    
+    return number;
+}
+
+
+i32 ParseSignedNumber(ParseState* parser)
+{
+    i32 result = ParseNumberInternal(parser, true);
+    return result;
 }
 
 
