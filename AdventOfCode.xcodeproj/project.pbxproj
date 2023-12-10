@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		665399FD2B2520D200613227 /* day_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665399FC2B2520D200613227 /* day_09.cpp */; };
+		66539A012B2653F900613227 /* day_10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66539A002B2653F900613227 /* day_10.cpp */; };
 		66612A832B1A3A6E0056154B /* day_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66612A822B1A3A6E0056154B /* day_01.cpp */; };
 		6667B8822B22456F00A528B5 /* day_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6667B8802B22456F00A528B5 /* day_07.cpp */; };
 		6667B8842B2371B300A528B5 /* day_08.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6667B8832B2371B300A528B5 /* day_08.cpp */; };
@@ -36,6 +37,10 @@
 		665399FC2B2520D200613227 /* day_09.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_09.cpp; sourceTree = "<group>"; };
 		665399FE2B25211A00613227 /* day_09.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.input; path = input/day_09.input; sourceTree = "<group>"; };
 		665399FF2B25211A00613227 /* day_09.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.test_input; path = input/day_09.test_input; sourceTree = "<group>"; };
+		66539A002B2653F900613227 /* day_10.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_10.cpp; sourceTree = "<group>"; };
+		66539A022B265C4100613227 /* day_10.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.test_input; path = input/day_10.test_input; sourceTree = "<group>"; };
+		66539A032B265C4100613227 /* day_10.test_input2 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.test_input2; path = input/day_10.test_input2; sourceTree = "<group>"; };
+		66539A042B265C4100613227 /* day_10.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.input; path = input/day_10.input; sourceTree = "<group>"; };
 		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
 		66612A822B1A3A6E0056154B /* day_01.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_01.cpp; sourceTree = "<group>"; };
 		66612A8A2B1A41890056154B /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = input/day_01.input; sourceTree = "<group>"; };
@@ -112,6 +117,7 @@
 				6667B8802B22456F00A528B5 /* day_07.cpp */,
 				6667B8832B2371B300A528B5 /* day_08.cpp */,
 				665399FC2B2520D200613227 /* day_09.cpp */,
+				66539A002B2653F900613227 /* day_10.cpp */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -140,6 +146,9 @@
 				6667B8882B237E7000A528B5 /* day_08.test_input3 */,
 				665399FE2B25211A00613227 /* day_09.input */,
 				665399FF2B25211A00613227 /* day_09.test_input */,
+				66539A042B265C4100613227 /* day_10.input */,
+				66539A022B265C4100613227 /* day_10.test_input */,
+				66539A032B265C4100613227 /* day_10.test_input2 */,
 			);
 			name = "Input Data";
 			sourceTree = "<group>";
@@ -210,6 +219,7 @@
 				66E7E8092B1D3C700098BABD /* day_03.cpp in Sources */,
 				66C3F1DB2B1E6C1B00016D2F /* day_04.cpp in Sources */,
 				66C3F1E52B20B4BE00016D2F /* day_06.cpp in Sources */,
+				66539A012B2653F900613227 /* day_10.cpp in Sources */,
 				6667B8842B2371B300A528B5 /* day_08.cpp in Sources */,
 				66E7E8072B1C2DD90098BABD /* advent_of_code.cpp in Sources */,
 			);
