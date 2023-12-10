@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file_name = "day_09.test_input";  // Part 1: 114, part 2:
-static const char* input_file_name = "day_09.input";  // Part 1: 1819125966, part 2:
+// static const char* input_file_name = "day_09.test_input";  // Part 1: 114, part 2: 2
+static const char* input_file_name = "day_09.input";  // Part 1: 1819125966, part 2: 1140
 
 static const int kMaxSamples = 100;
 static const int kMaxRows = 200;
@@ -47,8 +47,12 @@ i32 PredictNextValue(History* history)
         result = PredictNextValue(&diffs);
     }
     
-    // result += history->samples[history->count-1];
-    result += diffs.samples[diffs.count-1];
+    // Part 1:
+    // result += diffs.samples[diffs.count-1];
+    
+    // Part 2:
+    result = diffs.samples[0] - result;
+    
     // fprintf(stdout, " -> %d\n", result);
     
     return result;
@@ -90,7 +94,12 @@ void Day09()
         }
         // fprintf(stdout, "\n");
         i32 prediction = PredictNextValue(history);
-        prediction_sum += prediction + history->samples[history->count-1];
+        
+        // Part 1:
+        // prediction_sum += prediction + history->samples[history->count-1];
+        
+        // Part 2:
+        prediction_sum += history->samples[0] - prediction;
     }
     
     fprintf(stdout, "Prediction sum: %lld\n", prediction_sum);
