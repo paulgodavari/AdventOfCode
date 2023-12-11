@@ -17,7 +17,8 @@ int main(int argc, char* argv[])
     // Day06();
     // Day07();
     // Day08();
-    Day09();
+    // Day09();
+    Day10();
     
     return 0;
 }
