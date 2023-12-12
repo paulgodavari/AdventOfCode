@@ -6,10 +6,12 @@
 
 #include "advent_of_code.h"
 
+#include <string.h>
 
-static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
+
+// static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
 // static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
-// static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
+static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
 
 
 enum Move
@@ -78,7 +80,7 @@ Position PositionFromOffset(Position table, i32 offset)
 }
 
 
-char CharAtPosition(ParseState* parser, Position table, Position pos)
+char GetCharAtPosition(ParseState* parser, Position table, Position pos)
 {
     char result = -1;
     
@@ -92,11 +94,21 @@ char CharAtPosition(ParseState* parser, Position table, Position pos)
 }
 
 
+void SetCharAtPosition(ParseState* parser, Position table, Position pos, char new_value)
+{
+    if (pos.col >= 0 && pos.col < (table.col - 1) && pos.row >= 0 && pos.row < table.row) {
+        i32 offset = OffsetFromPosition(table, pos);
+        assert(offset < parser->size);
+        parser->data[offset] = new_value;
+    }
+}
+
+
 Move NextDirection(ParseState* parser, Position table, Position position, Move from_direction)
 {
     Move result = kMoveInvalid;
     
-    char current_char = CharAtPosition(parser, table, position);
+    char current_char = GetCharAtPosition(parser, table, position);
     switch (current_char) {
         case '-': {
             assert(from_direction == kMoveRight || from_direction == kMoveLeft);
@@ -197,11 +209,11 @@ MoveInfo CanMove(ParseState* parser, Position grid, Move direction, Position cur
         { 'F', { false,  false,   true,   true,  false } },
         { '7', { false,   true,  false,  false,   true } },
         { 'L', { false,  false,   true,   true,  false } },
-        { 'J', { false,  false,  true,  false,    true } },
+        { 'J', { false,  false,  true,   false,   true } },
     };
     
     if ((next_pos.row >= 0 && next_pos.row < grid.row) && (next_pos.col >= 0 && next_pos.col < grid.col)) {
-        char n = CharAtPosition(parser, grid, next_pos);
+        char n = GetCharAtPosition(parser, grid, next_pos);
         bool valid_move = false;
         
         for (int i = 0; i < 6; ++i) {
@@ -289,7 +301,7 @@ void Day10()
         assert(0);
     }
     
-    // Find the type of connector that would be at the starting position based on which direction
+    // Find the type of connector at the starting position based on which direction
     // we can move in.
     char start_char = '?';
     if (r.dir == kMoveRight) {
@@ -324,11 +336,13 @@ void Day10()
     assert(move != kMoveInvalid);
 
     // fprintf(stdout, "Move %s -> (%d, %d)\n", MoveToString(move), next_position.row, next_position.col);
+    Position first_position = next_position;
+    Move first_move = move;
     
     u32 steps = 1;
     bool found_loop = false;
     while (!found_loop) {
-        char current = CharAtPosition(&parser, grid, next_position);
+        char current = GetCharAtPosition(&parser, grid, next_position);
         if (current == 'S') {
             found_loop = true;
             break;
@@ -341,6 +355,38 @@ void Day10()
     }
     
     fprintf(stdout, "Day 10 part 1 furthest: %d (steps: %d)\n", steps / 2, steps);
+    
+    // Part 2.
+    
+    // Create a copy of the map.
+    ParseState map = { new char[input_file.size], input_file.size, 0};
+    memset(map.data, '.', input_file.size);
+
+    // Copy the connected path loop.
+    found_loop = false;
+    next_position = first_position;
+    move = first_move;
+    while (!found_loop) {
+        char current = GetCharAtPosition(&parser, grid, next_position);
+        if (current == 'S') {
+            found_loop = true;
+            break;
+        }
+        SetCharAtPosition(&map, grid, next_position, current);
+        assert(current != -1);
+        move = NextDirection(&parser, grid, next_position, move);
+        next_position = NextPosition(next_position, move);
+    }
+    
+    // Copy the starting character.
+    SetCharAtPosition(&map, grid, start_pos, start_char);
+
+    for (int row = 0; row < grid.row; ++row) {
+        for (int col = 0; col < (grid.col - 1); ++col) {
+            fprintf(stdout, "%c", GetCharAtPosition(&map, grid, { row, col }));
+        }
+        fprintf(stdout, "\n");
+    }
     
     CloseFile(&input_file);
 }

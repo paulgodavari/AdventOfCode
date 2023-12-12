@@ -45,7 +45,7 @@ File ReadFile(const char* file_name);
 
 struct ParseState
 {
-    const char* data;
+    char* data;
     size_t size;
     i32 offset;
 };
