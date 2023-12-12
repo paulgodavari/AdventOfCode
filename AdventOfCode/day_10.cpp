@@ -7,18 +7,19 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file_name = "day_10.test_input";
-// static const char* input_file_name = "day_10.test_input2";
-static const char* input_file_name = "day_10.input";
+static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
+// static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
+// static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
 
 
 enum Move
 {
     kMoveInvalid = 0,
-    kMoveRight,
-    kMoveLeft,
     kMoveUp,
-    kMoveDown
+    kMoveDown,
+    kMoveLeft,
+    kMoveRight,
+    kMoveSize
 };
 
 
@@ -153,6 +154,90 @@ Position NextPosition(Position current_position, Move move)
 }
 
 
+struct MoveInfo
+{
+    Move dir;
+    Position pos;
+};
+
+
+struct MoveTable
+{
+    char symbol;
+    bool valid_next[kMoveSize];
+};
+
+
+//struct MoveTable
+//{
+//    char symbol;
+//    const char* valid_next[kMoveSize];
+//};
+//
+//MoveTable valid_moves_table[] = {
+//    //  invalid,     up,   down,   left,  right
+//    { '-', { "",     "",     "",  "-FL",  "-J7" } },
+//    { '|', { "",  "|F7",  "|LJ",     "",     "" } },
+//    { 'F', { "",     "",  "|JL",     "",  "-7J" } },
+//    { '7', { "",     "",  "|LJ",  "-LF",     "" } },
+//    { 'L', { "",  "|7F",     "",     "",  "-J7" } },
+//    { 'J', { "",  "|7F",     "",  "-LF",     "" } },
+//};
+
+
+MoveInfo CanMove(ParseState* parser, Position grid, Move direction, Position current_position)
+{
+    MoveInfo result = { kMoveInvalid, kInvalidPosition };
+    
+    Position next_pos = current_position;
+    switch (direction) {
+        case kMoveUp:
+            next_pos.row = current_position.row - 1;
+            break;
+        case kMoveDown:
+            next_pos.row = current_position.row + 1;
+            break;
+        case kMoveLeft:
+            next_pos.col = current_position.col - 1;
+            break;
+        case kMoveRight:
+            next_pos.col = current_position.col + 1;
+            break;
+        default:
+            break;
+    }
+
+    MoveTable valid_moves_table[] = {
+        //     invalid,     up,   down,   left,  right
+        { '-', { false,  false,  false,   true,   true } },
+        { '|', { false,   true,   true,  false,  false } },
+        { 'F', { false,  false,   true,  false,   true } },
+        { '7', { false,  false,   true,   true,  false } },
+        { 'L', { false,   true,  false,  false,   true } },
+        { 'J', { false,   true,  false,   true,  false } },
+    };
+    
+    if ((next_pos.row >= 0 && next_pos.row < grid.row) && (next_pos.col >= 0 && next_pos.col < grid.col)) {
+        char n = CharAtPosition(parser, grid, next_pos);
+        bool valid_move = false;
+        
+        for (int i = 0; i < 6; ++i) {
+            if (n == valid_moves_table[i].symbol) {
+                valid_move = valid_moves_table[i].valid_next[direction];
+                break;
+            }
+        }
+        
+        if (valid_move) {
+            result.dir = direction;
+            result.pos = next_pos;
+        }
+    }
+    
+    return result;
+}
+
+
 void Day10()
 {
     File input_file = ReadFile(input_file_name);
@@ -212,8 +297,8 @@ void Day10()
             move = kMoveRight;
             break;
         }
-        default: {
-        }
+        default:
+            break;
     }
     
     // Check one step left.
@@ -267,6 +352,24 @@ void Day10()
         }
     }
     
+    MoveInfo r = CanMove(&parser, grid, kMoveRight, start_pos);
+    MoveInfo l = CanMove(&parser, grid, kMoveLeft, start_pos);
+    MoveInfo u = CanMove(&parser, grid, kMoveUp, start_pos);
+    MoveInfo d = CanMove(&parser, grid, kMoveDown, start_pos);
+    
+    char start_char = '';
+    if (r.dir == kMoveRight) {
+        if (l.dir == kMoveLeft) {
+            start_char = '-';
+        } else if (u.dir == kMoveUp) {
+            start_char = 'L';
+        } else if (d.dir == kMoveDown) {
+            start_char = 'F';
+        } else {
+            assert(0);
+        }
+    }
+
     assert(next_position != kInvalidPosition);
     assert(move != kMoveInvalid);
 
