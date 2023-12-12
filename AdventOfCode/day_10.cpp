@@ -16,7 +16,7 @@
 // static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
 // static const char* input_file_name = "day_10.test_input3";  // Part 2: 4
 // static const char* input_file_name = "day_10.test_input4";  // Part 2: 8
-static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
+static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2: 523
 
 
 enum Move
