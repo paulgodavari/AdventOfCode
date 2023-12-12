@@ -2,6 +2,9 @@
 // AdventOfCode
 //
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
+//
+// Good explanation for part 2:
+// https://www.reddit.com/r/adventofcode/comments/18ey1s7/comment/kcr1jga/
 
 
 #include "advent_of_code.h"
@@ -11,6 +14,8 @@
 
 // static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
 // static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
+// static const char* input_file_name = "day_10.test_input3";  // Part 2: 4
+// static const char* input_file_name = "day_10.test_input4";  // Part 2: 8
 static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
 
 
@@ -75,7 +80,7 @@ i32 OffsetFromPosition(Position table, Position pos)
 
 Position PositionFromOffset(Position table, i32 offset)
 {
-    Position pos = { offset / table.row, offset % table.col };
+    Position pos = { offset / table.col, offset % table.col };
     return pos;
 }
 
@@ -378,12 +383,64 @@ void Day10()
     // Copy the starting character.
     SetCharAtPosition(&map, grid, start_pos, start_char);
 
+    // Print the new map.
+//    for (int row = 0; row < grid.row; ++row) {
+//        for (int col = 0; col < (grid.col - 1); ++col) {
+//            fprintf(stdout, "%c", GetCharAtPosition(&map, grid, { row, col }));
+//        }
+//        fprintf(stdout, "\n");
+//    }
+    
+    // Raycast left to right to determine which points are inside or outside the path loop.
+    u32 inside_count = 0;
     for (int row = 0; row < grid.row; ++row) {
+        bool inside = false;
+        char last_bend = -1;
         for (int col = 0; col < (grid.col - 1); ++col) {
-            fprintf(stdout, "%c", GetCharAtPosition(&map, grid, { row, col }));
+            char current_char = GetCharAtPosition(&map, grid, { row, col });
+            switch (current_char) {
+                case '.': {
+                    if (inside) {
+                        inside_count++;
+                    }
+                    break;
+                }
+                case '-': {
+                    break;
+                }
+                case '|': {
+                    inside = !inside;
+                    break;
+                }
+                case 'F': {
+                    last_bend = 'F';
+                    break;
+                }
+                case '7': {
+                    if (last_bend == 'L') {
+                        inside = !inside;
+                        last_bend = -1;
+                    }
+                    break;
+                }
+                case 'J': {
+                    if (last_bend == 'F') {
+                        inside = !inside;
+                        last_bend = -1;
+                    }
+                    break;
+                }
+                case 'L': {
+                    last_bend = 'L';
+                    break;
+                }
+                default:
+                    break;
+            }
         }
-        fprintf(stdout, "\n");
     }
+
+    fprintf(stdout, "Day 10 part 2: inside count = %u\n", inside_count);
     
     CloseFile(&input_file);
 }
