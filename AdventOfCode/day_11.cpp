@@ -22,8 +22,6 @@ struct Position
     i32 col;
 };
 
-const Position kPositionInvalid = { -1, -1 };
-
 
 void Day11()
 {
@@ -37,24 +35,54 @@ void Day11()
     
     ParseState parser = { input_file.data, input_file.size, 0 };
     
-    u32 rows = 0;
     u32 galaxy_count = 0;
+    Position galaxy_map[kMaxGalaxies] = {};
+    
+    bool row_has_galaxy[kMaxRows] = {};
+    bool col_has_galaxy[kMaxCols] = {};
+    
+    i32 rows = 0;
+    i32 cols = 0;
     while (!AtEndOfFile(&parser)) {
+        cols = 0;
         while (!AtEndOfLine(&parser)) {
             char current_char = parser.data[parser.offset];
             if (current_char == '#') {
+                galaxy_map[galaxy_count] = { rows, cols };
                 galaxy_count++;
+                col_has_galaxy[cols] = true;
+                row_has_galaxy[rows] = true;
             }
+            cols++;
             Advance(&parser);
         }
         rows++;
         Advance(&parser);
     }
-    u32 cols = (u32) parser.size / rows;
-
+    // u32 cols = (u32) parser.size / rows;
     
     fprintf(stdout, "Galaxy count: %u (r: %u, c: %u)\n", galaxy_count, rows, cols);
     
+    i32 empty_row_count = 0;
+    fprintf(stdout, "Empty rows:  ");
+    for (int i = 0; i < rows; ++i) {
+        if (!row_has_galaxy[i]) {
+            empty_row_count++;
+            fprintf(stdout, "%d ", i);
+        }
+    }
+    fprintf(stdout, " (%d)\n", empty_row_count);
+
+    i32 empty_col_count = 0;
+    fprintf(stdout, "Empty cols:  ");
+    for (int i = 0; i < cols; ++i) {
+        if (!col_has_galaxy[i]) {
+            empty_col_count++;
+            fprintf(stdout, "%d ", i);
+        }
+    }
+    fprintf(stdout, " (%d)\n", empty_col_count);
+
     CloseFile(&input_file);
 }
 
