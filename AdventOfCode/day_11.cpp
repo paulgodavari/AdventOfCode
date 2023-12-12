@@ -7,13 +7,18 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_11.test_input";  // Part 1: 374, part 2:
-// static const char* input_file_name = "day_11.input";  // Part 1: , part 2:
+// static const char* input_file_name = "day_11.test_input";  // Part 1: 374, part 2: (10, 1030), (100, 8410)
+static const char* input_file_name = "day_11.input";  // Part 1: , part 2: 731244261352
 
 
 static const u32 kMaxGalaxies = 512;
 static const u32 kMaxRows = 140;
 static const u32 kMaxCols = 140;  // 141 if including the '\n' character.
+
+// static const u32 kEmptyAdjustment = 1;
+// static const u32 kEmptyAdjustment = 10-1;
+// static const u32 kEmptyAdjustment = 100-1;
+static const u32 kEmptyAdjustment = 1000000-1;
 
 
 struct Position
@@ -88,7 +93,7 @@ void Day11()
     i32 current_adjustment = 0;
     for (int i = 0; i < cols; ++i) {
         if (!col_has_galaxy[i]) {
-            current_adjustment++;
+            current_adjustment += kEmptyAdjustment;
         }
         col_adjustment[i] = current_adjustment;
     }
@@ -98,7 +103,7 @@ void Day11()
     current_adjustment = 0;
     for (int i = 0; i < rows; ++i) {
         if (!row_has_galaxy[i]) {
-            current_adjustment++;
+            current_adjustment += kEmptyAdjustment;
         }
         row_adjustment[i] = current_adjustment;
     }
@@ -113,20 +118,20 @@ void Day11()
     }
     
     // Compute the distances between each pair of galaxies.
-    u32 distance_sum = 0;
+    u64 distance_sum = 0;
     u32 count = 0;
     for (int i = 0; i < galaxy_count; ++i) {
         Position g1 = galaxy_map[i];
         for (int j = i; j < galaxy_count; ++j) {
             Position g2 = galaxy_map[j];
-            u32 distance = abs(g2.row - g1.row) + abs(g2.col - g1.col);
-            // fprintf(stdout, "%d: (%u, %u) - (%u, %u) = %u\n", count, g2.row, g2.col, g1.row, g1.col, distance);
+            u64 distance = abs(g2.row - g1.row) + abs(g2.col - g1.col);
+            //fprintf(stdout, "%d: (%u, %u) - (%u, %u) = %llu\n", count, g2.row, g2.col, g1.row, g1.col, distance);
             distance_sum += distance;
             count++;
         }
     }
 
-    fprintf(stdout, "Day 11: distance sum: %u\n", distance_sum);
+    fprintf(stdout, "Day 11: distance sum: %llu\n", distance_sum);
 
     CloseFile(&input_file);
 }
