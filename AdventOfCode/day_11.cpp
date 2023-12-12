@@ -82,6 +82,38 @@ void Day11()
         }
     }
     fprintf(stdout, " (%d)\n", empty_col_count);
+    
+    // Expand the positions of the galaxies.
+    // Create a list of adjustments for each column.
+    i32 col_adjustment[kMaxCols] = {};
+    i32 current_adjustment = 0;
+    for (int i = 0; i < cols; ++i) {
+        if (!col_has_galaxy[i]) {
+            current_adjustment++;
+        }
+        col_adjustment[i] = current_adjustment;
+    }
+
+    // Create a list of adjustments for each row.
+    i32 row_adjustment[kMaxRows] = {};
+    current_adjustment = 0;
+    for (int i = 0; i < rows; ++i) {
+        if (!row_has_galaxy[i]) {
+            current_adjustment++;
+        }
+        row_adjustment[i] = current_adjustment;
+    }
+    
+    // Adjust the positions of each galaxy.
+    for (int i = 0; i < galaxy_count; ++i) {
+        Position old_pos = galaxy_map[i];
+        Position new_pos = { old_pos.row + row_adjustment[old_pos.row],
+                             old_pos.col + col_adjustment[old_pos.col] };
+        galaxy_map[i] = new_pos;
+        fprintf(stdout, "(%u, %u) --> (%u, %u)\n", old_pos.row, old_pos.col, new_pos.row, new_pos.col);
+    }
+    
+    // Compute the distances between each pair of galaxies.
 
     CloseFile(&input_file);
 }
