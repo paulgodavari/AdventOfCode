@@ -10,11 +10,11 @@
 #include <string.h>
 
 
-static const char* input_file_name = "day_12.test_input";  // Part 1: 21, part 2:
+static const char* input_file_name = "day_12.test_input";  // Part 1: 21, part 2: 525152
 // static const char* input_file_name = "day_12.input";  // Part 1: 7163, part 2:
 
-static const u32 kMaxGroups = 10;
-static const u32 kMaxPatternLength = 20;
+static const u32 kMaxGroups = 50;
+static const u32 kMaxPatternLength = 120;
 
 
 struct Pattern
@@ -104,8 +104,8 @@ void Day12()
     ParseState parser = { input_file.data, input_file.size, 0 };
     
     i32 pattern_count = 0;
-    u32 combination_sum = 0;
-    
+    u32 part_1_sum = 0;
+    u64 part_2_sum = 0;
     u32 longest_pattern = 0;
     
     while (!AtEndOfFile(&parser)) {
@@ -123,9 +123,32 @@ void Day12()
         pattern.count = (u32) pattern_string.size;
 
         u32 combinations = GenerateMatches(pattern, group);
-        combination_sum += combinations;
-
-        fprintf(stdout, "(combos: %u)\n", combinations);
+        part_1_sum += combinations;
+        fprintf(stdout, "(part 1 combos: %u, ", combinations);
+        
+        // Part 2 patterns and combos
+        u32 offset = 0;
+        Pattern expanded_pattern = {};
+        for (int i = 0; i < 5; ++i) {
+            memcpy(&expanded_pattern.springs[offset], pattern.springs, pattern.count);
+            offset += pattern.count;
+            expanded_pattern.springs[offset] = '?';
+            offset++;
+        }
+        expanded_pattern.count = offset - 1;
+        
+        offset = 0;
+        Group expanded_group = {};
+        for (int i = 0; i < 5; ++i) {
+            u32 bytes_to_copy = sizeof(u32) * group.count;
+            memcpy(&expanded_group.groups[offset], group.groups, bytes_to_copy);
+            offset += group.count;
+        }
+        expanded_group.count = group.count * 5;
+        
+        combinations = GenerateMatches(expanded_pattern, expanded_group);
+        part_2_sum += combinations;
+        fprintf(stdout, "part 2 combos: %u)\n", combinations);
 
         Advance(&parser);
         pattern_count++;
@@ -134,7 +157,10 @@ void Day12()
         }
     }
     
-    fprintf(stdout, "Day 12 combination sum: %u (longest: %u)\n", combination_sum, longest_pattern);
+    fprintf(stdout, "Longest pattern: %u\n", longest_pattern);
+    
+    fprintf(stdout, "Day 12 part 1 sum: %u\n", part_1_sum);
+    fprintf(stdout, "Day 12 part 2 sum: %llu\n", part_2_sum);
 
     CloseFile(&input_file);
 }
