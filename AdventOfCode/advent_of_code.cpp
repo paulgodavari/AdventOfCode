@@ -166,6 +166,30 @@ String ParseWord(ParseState* parser)
 }
 
 
+String ParseUntilSpace(ParseState* parser)
+{
+    String result = {};
+    
+    const char* start = parser->data + parser->offset;
+    size_t size = 0;
+    
+    i32 advance = 1;
+    bool done = false;
+    while (!done && !AtEndOfFile(parser)) {
+        char current_char = parser->data[parser->offset];
+        if (current_char == ' ') {
+            done = true;
+            advance = 0;
+            result = { start, size };
+        }
+        Advance(parser, advance);
+        size++;
+    }
+    
+    return result;
+}
+
+
 bool ConsumeString(ParseState* parser, String match)
 {
     bool result = false;

@@ -60,6 +60,10 @@ i32 ParseSignedNumber(ParseState* parser);
 // past the last alpha-digit.
 String ParseWord(ParseState* parser);
 
+// Return a string from the current position up to (but not including) the first
+// space character. The parser will be left pointing the space character.
+String ParseUntilSpace(ParseState* parser);
+
 // Attempts to match the provided string. If there is a complete match, the parser
 // is advanced 1 character past the match. The state is not updated if there is no
 // match, or a partial match.
