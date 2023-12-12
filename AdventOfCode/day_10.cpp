@@ -268,7 +268,7 @@ void Day10()
         }
         Advance(&parser);
     }
-
+    
     Position start_pos = PositionFromOffset(grid, start_offset);
     fprintf(stderr, "Starting position %d (%d, %d)\n", start_offset, start_pos.row, start_pos.col);
     if (start_offset < 0) {
@@ -283,20 +283,19 @@ void Day10()
     MoveInfo u = CanMove(&parser, grid, kMoveUp, start_pos);
     MoveInfo d = CanMove(&parser, grid, kMoveDown, start_pos);
     
-    Position next_position = kInvalidPosition;
-    Move move = kMoveInvalid;
+    MoveInfo first = { kMoveInvalid, kInvalidPosition };
     if (r.dir == kMoveRight) {
-        next_position = r.pos;
-        move = kMoveRight;
+        first.pos = r.pos;
+        first.dir = kMoveRight;
     } else if (l.dir == kMoveLeft) {
-        next_position = l.pos;
-        move = kMoveLeft;
+        first.pos = l.pos;
+        first.dir = kMoveLeft;
     } else if (u.dir == kMoveUp) {
-        next_position = u.pos;
-        move = kMoveUp;
+        first.pos = u.pos;
+        first.dir = kMoveUp;
     } else if (d.dir == kMoveDown) {
-        next_position = d.pos;
-        move = kMoveRight;
+        first.pos = d.pos;
+        first.dir = kMoveRight;
     } else {
         assert(0);
     }
@@ -332,25 +331,24 @@ void Day10()
     
     fprintf(stdout, "Start character: '%c'\n", start_char);
 
-    assert(next_position != kInvalidPosition);
-    assert(move != kMoveInvalid);
+    assert(first.pos != kInvalidPosition);
+    assert(first.dir != kMoveInvalid);
 
     // fprintf(stdout, "Move %s -> (%d, %d)\n", MoveToString(move), next_position.row, next_position.col);
-    Position first_position = next_position;
-    Move first_move = move;
+    MoveInfo next_position = first;
     
     u32 steps = 1;
     bool found_loop = false;
     while (!found_loop) {
-        char current = GetCharAtPosition(&parser, grid, next_position);
+        char current = GetCharAtPosition(&parser, grid, next_position.pos);
         if (current == 'S') {
             found_loop = true;
             break;
         }
         assert(current != -1);
-        move = NextDirection(&parser, grid, next_position, move);
-        next_position = NextPosition(next_position, move);
-        // fprintf(stdout, "Move %s -> (%d, %d)\n", MoveToString(move), next_position.row, next_position.col);
+        next_position.dir = NextDirection(&parser, grid, next_position.pos, next_position.dir);
+        next_position.pos = NextPosition(next_position.pos, next_position.dir);
+        // fprintf(stdout, "Move %s -> (%d, %d)\n", MoveToString(next_position.dir), next_position.pos.row, next_position.pos.col);
         steps++;
     }
     
@@ -364,18 +362,17 @@ void Day10()
 
     // Copy the connected path loop.
     found_loop = false;
-    next_position = first_position;
-    move = first_move;
+    next_position = first;
     while (!found_loop) {
-        char current = GetCharAtPosition(&parser, grid, next_position);
+        char current = GetCharAtPosition(&parser, grid, next_position.pos);
         if (current == 'S') {
             found_loop = true;
             break;
         }
-        SetCharAtPosition(&map, grid, next_position, current);
+        SetCharAtPosition(&map, grid, next_position.pos, current);
         assert(current != -1);
-        move = NextDirection(&parser, grid, next_position, move);
-        next_position = NextPosition(next_position, move);
+        next_position.dir = NextDirection(&parser, grid, next_position.pos, next_position.dir);
+        next_position.pos = NextPosition(next_position.pos, next_position.dir);
     }
     
     // Copy the starting character.
