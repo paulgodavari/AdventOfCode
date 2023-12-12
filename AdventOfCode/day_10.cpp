@@ -7,9 +7,9 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
+// static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
 // static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
-// static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
+static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
 
 
 enum Move
@@ -211,10 +211,10 @@ MoveInfo CanMove(ParseState* parser, Position grid, Move direction, Position cur
         //     invalid,     up,   down,   left,  right
         { '-', { false,  false,  false,   true,   true } },
         { '|', { false,   true,   true,  false,  false } },
-        { 'F', { false,  false,   true,  false,   true } },
-        { '7', { false,  false,   true,   true,  false } },
-        { 'L', { false,   true,  false,  false,   true } },
-        { 'J', { false,   true,  false,   true,  false } },
+        { 'F', { false,  false,   true,   true,  false } },
+        { '7', { false,   true,  false,  false,   true } },
+        { 'L', { false,  false,   true,   true,  false } },
+        { 'J', { false,  false,  true,  false,    true } },
     };
     
     if ((next_pos.row >= 0 && next_pos.row < grid.row) && (next_pos.col >= 0 && next_pos.col < grid.col)) {
@@ -357,7 +357,7 @@ void Day10()
     MoveInfo u = CanMove(&parser, grid, kMoveUp, start_pos);
     MoveInfo d = CanMove(&parser, grid, kMoveDown, start_pos);
     
-    char start_char = '';
+    char start_char = '?';
     if (r.dir == kMoveRight) {
         if (l.dir == kMoveLeft) {
             start_char = '-';
@@ -369,6 +369,22 @@ void Day10()
             assert(0);
         }
     }
+    if (l.dir == kMoveLeft) {
+        if (u.dir == kMoveUp) {
+            start_char = 'J';
+        } else if (d.dir == kMoveDown) {
+            start_char = '7';
+        } else {
+            assert(0);
+        }
+    }
+    if (u.dir == kMoveUp) {
+        if (d.dir == kMoveDown) {
+            start_char = '|';
+        }
+    }
+    
+    fprintf(stdout, "Start character: '%c'\n", start_char);
 
     assert(next_position != kInvalidPosition);
     assert(move != kMoveInvalid);
