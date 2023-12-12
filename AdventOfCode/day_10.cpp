@@ -7,9 +7,9 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
+static const char* input_file_name = "day_10.test_input";  // Part 1: 4, part 2:
 // static const char* input_file_name = "day_10.test_input2";  // Part 1: 8
-static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
+// static const char* input_file_name = "day_10.input";  // Part 1: 6757, part 2:
 
 
 enum Move
@@ -39,6 +39,20 @@ struct Position
 {
     i32 row;
     i32 col;
+};
+
+
+struct MoveInfo
+{
+    Move dir;
+    Position pos;
+};
+
+
+struct MoveTable
+{
+    char symbol;
+    bool valid_next[kMoveSize];
 };
 
 
@@ -154,37 +168,6 @@ Position NextPosition(Position current_position, Move move)
 }
 
 
-struct MoveInfo
-{
-    Move dir;
-    Position pos;
-};
-
-
-struct MoveTable
-{
-    char symbol;
-    bool valid_next[kMoveSize];
-};
-
-
-//struct MoveTable
-//{
-//    char symbol;
-//    const char* valid_next[kMoveSize];
-//};
-//
-//MoveTable valid_moves_table[] = {
-//    //  invalid,     up,   down,   left,  right
-//    { '-', { "",     "",     "",  "-FL",  "-J7" } },
-//    { '|', { "",  "|F7",  "|LJ",     "",     "" } },
-//    { 'F', { "",     "",  "|JL",     "",  "-7J" } },
-//    { '7', { "",     "",  "|LJ",  "-LF",     "" } },
-//    { 'L', { "",  "|7F",     "",     "",  "-J7" } },
-//    { 'J', { "",  "|7F",     "",  "-LF",     "" } },
-//};
-
-
 MoveInfo CanMove(ParseState* parser, Position grid, Move direction, Position current_position)
 {
     MoveInfo result = { kMoveInvalid, kInvalidPosition };
@@ -283,80 +266,31 @@ void Day10()
     parser.offset = start_offset;
     
     // Find the first pipe that connects to the starting position.
-    Position next_position = kInvalidPosition;
-    Move move = kMoveInvalid;
-    
-    // Check one step right.
-    Position guess = { start_pos.row, start_pos.col + 1 };
-    char guess_char = CharAtPosition(&parser, grid, guess);
-    switch (guess_char) {
-        case 'J': 
-        case '7': 
-        case '-': {
-            next_position = guess;
-            move = kMoveRight;
-            break;
-        }
-        default:
-            break;
-    }
-    
-    // Check one step left.
-    if (next_position == kInvalidPosition) {
-        guess = { start_pos.row, start_pos.col - 1 };
-        guess_char = CharAtPosition(&parser, grid, guess);
-        switch (guess_char) {
-            case 'L': 
-            case 'F': 
-            case '-': {
-                next_position = guess;
-                move = kMoveLeft;
-                break;
-            }
-            default: {
-            }
-        }
-    }
-    
-    // Check one step up.
-    if (next_position == kInvalidPosition) {
-        guess = { start_pos.row - 1, start_pos.col };
-        guess_char = CharAtPosition(&parser, grid, guess);
-        switch (guess_char) {
-            case 'F': 
-            case '7': 
-            case '|': {
-                next_position = guess;
-                move = kMoveUp;
-                break;
-            }
-            default: {
-            }
-        }
-    }
-   
-    // Check one step down.
-    if (next_position == kInvalidPosition) {
-        guess = { start_pos.row + 1, start_pos.col };
-        guess_char = CharAtPosition(&parser, grid, guess);
-        switch (guess_char) {
-            case 'L': 
-            case 'J': 
-            case '|': {
-                next_position = guess;
-                move = kMoveDown;
-                break;
-            }
-            default: {
-            }
-        }
-    }
-    
     MoveInfo r = CanMove(&parser, grid, kMoveRight, start_pos);
     MoveInfo l = CanMove(&parser, grid, kMoveLeft, start_pos);
     MoveInfo u = CanMove(&parser, grid, kMoveUp, start_pos);
     MoveInfo d = CanMove(&parser, grid, kMoveDown, start_pos);
     
+    Position next_position = kInvalidPosition;
+    Move move = kMoveInvalid;
+    if (r.dir == kMoveRight) {
+        next_position = r.pos;
+        move = kMoveRight;
+    } else if (l.dir == kMoveLeft) {
+        next_position = l.pos;
+        move = kMoveLeft;
+    } else if (u.dir == kMoveUp) {
+        next_position = u.pos;
+        move = kMoveUp;
+    } else if (d.dir == kMoveDown) {
+        next_position = d.pos;
+        move = kMoveRight;
+    } else {
+        assert(0);
+    }
+    
+    // Find the type of connector that would be at the starting position based on which direction
+    // we can move in.
     char start_char = '?';
     if (r.dir == kMoveRight) {
         if (l.dir == kMoveLeft) {
@@ -406,7 +340,7 @@ void Day10()
         steps++;
     }
     
-    fprintf(stdout, "Day 10: furthest: %d (steps: %d)\n", steps / 2, steps);
+    fprintf(stdout, "Day 10 part 1 furthest: %d (steps: %d)\n", steps / 2, steps);
     
     CloseFile(&input_file);
 }
