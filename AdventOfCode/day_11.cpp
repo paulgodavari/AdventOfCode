@@ -59,7 +59,6 @@ void Day11()
         rows++;
         Advance(&parser);
     }
-    // u32 cols = (u32) parser.size / rows;
     
     fprintf(stdout, "Galaxy count: %u (r: %u, c: %u)\n", galaxy_count, rows, cols);
     
@@ -110,10 +109,24 @@ void Day11()
         Position new_pos = { old_pos.row + row_adjustment[old_pos.row],
                              old_pos.col + col_adjustment[old_pos.col] };
         galaxy_map[i] = new_pos;
-        fprintf(stdout, "(%u, %u) --> (%u, %u)\n", old_pos.row, old_pos.col, new_pos.row, new_pos.col);
+        // fprintf(stdout, "(%u, %u) --> (%u, %u)\n", old_pos.row, old_pos.col, new_pos.row, new_pos.col);
     }
     
     // Compute the distances between each pair of galaxies.
+    u32 distance_sum = 0;
+    u32 count = 0;
+    for (int i = 0; i < galaxy_count; ++i) {
+        Position g1 = galaxy_map[i];
+        for (int j = i; j < galaxy_count; ++j) {
+            Position g2 = galaxy_map[j];
+            u32 distance = abs(g2.row - g1.row) + abs(g2.col - g1.col);
+            // fprintf(stdout, "%d: (%u, %u) - (%u, %u) = %u\n", count, g2.row, g2.col, g1.row, g1.col, distance);
+            distance_sum += distance;
+            count++;
+        }
+    }
+
+    fprintf(stdout, "Day 11: distance sum: %u\n", distance_sum);
 
     CloseFile(&input_file);
 }
