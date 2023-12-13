@@ -115,7 +115,6 @@
 				66797BF92B2A5DBB00777948 /* Day 03 */,
 				66797BF82B2A5DB300777948 /* Day 02 */,
 				66797BF72B2A5D5B00777948 /* Day 01 */,
-				66612A892B1A415A0056154B /* Input Data */,
 				66612A812B1A3A6E0056154B /* AdventOfCode */,
 				66612A802B1A3A6E0056154B /* Products */,
 			);
@@ -137,13 +136,6 @@
 				66E7E8012B1BD68B0098BABD /* advent_of_code.h */,
 			);
 			path = AdventOfCode;
-			sourceTree = "<group>";
-		};
-		66612A892B1A415A0056154B /* Input Data */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Input Data";
 			sourceTree = "<group>";
 		};
 		66797BF72B2A5D5B00777948 /* Day 01 */ = {
