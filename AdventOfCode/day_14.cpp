@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_14.test_input";  // Part 1: , part 2:
-// static const char* input_file_name = "day_14.input";  // Part 1: , part 2:
+static const char* input_file_name = "day_14.test_input";  // Part 1: 136, part 2:
+// static const char* input_file_name = "day_14.input";  // Part 1: 108826, part 2:
 
 static const u32 kMaxRows = 100;
 static const u32 kMaxCols = 100;
@@ -20,6 +20,68 @@ struct Grid
     u32 cols;
     char items[kMaxRows][kMaxCols];
 };
+
+
+void PrintGrid(Grid* grid)
+{
+    for (int row = 0; row < grid->rows; ++row) {
+        for (int col = 0; col < grid->cols; ++col) {
+            fprintf(stdout, "%c", grid->items[row][col]);
+        }
+        fprintf(stdout, "\n");
+    }
+}
+
+
+void TiltGrid(Grid* grid)
+{
+    for (int col = 0; col < grid->cols; ++col) {
+        i32 adjust = 0;
+        for (int row = 0; row < grid->rows; ++row) {
+            char c = grid->items[row][col];
+            switch (c) {
+                case '.': {
+                    adjust += 1;
+                    break;
+                }
+                case 'O': {
+                    if (adjust > 0) {
+                        i32 new_row = row - adjust;
+                        grid->items[new_row][col] = 'O';
+                        grid->items[row][col] = '.';
+                    }
+                    break;
+                }
+                case '#': {
+                    adjust = 0;
+                    break;
+                }
+                default: {
+                    assert(0);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+u32 ScoreGrid(Grid* grid)
+{
+    u32 result = 0;
+    
+    for (int row = 0; row < grid->rows; ++row) {
+        u32 row_count = 0;
+        for (int col = 0; col < grid->cols; ++col) {
+            if (grid->items[row][col] == 'O') {
+                row_count++;
+            }
+        }
+        result += row_count * (grid->rows - row);
+    }
+    
+    return result;
+}
 
 
 void Day14()
@@ -54,13 +116,14 @@ void Day14()
     
     fprintf(stdout, "Rows: %u, cols: %u\n", grid.rows, grid.cols);
     
-    for (int row = 0; row < grid.rows; ++row) {
-        for (int col = 0; col < grid.cols; ++col) {
-            fprintf(stdout, "%c", grid.items[row][col]);
-        }
-        fprintf(stdout, "\n");
-    }
+    // PrintGrid(&grid);
+    TiltGrid(&grid);
+    // fprintf(stdout, "\n\n");
+    // PrintGrid(&grid);
     
+    u32 score = ScoreGrid(&grid);
+    fprintf(stdout, "Part 1 score: %u\n", score);
+
     CloseFile(&input_file);
 }
 
