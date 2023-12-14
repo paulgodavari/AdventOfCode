@@ -7,8 +7,33 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_13.test_input";  // Part 1: 405, part 2: 
-// static const char* input_file_name = "day_13.input";  // Part 1: 27502, part 2: 
+// static const char* input_file_name = "day_13.test_input";  // Part 1: 405, part 2: 400
+static const char* input_file_name = "day_13.input";  // Part 1: 27502, part 2: 31947
+
+
+struct Reflection
+{
+    u32 rows_above;
+    u32 cols_left;
+};
+
+
+bool operator==(const Reflection& lhs, const Reflection& rhs)
+{
+    return (lhs.cols_left == rhs.cols_left) && (lhs.rows_above == rhs.rows_above);
+}
+
+
+bool Matches(const Reflection& lhs, const Reflection& rhs)
+{
+    bool result = false;
+    if (rhs.cols_left > 0 && (rhs.cols_left == lhs.cols_left)) {
+        result = true;
+    } else if (rhs.rows_above > 0 && (rhs.rows_above == lhs.rows_above)) {
+        result = true;
+    }
+    return result;
+}
 
 
 struct Pattern
@@ -16,13 +41,8 @@ struct Pattern
     char* start;
     u32 rows;
     u32 cols;
-};
-
-
-struct Reflection
-{
-    u32 rows_above;
-    u32 cols_left;
+    Reflection part1;
+    Reflection part2;
 };
 
 
@@ -103,7 +123,7 @@ bool IsReflectionRow(Pattern pattern, u32 row)
 }
 
 
-Reflection FindReflection(Pattern pattern)
+Reflection FindReflection(Pattern pattern, bool part2 = false)
 {
     Reflection result = {};
     
@@ -111,9 +131,12 @@ Reflection FindReflection(Pattern pattern)
     for (int col = 0; col < (pattern.cols - 1); ++col) {
         bool found_horizontal = ColumnsAreIdentical(pattern, col, col+1);
         if (found_horizontal) {
+            if (part2 && pattern.part1.cols_left == (col + 1)) {
+                continue;
+            }
             // fprintf(stdout, "Column match at: %u, %u\n", col, col+1);
             if (IsReflectionColumn(pattern, col)) {
-                fprintf(stdout, "Column reflection at: %u, %u\n", col, col+1);
+                // fprintf(stdout, "Column reflection at: %u, %u\n", col, col+1);
                 result.cols_left = col + 1;
                 break;
             }
@@ -124,9 +147,12 @@ Reflection FindReflection(Pattern pattern)
     for (int row = 0; row < (pattern.rows - 1); ++row) {
         bool found_vertical = RowsAreIdentical(pattern, row, row+1);
         if (found_vertical) {
+            if (part2 && pattern.part1.rows_above == (row + 1)) {
+                continue;
+            }
             // fprintf(stdout, "Row match at: %u, %u\n", row, row+1);
             if (IsReflectionRow(pattern, row)) {
-                fprintf(stdout, "Row reflection at: %u, %u\n", row, row+1);
+                // fprintf(stdout, "Row reflection at: %u, %u\n", row, row+1);
                 result.rows_above = row + 1;
                 break;
             }
@@ -146,8 +172,10 @@ void Day13()
         fprintf(stderr, "Error reading: %s\n", input_file_name);
         return;
     }
-    u32 part_1_sum = 0;
     
+    u32 part_1_sum = 0;
+    u32 part_2_sum = 0;
+
     ParseState parser = { input_file.data, input_file.size, 0 };
     
     while (!AtEndOfFile(&parser)) {
@@ -178,15 +206,43 @@ void Day13()
             }
         }
         
-        Reflection reflection_point = FindReflection(pattern);
-        part_1_sum += reflection_point.cols_left + reflection_point.rows_above * 100;
+        Reflection rp1 = FindReflection(pattern);
+        part_1_sum += rp1.cols_left + rp1.rows_above * 100;
+        pattern.part1 = rp1;
         
-        fprintf(stdout, "Found pattern sum: %u (r: %u, c: %u)\n",
-                part_1_sum, pattern.rows, pattern.cols);
+        // fprintf(stdout, "Part 1: found pattern sum: %u (r: %u, c: %u)\n",
+        //         part_1_sum, rp1.rows_above, rp1.cols_left);
+
+        // Part 2: toggle every point in each pattern to fix the smudge.
+        Reflection current_r2 = {};
+        bool found_sum = false;
+        for (int row = 0; row < pattern.rows; ++row) {
+            for (int col = 0; col < pattern.cols; ++col) {
+                u32 offset = row * (pattern.cols + 1) + col;
+                pattern.start[offset] = (pattern.start[offset] == '.') ? '#' : '.';  // Fix candidate smudge
+                Reflection rp2 = FindReflection(pattern, true);
+                pattern.start[offset] = (pattern.start[offset] == '.') ? '#' : '.';  // Put candidate back
+                
+                Reflection new_r = rp2;
+                if (new_r == current_r2) {
+                    continue;
+                }
+                current_r2 = new_r;
+                
+                u32 r2_sum = new_r.cols_left + new_r.rows_above * 100;
+                if (r2_sum && !found_sum) {
+                    found_sum = true;
+                    part_2_sum += r2_sum;
+                    // fprintf(stdout, "Part 2: found pattern sum: %u (r: %u, c: %u)\n",
+                    //         part_2_sum, new_r.rows_above, new_r.cols_left);
+                }
+            }
+        }
     }
     
     fprintf(stdout, "Part 1: %u\n", part_1_sum);
-    
+    fprintf(stdout, "Part 2: %u\n", part_2_sum);
+
     CloseFile(&input_file);
 }
 
