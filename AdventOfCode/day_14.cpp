@@ -7,11 +7,14 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_14.test_input";  // Part 1: 136, part 2:
+static const char* input_file_name = "day_14.test_input";  // Part 1: 136, part 2: 64
 // static const char* input_file_name = "day_14.input";  // Part 1: 108826, part 2:
 
 static const u32 kMaxRows = 100;
 static const u32 kMaxCols = 100;
+
+// static const u32 kCycles = 1;
+static const u32 kCycles = 1000000000;
 
 
 struct Grid
@@ -33,11 +36,43 @@ void PrintGrid(Grid* grid)
 }
 
 
-void TiltGrid(Grid* grid)
+void TiltGridNorth(Grid* grid)
 {
     for (int col = 0; col < grid->cols; ++col) {
         i32 adjust = 0;
         for (int row = 0; row < grid->rows; ++row) {
+            char c = grid->items[row][col];
+            switch (c) {
+                case '.': {
+                    adjust -= 1;
+                    break;
+                }
+                case 'O': {
+                    if (adjust < 0) {
+                        i32 new_row = row + adjust;
+                        grid->items[new_row][col] = 'O';
+                        grid->items[row][col] = '.';
+                    }
+                    break;
+                }
+                case '#': {
+                    adjust = 0;
+                    break;
+                }
+                default: {
+                    assert(0);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void TiltGridSouth(Grid* grid)
+{
+    for (int col = 0; col < grid->cols; ++col) {
+        i32 adjust = 0;
+        for (int row = (grid->rows - 1); row >= 0; --row) {
             char c = grid->items[row][col];
             switch (c) {
                 case '.': {
@@ -46,8 +81,74 @@ void TiltGrid(Grid* grid)
                 }
                 case 'O': {
                     if (adjust > 0) {
-                        i32 new_row = row - adjust;
+                        i32 new_row = row + adjust;
                         grid->items[new_row][col] = 'O';
+                        grid->items[row][col] = '.';
+                    }
+                    break;
+                }
+                case '#': {
+                    adjust = 0;
+                    break;
+                }
+                default: {
+                    assert(0);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+void TiltGridEast(Grid* grid)
+{
+    for (int row = 0; row < grid->rows; ++row) {
+        i32 adjust = 0;
+        for (int col = (grid->cols - 1); col >= 0; --col) {
+            char c = grid->items[row][col];
+            switch (c) {
+                case '.': {
+                    adjust += 1;
+                    break;
+                }
+                case 'O': {
+                    if (adjust > 0) {
+                        i32 new_col = col + adjust;
+                        grid->items[row][new_col] = 'O';
+                        grid->items[row][col] = '.';
+                    }
+                    break;
+                }
+                case '#': {
+                    adjust = 0;
+                    break;
+                }
+                default: {
+                    assert(0);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+void TiltGridWest(Grid* grid)
+{
+    for (int row = 0; row < grid->rows; ++row) {
+        i32 adjust = 0;
+        for (int col = 0; col < grid->cols; ++col) {
+            char c = grid->items[row][col];
+            switch (c) {
+                case '.': {
+                    adjust -= 1;
+                    break;
+                }
+                case 'O': {
+                    if (adjust < 0) {
+                        i32 new_col = col + adjust;
+                        grid->items[row][new_col] = 'O';
                         grid->items[row][col] = '.';
                     }
                     break;
@@ -117,7 +218,17 @@ void Day14()
     fprintf(stdout, "Rows: %u, cols: %u\n", grid.rows, grid.cols);
     
     // PrintGrid(&grid);
-    TiltGrid(&grid);
+    
+    for (int cycle = 0; cycle < kCycles; ++cycle) {
+        TiltGridNorth(&grid);
+        TiltGridWest(&grid);
+        TiltGridSouth(&grid);
+        TiltGridEast(&grid);
+        if (cycle % 1000000 == 0) {
+            fprintf(stdout, "Cycles %u\n", cycle);
+        }
+    }
+    
     // fprintf(stdout, "\n\n");
     // PrintGrid(&grid);
     
