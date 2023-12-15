@@ -6,14 +6,16 @@
 
 #include "advent_of_code.h"
 
+#include <unordered_map>
+#include <vector>
+
 
 static const char* input_file_name = "day_14.test_input";  // Part 1: 136, part 2: 64
-// static const char* input_file_name = "day_14.input";  // Part 1: 108826, part 2:
+// static const char* input_file_name = "day_14.input";  // Part 1: 108826, part 2: 99291
 
 static const u32 kMaxRows = 100;
 static const u32 kMaxCols = 100;
 
-// static const u32 kCycles = 1;
 static const u32 kCycles = 1000000000;
 
 
@@ -22,7 +24,29 @@ struct Grid
     u32 rows;
     u32 cols;
     char items[kMaxRows][kMaxCols];
+    
+    bool operator==(const Grid& rhs) const
+    {
+        return memcmp(items, rhs.items, kMaxCols * kMaxRows * sizeof(char)) == 0;
+    }
 };
+
+
+struct GridHash
+{
+    std::size_t operator()(const Grid& grid) const
+    {
+        std::hash<char> hasher;
+        std::size_t hash = 0;
+        for (int row = 0; row < grid.rows; ++row) {
+            for (int col = 0; col < grid.cols; ++col) {
+                hash ^= hasher(grid.items[row][col]) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+            }
+        }
+        return hash;
+    }
+};
+
 
 
 void PrintGrid(Grid* grid)
@@ -218,22 +242,41 @@ void Day14()
     fprintf(stdout, "Rows: %u, cols: %u\n", grid.rows, grid.cols);
     
     // PrintGrid(&grid);
+    // fprintf(stdout, "\n\n");
+    // TiltGridNorth(&grid);
+    // u32 score = ScoreGrid(&grid);
+    // fprintf(stdout, "Part 1 score: %u\n", score);
+    // PrintGrid(&grid);
+    
+    std::unordered_map<Grid, u32, GridHash> grid_map;
+    std::vector<u32> scores;
     
     for (int cycle = 0; cycle < kCycles; ++cycle) {
         TiltGridNorth(&grid);
         TiltGridWest(&grid);
         TiltGridSouth(&grid);
         TiltGridEast(&grid);
+        
+        auto it = grid_map.find(grid);
+        if (it != grid_map.end()) {
+            u32 found_cycle = it->second;
+            u32 period = cycle - found_cycle;
+            u32 index = (kCycles - found_cycle) % period;
+            u32 offset = found_cycle - 1 + index;
+            u32 final_score = scores[offset];
+            fprintf(stdout, "Day 14 part 2: final_score: %u (period: %u)\n", final_score, period);
+            break;
+        } else {
+            u32 score = ScoreGrid(&grid);
+            scores.push_back(score);
+            grid_map[grid] = cycle;
+        }
+
         if (cycle % 1000000 == 0) {
             fprintf(stdout, "Cycles %u\n", cycle);
         }
     }
     
-    // fprintf(stdout, "\n\n");
-    // PrintGrid(&grid);
-    
-    u32 score = ScoreGrid(&grid);
-    fprintf(stdout, "Part 1 score: %u\n", score);
 
     CloseFile(&input_file);
 }
