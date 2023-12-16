@@ -10,6 +10,27 @@
 #include <sys/stat.h>
 
 
+bool operator==(const String& lhs, const String& rhs)
+{
+    bool result = true;
+    
+    if (lhs.size == rhs.size) {
+        if (lhs.start != rhs.start) {
+            for (int i = 0; i < lhs.size; ++i) {
+                if (lhs.start[i] != rhs.start[i]) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+    } else {
+        result = false;
+    }
+    
+    return result;
+}
+
+
 bool MatchNumberKeyword(const char* line, int line_index, String keyword)
 {
     bool match = true;

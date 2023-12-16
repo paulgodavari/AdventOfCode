@@ -27,6 +27,7 @@ struct String
 };
 #define CONST_STRING(x) { (x), sizeof(x) - 1 }
 
+bool operator==(const String& lhs, const String& rhs);
 
 bool MatchNumberKeyword(const char* line, int line_index, String keyword);
 
