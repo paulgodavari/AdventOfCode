@@ -252,7 +252,7 @@ void Day16()
     // Check all the column possibilities.
     for (int col = 0; col < (visited.cols - 1); ++col) {
         inital_pos = { kDirectionDown, { 0, col } };
-        visited = { row_count, column_count };
+        visited = {  row_count, column_count };
         u32 enery_col = ScoreLightRayTrace(&parser, &visited, inital_pos);
         if (enery_col > energized) {
             energized = enery_col;
