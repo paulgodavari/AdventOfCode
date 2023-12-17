@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-static const char* input_file_name = "day_16.test_input";  // Part 1: 46, part2: 
-// static const char* input_file_name = "day_16.input";  // Part 1: 7472, part2: 
+static const char* input_file_name = "day_16.test_input";  // Part 1: 46, part2: 51
+// static const char* input_file_name = "day_16.input";  // Part 1: 7472, part2: 7716
 
 static const u32 kMaxRows = 110;
 static const u32 kMaxColumns = 110;
@@ -41,7 +41,7 @@ struct Move
 
 struct GridItem
 {
-    u32 count;
+    // First position is used for having been visited at all.
     bool visited[kDirectionSize];
 };
 
@@ -69,8 +69,11 @@ void TraceLightRay(ParseState* parser, Grid* visited_grid, Move move)
             // Already visited from this direction, we can skip the rest of the path.
             return;
         }
-        visited_grid->items[move.pos.row][move.pos.col].count++;  // Mark as visited
+        
+        // Mark as visited:
+        visited_grid->items[move.pos.row][move.pos.col].visited[0] = true;
         visited_grid->items[move.pos.row][move.pos.col].visited[move.dir] = true;
+        
         u32 offset = move.pos.row * visited_grid->cols + move.pos.col;
         char terrain = parser->data[offset];
         switch (terrain) {
@@ -195,6 +198,24 @@ void TraceLightRay(ParseState* parser, Grid* visited_grid, Move move)
 }
 
 
+u32 ScoreLightRayTrace(ParseState* parser, Grid* grid, Move starting_move)
+{
+    u32 result = 0;
+    
+    TraceLightRay(parser, grid, starting_move);
+    
+    for (int row = 0; row < grid->rows; ++row) {
+        for (int col = 0; col < (grid->cols - 1); ++col) {
+            if (grid->items[row][col].visited[0]) {
+                result++;
+            }
+        }
+    }
+    
+    return result;
+}
+
+
 void Day16()
 {
     File input_file = ReadFile(input_file_name);
@@ -216,21 +237,53 @@ void Day16()
     // Reset
     parser.offset = 0;
     
-    Grid visited = { row_count, column_count };
+    // Part 1 ----------------------------
     
+    Grid visited = { row_count, column_count };
     Move inital_pos = { kDirectionRight };
     
-    TraceLightRay(&parser, &visited, inital_pos);
+    u32 energized = ScoreLightRayTrace(&parser, &visited, inital_pos);
+    fprintf(stdout, "Day 16 part 1 energized: %u\n", energized);
     
-    u32 visited_count = 0;
-    for (int row = 0; row < visited.rows; ++row) {
-        for (int col = 0; col < (visited.cols - 1); ++col) {
-            if (visited.items[row][col].count) {
-                visited_count++;
-            }
+    // Part 2 ----------------------------
+    
+    energized = 0;
+    
+    // Check all the column possibilities.
+    for (int col = 0; col < (visited.cols - 1); ++col) {
+        inital_pos = { kDirectionDown, { 0, col } };
+        visited = { row_count, column_count };
+        u32 enery_col = ScoreLightRayTrace(&parser, &visited, inital_pos);
+        if (enery_col > energized) {
+            energized = enery_col;
+        }
+        
+        inital_pos = { kDirectionUp, { (i32) visited.rows - 1, col } };
+        visited = { row_count, column_count };
+        enery_col = ScoreLightRayTrace(&parser, &visited, inital_pos);
+        if (enery_col > energized) {
+            energized = enery_col;
         }
     }
-    fprintf(stdout, "Day 16 part 1 visited count: %u\n", visited_count);
+
+    // Check all the row possibilities.
+    for (int row = 0; row < visited.rows; ++row) {
+        inital_pos = { kDirectionRight, { row, 0 } };
+        visited = { row_count, column_count };
+        u32 enery_row = ScoreLightRayTrace(&parser, &visited, inital_pos);
+        if (enery_row > energized) {
+            energized = enery_row;
+        }
+        
+        inital_pos = { kDirectionLeft, { row, (i32) visited.cols - 2 } };
+        visited = { row_count, column_count };
+        enery_row = ScoreLightRayTrace(&parser, &visited, inital_pos);
+        if (enery_row > energized) {
+            energized = enery_row;
+        }
+    }
+    
+    fprintf(stdout, "Day 16 part 2 energized: %u\n", energized);
     
     CloseFile(&input_file);
 }
