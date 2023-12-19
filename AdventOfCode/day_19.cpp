@@ -11,8 +11,8 @@
 #include <vector>
 
 
-static const char* input_file_name = "day_19.test_input";  // Part 1: , part 2:
-// static const char* input_file_name = "day_19.input";  // Part 1: , part 2:
+static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, part 2:
+// static const char* input_file_name = "day_19.input";  // Part 1: 425811, part 2:
 
 static const u32 kMaxRules = 10;
 
@@ -210,12 +210,8 @@ void Day19()
         bool accepted = false;
         while (!done_component) {
             
-            if (rule_name == "A") {
-            } else if (rule_name == "R") {
-            }
-            
-            RuleList rule_list = all_rules[rule_name];
-            fprintf(stdout, " -> %.*s", rule_list.name.size, rule_list.name.start);
+           RuleList rule_list = all_rules[rule_name];
+            fprintf(stdout, " -> %.*s", (int) rule_list.name.size, rule_list.name.start);
             for (int r = 0; r < rule_list.count; ++r) {
                 bool done_rule_list = false;
                 Rule rule = rule_list.rules[r];
@@ -261,7 +257,14 @@ void Day19()
                 }
             }
             
-            if (done_component) {
+            if (rule_name == "A") {
+                done_component = true;
+                accepted = true;
+            } else if (rule_name == "R") {
+                done_component = true;
+            }
+            
+             if (done_component) {
                 break;
             }
         }
@@ -271,6 +274,8 @@ void Day19()
         }
         fprintf(stdout, " -> %c\n", accepted ? 'A' : 'R');
     }
+    
+    fprintf(stdout, "Part 1 sum: %llu\n", part_1_sum);
     
     CloseFile(&input_file);
 }
