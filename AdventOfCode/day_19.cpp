@@ -11,7 +11,7 @@
 #include <vector>
 
 
-static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, part 2:
+static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, part 2: 167409079868000
 // static const char* input_file_name = "day_19.input";  // Part 1: 425811, part 2:
 
 static const u32 kMaxRules = 10;
@@ -94,6 +94,8 @@ Attribute AttributeFromString(String attr_str)
 
 void Day19()
 {
+    u64 run_time_start = TimeNow();
+    
     File input_file = ReadFile(input_file_name);
     if (!input_file.handle) {
         fprintf(stderr, "Error reading %s\n", input_file_name);
@@ -106,6 +108,8 @@ void Day19()
     
     // std::vector<RuleList> list;
     std::unordered_map<std::string, RuleList> all_rules;
+    
+    u64 start_time = TimeNow();
     
     // Parse the rules.
     bool done_parsing_rules = false;
@@ -169,6 +173,9 @@ void Day19()
         all_rules[rule_name] = rule_list;
     }
     
+    fprintf(stdout, "Rules parse time: %.2fms\n", MillisecondsSince(start_time));
+    start_time = TimeNow();
+    
     // Parse the components.
     std::vector<Component> components;
     while (!AtEndOfFile(&parser)) {
@@ -199,10 +206,13 @@ void Day19()
         components.push_back(c);
     }
     
+    fprintf(stdout, "Cmponents parse time: %.2fms\n", MillisecondsSince(start_time));
+    start_time = TimeNow();
+
     u64 part_1_sum = 0;
     for (int i = 0; i < components.size(); ++i) {
         Component c = components[i];
-        fprintf(stdout, "{x=%u,m=%u,a=%u,s=%u}: ", c.x, c.m, c.a, c.s);
+        // fprintf(stdout, "{x=%u,m=%u,a=%u,s=%u}: ", c.x, c.m, c.a, c.s);
 
         std::string rule_name = "in";
 
@@ -211,7 +221,7 @@ void Day19()
         while (!done_component) {
             
            RuleList rule_list = all_rules[rule_name];
-            fprintf(stdout, " -> %.*s", (int) rule_list.name.size, rule_list.name.start);
+            // fprintf(stdout, " -> %.*s", (int) rule_list.name.size, rule_list.name.start);
             for (int r = 0; r < rule_list.count; ++r) {
                 bool done_rule_list = false;
                 Rule rule = rule_list.rules[r];
@@ -272,9 +282,12 @@ void Day19()
         if (accepted) {
             part_1_sum += c.x + c.m + c.a + c.s;
         }
-        fprintf(stdout, " -> %c\n", accepted ? 'A' : 'R');
+        // fprintf(stdout, " -> %c\n", accepted ? 'A' : 'R');
     }
     
+    fprintf(stdout, "Compute sum time: %.4f ms (total: %.4f ms)\n",
+            MillisecondsSince(start_time), MillisecondsSince(run_time_start));
+
     fprintf(stdout, "Part 1 sum: %llu\n", part_1_sum);
     
     CloseFile(&input_file);

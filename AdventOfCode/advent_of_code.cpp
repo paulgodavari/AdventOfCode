@@ -9,6 +9,39 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+#include <dispatch/dispatch.h>
+#include <mach/mach_time.h>
+
+
+static f64 g_scale = 1.0f;
+static mach_timebase_info_data_t g_time_base;
+
+
+u64 TimeNow()
+{
+    u64 result = mach_absolute_time();
+    return result;
+}
+
+
+f64 MillisecondsSince(u64 start_time)
+{
+    f64 result = mach_absolute_time();
+    
+    static dispatch_once_t time_init_token;
+
+    dispatch_once(&time_init_token, ^{
+        mach_timebase_info(&g_time_base);
+        if (g_time_base.denom > 0) {
+            g_scale = ((f64) (g_time_base.numer / g_time_base.denom)) / NSEC_PER_MSEC;
+        }
+    });
+    
+    result = (result - start_time) * g_scale;
+
+    return result;
+}
+
 
 bool operator==(const String& lhs, const String& rhs)
 {
