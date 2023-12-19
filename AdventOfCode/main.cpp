@@ -20,13 +20,14 @@ int main(int argc, char* argv[])
     // Day09();
     // Day10();
     // Day11();
-    // Day12();  --> Missing part 2
+    // Day12();  // --> Missing part 2
     // Day13();
     // Day14();
     // Day15();
     // Day16();
-    // Day17();  --> Missing parts 1, 2
-    Day18();
+    // Day17();  // --> Missing parts 1, 2
+    // Day18();  // --> Missing parts 1, 2
+    Day19();
     
     return 0;
 }
