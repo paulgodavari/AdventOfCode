@@ -6,6 +6,8 @@
 
 #include "advent_of_code.h"
 
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 
@@ -33,15 +35,22 @@ enum Attribute
     kAttributeM,
     kAttributeA,
     kAttributeS,
+    kAttributeSize
 };
 
 
 struct Component
 {
-    u32 x;
-    u32 m;
-    u32 a;
-    u32 s;
+    union {
+        struct {
+            u32 invalid;
+            u32 x;
+            u32 m;
+            u32 a;
+            u32 s;
+        };
+        u32 c[kAttributeSize];
+    };
 };
 
 
@@ -95,7 +104,8 @@ void Day19()
     
     ParseState parser = { input_file.data, input_file.size, 0 };
     
-    std::vector<RuleList> list;
+    // std::vector<RuleList> list;
+    std::unordered_map<std::string, RuleList> all_rules;
     
     // Parse the rules.
     bool done_parsing_rules = false;
@@ -154,7 +164,9 @@ void Day19()
             Advance(&parser);
         }
         
-        list.push_back(rule_list);
+        // list.push_back(rule_list);
+        std::string rule_name(rule_list.name.start, rule_list.name.size);
+        all_rules[rule_name] = rule_list;
     }
     
     // Parse the components.
@@ -183,8 +195,81 @@ void Day19()
         assert(parser.data[parser.offset] == '}');
         Advance(&parser, 2);  // '}' + '\n'
         
-        Component c = { x, m, a, s };
+        Component c = { 0, x, m, a, s };
         components.push_back(c);
+    }
+    
+    u64 part_1_sum = 0;
+    for (int i = 0; i < components.size(); ++i) {
+        Component c = components[i];
+        fprintf(stdout, "{x=%u,m=%u,a=%u,s=%u}: ", c.x, c.m, c.a, c.s);
+
+        std::string rule_name = "in";
+
+        bool done_component = false;
+        bool accepted = false;
+        while (!done_component) {
+            
+            if (rule_name == "A") {
+            } else if (rule_name == "R") {
+            }
+            
+            RuleList rule_list = all_rules[rule_name];
+            fprintf(stdout, " -> %.*s", rule_list.name.size, rule_list.name.start);
+            for (int r = 0; r < rule_list.count; ++r) {
+                bool done_rule_list = false;
+                Rule rule = rule_list.rules[r];
+                switch (rule.op) {
+                    case kOpLess: {
+                        if (c.c[rule.attr] < rule.value) {
+                            // Go to rule.next_rule
+                            done_rule_list = true;
+                            rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+                        }
+                        break;
+                    }
+                    case kOpGreater: {
+                        if (c.c[rule.attr] > rule.value) {
+                            // Go to rule.next_rule
+                            done_rule_list = true;
+                            rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+                        }
+                        break;
+                    }
+                    case kOpNext: {
+                        done_rule_list = true;
+                        rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+                        break;
+                    }
+                    case kOpReject: {
+                        done_component = true;
+                        done_rule_list = true;
+                        break;
+                    }
+                    case kOpAccept: {
+                        done_component = true;
+                        done_rule_list = true;
+                        accepted = true;
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+                if (done_rule_list) {
+                    break;
+                }
+            }
+            
+            if (done_component) {
+                break;
+            }
+        }
+        
+        if (accepted) {
+            part_1_sum += c.x + c.m + c.a + c.s;
+        }
+        fprintf(stdout, " -> %c\n", accepted ? 'A' : 'R');
     }
     
     CloseFile(&input_file);
