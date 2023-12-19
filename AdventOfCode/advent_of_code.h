@@ -25,7 +25,7 @@ struct String
     const char* start;
     size_t size;
 };
-#define CONST_STRING(x) { (x), sizeof(x) - 1 }
+#define CONST_STRING(x) (String) { (x), sizeof(x) - 1 }
 
 bool operator==(const String& lhs, const String& rhs);
 
