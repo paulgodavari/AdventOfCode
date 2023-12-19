@@ -36,6 +36,15 @@ enum Attribute
 };
 
 
+struct Component
+{
+    u32 x;
+    u32 m;
+    u32 a;
+    u32 s;
+};
+
+
 struct Rule
 {
     Attribute attr;
@@ -146,6 +155,36 @@ void Day19()
         }
         
         list.push_back(rule_list);
+    }
+    
+    // Parse the components.
+    std::vector<Component> components;
+    while (!AtEndOfFile(&parser)) {
+        Advance(&parser);  // '{'
+        assert(parser.data[parser.offset] == 'x');
+        Advance(&parser, 2);
+        u32 x = ParseNumber(&parser);
+
+        Advance(&parser);  // ','
+        assert(parser.data[parser.offset] == 'm');
+        Advance(&parser, 2);
+        u32 m = ParseNumber(&parser);
+
+        Advance(&parser);  // ','
+        assert(parser.data[parser.offset] == 'a');
+        Advance(&parser, 2);
+        u32 a = ParseNumber(&parser);
+
+        Advance(&parser);  // ','
+        assert(parser.data[parser.offset] == 's');
+        Advance(&parser, 2);
+        u32 s = ParseNumber(&parser);
+
+        assert(parser.data[parser.offset] == '}');
+        Advance(&parser, 2);  // '}' + '\n'
+        
+        Component c = { x, m, a, s };
+        components.push_back(c);
     }
     
     CloseFile(&input_file);
