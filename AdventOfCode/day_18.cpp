@@ -9,8 +9,18 @@
 #include <vector>
 
 
-// static const char* input_file_name = "day_18.test_input";  // Part 1: , part 2:
-static const char* input_file_name = "day_18.input";  // Part 1: , part 2:
+struct Position
+{
+    i32 row;
+    i32 col;
+};
+
+
+// static const char* input_file_name = "day_18.test_input";  // Part 1: 62, part 2:
+// static Position start_pos = {};
+
+static const char* input_file_name = "day_18.input";  // Part 1: 46359, part 2:
+static Position start_pos = { 275, 41 };  // Based on having computing the input's min/max dimensions
 
 
 static const u32 kMaxRows = 400;
@@ -52,13 +62,6 @@ struct Instruction
     Direction dir;
     u32 value;
     Color edge;
-};
-
-
-struct Position
-{
-    i32 row;
-    i32 col;
 };
 
 
@@ -245,8 +248,6 @@ void Day18()
             dim.min.row, dim.min.col, dim.max.row, dim.max.col, MillisecondsSince(start_time));
     start_time = TimeNow();
     
-    Position start_pos = { 275, 41 };  // Based on having computing the input's min/max dimensions
-    // Position start_pos = {};
     Position pos = start_pos;
     Grid grid = {};
     Direction last_dir = kDirectionInvalid;
@@ -303,8 +304,19 @@ void Day18()
 
     u32 part_1_sum = 0;
     for (int row = 0; row < kMaxRows; ++row) {
+        bool should_include = false;
         for (int col = 0; col < kMaxCols; ++col) {
-            
+            Terrain terrain = grid.state[row][col];
+            if (terrain == kTerrainPipe || terrain == kTerrainL || terrain == kTerrainJ) {
+                should_include = !should_include;
+            }
+            if (terrain == kTerrainEmpty) {
+                if (should_include) {
+                    part_1_sum++;
+                }
+            } else {
+                part_1_sum++;
+            }
         }
     }
     
