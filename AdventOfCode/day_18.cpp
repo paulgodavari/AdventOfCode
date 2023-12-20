@@ -9,8 +9,12 @@
 #include <vector>
 
 
-static const char* input_file_name = "day_18.test_input";  // Part 1: , part 2:
-// static const char* input_file_name = "day_18.input";  // Part 1: , part 2:
+// static const char* input_file_name = "day_18.test_input";  // Part 1: , part 2:
+static const char* input_file_name = "day_18.input";  // Part 1: , part 2:
+
+
+static const u32 kMaxRows = 400;
+static const u32 kMaxCols = 400;
 
 
 struct Color
@@ -31,12 +35,156 @@ enum Direction
 };
 
 
+enum Terrain
+{
+    kTerrainEmpty = 0,
+    kTerrainDash,
+    kTerrainPipe,
+    kTerrainF,
+    kTerrain7,
+    kTerrainL,
+    kTerrainJ
+};
+
+
 struct Instruction
 {
     Direction dir;
     u32 value;
     Color edge;
 };
+
+
+struct Position
+{
+    i32 row;
+    i32 col;
+};
+
+
+struct Grid
+{
+    Terrain state[kMaxRows][kMaxCols];
+};
+
+
+struct Dimensions
+{
+    Position min;
+    Position max;
+};
+
+
+Terrain TerrainFromDirections(Direction first, Direction second)
+{
+    Terrain result = kTerrainEmpty;
+
+    bool first_vertical = (first == kDirectionUp) || (first == kDirectionDown);
+    bool second_vertical = (second == kDirectionUp) || (second == kDirectionDown);
+    if (first_vertical == second_vertical) {
+        result = first_vertical ? kTerrainPipe : kTerrainDash;
+        return result;
+    }
+    
+    switch (first) {
+        case kDirectionUp:
+            result = (second == kDirectionLeft) ? kTerrain7 : kTerrainF;
+            break;
+        case kDirectionDown:
+            result = (second == kDirectionLeft) ? kTerrainJ : kTerrainL;
+            break;
+        case kDirectionLeft:
+            result = (second == kDirectionUp) ? kTerrainL : kTerrainF;
+            break;
+        case kDirectionRight:
+            result = (second == kDirectionUp) ? kTerrainJ : kTerrain7;
+            break;
+        default:
+            assert(0);
+            break;
+    }
+    
+    return result;
+}
+
+
+void PrintGrid(const Grid& grid)
+{
+    for (int row = 0; row < kMaxRows; ++row) {
+        for (int col = 0; col < kMaxCols; ++col) {
+            char c = 'X';  // Some obviously visible bad character
+            switch (grid.state[row][col]) {
+                case kTerrainEmpty:
+                    c = '.';
+                    break;
+                case kTerrainDash:
+                    c = '-';
+                    break;
+                case kTerrainPipe:
+                    c = '|';
+                    break;
+                case kTerrainF:
+                    c = 'F';
+                    break;
+                case kTerrain7:
+                    c = '7';
+                    break;
+                case kTerrainL:
+                    c = 'L';
+                    break;
+                case kTerrainJ:
+                    c = 'J';
+                    break;
+            }
+            fprintf(stdout, "%c", c);
+        }
+        fprintf(stdout, "\n");
+    }
+}
+
+
+Dimensions FindGridDimensions(const std::vector<Instruction>& instructions)
+{
+    Dimensions result = {};
+    
+    Position pos = {};
+    
+    for (int i = 0; i < instructions.size(); ++i) {
+        Instruction inst = instructions[i];
+        switch (inst.dir) {
+            case kDirectionUp:
+                pos.row -= inst.value;
+                break;
+            case kDirectionDown:
+                pos.row += inst.value;
+                break;
+            case kDirectionLeft:
+                pos.col -= inst.value;
+                break;
+            case kDirectionRight:
+                pos.col += inst.value;
+                break;
+            default:
+                assert(0);
+                break;
+        }
+        
+        if (pos.row < result.min.row) {
+            result.min.row = pos.row;
+        }
+        if (pos.col < result.min.col) {
+            result.min.col = pos.col;
+        }
+        if (pos.row > result.max.row) {
+            result.max.row = pos.row;
+        }
+        if (pos.col > result.max.col) {
+            result.max.col = pos.col;
+        }
+    }
+    
+    return result;
+}
 
 
 void Day18()
@@ -56,7 +204,6 @@ void Day18()
     fprintf(stdout, "Initialization time: %.4f\n", MillisecondsSince(run_time));
     
     // Part 1
-    u32 part_1_sum = 0;
     u64 start_time = TimeNow();
 
     std::vector<Instruction> instructions;
@@ -93,6 +240,74 @@ void Day18()
     fprintf(stdout, "Parse time: %.4f ms\n", MillisecondsSince(start_time));
     start_time = TimeNow();
 
+    Dimensions dim = FindGridDimensions(instructions);
+    fprintf(stdout, "Min: (r: %d, c: %d)\nMax: (r: %d, c: %d) found in %.4f ms\n",
+            dim.min.row, dim.min.col, dim.max.row, dim.max.col, MillisecondsSince(start_time));
+    start_time = TimeNow();
+    
+    Position start_pos = { 275, 41 };  // Based on having computing the input's min/max dimensions
+    // Position start_pos = {};
+    Position pos = start_pos;
+    Grid grid = {};
+    Direction last_dir = kDirectionInvalid;
+    Direction first_dir = kDirectionInvalid;
+
+    for (int i = 0; i < instructions.size(); ++i) {
+        Instruction inst = instructions[i];
+        Position next_pos = pos;
+        switch (inst.dir) {
+            case kDirectionUp:
+                next_pos.row -= inst.value;
+                for (int row = next_pos.row; row <= pos.row; ++row) {
+                    grid.state[row][pos.col] = kTerrainPipe;
+                }
+                break;
+            case kDirectionDown:
+                next_pos.row += inst.value;
+                for (int row = pos.row; row <= next_pos.row; ++row) {
+                    grid.state[row][pos.col] = kTerrainPipe;
+                }
+                break;
+            case kDirectionLeft:
+                next_pos.col -= inst.value;
+                for (int col = next_pos.col; col <= pos.col; ++col) {
+                    grid.state[pos.row][col] = kTerrainDash;
+                }
+                break;
+            case kDirectionRight:
+                next_pos.col += inst.value;
+                for (int col = pos.col; col <= next_pos.col; ++col) {
+                    grid.state[pos.row][col] = kTerrainDash;
+                }
+                break;
+            default:
+                assert(0);
+                break;
+        }
+        
+        if (first_dir == kDirectionInvalid) {
+            first_dir = inst.dir;
+        } else {
+            grid.state[pos.row][pos.col] = TerrainFromDirections(last_dir, inst.dir);
+        }
+        pos = next_pos;
+        last_dir = inst.dir;
+    }
+    
+    grid.state[start_pos.row][start_pos.col] = TerrainFromDirections(last_dir, first_dir);
+    
+    // PrintGrid(grid);
+    
+    fprintf(stdout, "Process instructions time: %.4f ms\n", MillisecondsSince(start_time));
+    start_time = TimeNow();
+
+    u32 part_1_sum = 0;
+    for (int row = 0; row < kMaxRows; ++row) {
+        for (int col = 0; col < kMaxCols; ++col) {
+            
+        }
+    }
+    
     fprintf(stdout, "Part 1 sum: %u (%.4f ms)\n", part_1_sum, MillisecondsSince(start_time));
 
     fprintf(stdout, "Run time: %.4f ms\n", MillisecondsSince(run_time));
