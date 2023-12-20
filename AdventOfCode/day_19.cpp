@@ -11,8 +11,8 @@
 #include <vector>
 
 
-static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, part 2: 167409079868000
-// static const char* input_file_name = "day_19.input";  // Part 1: 425811, part 2:
+// static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, part 2: 167409079868000
+static const char* input_file_name = "day_19.input";  // Part 1: 425811, part 2: 131796824371749
 
 static const u32 kMaxRules = 10;
 static const u32 kMinAttrValue = 1;
@@ -72,6 +72,8 @@ struct RuleList
     Rule rules[kMaxRules];
 };
 
+typedef std::unordered_map<std::string, RuleList> RuleMap;
+
 
 struct AttributeValue
 {
@@ -81,11 +83,17 @@ struct AttributeValue
 };
 
 
+struct AttributeList
+{
+    AttributeValue value[kAttributeSize];
+};
+
+
 struct Node
 {
     std::string rule_name;
     u32 rule_index;
-    AttributeValue ranges[kAttributeSize];
+    AttributeList attrs;
     Node* left;
     AttributeValue left_attr;
     Node* right;
@@ -93,19 +101,72 @@ struct Node
 };
 
 
-Node* CreateNode(AttributeValue parent_attrs[5], AttributeValue prev, std::string rule_name, u32 rule_index)
+u64 ComputeAttributeSum(AttributeList attrs)
 {
-    Node* result = new Node;
-    
-    if (parent_attrs) {
-        memcpy(result->ranges, parent_attrs, sizeof(result->ranges));
-    } else {
-        for (u32 i = kAttributeInvalid; i < kAttributeSize; ++i) {
-            result->ranges[i] = { (Attribute) i, kMinAttrValue, kMaxAttrValue };
-        }
+    u64 result = 1;
+    for (int i = 1; i < kAttributeSize; ++i) {
+        result *= attrs.value[i].max - attrs.value[i].min + 1;
+    }
+    return result;
+}
+
+
+u64 ComputeAcceptedRulesSum(AttributeList parent_attrs, std::string rule_name, u32 rule_index, RuleMap* rule_map)
+{
+    if (rule_name == "A") {
+        return ComputeAttributeSum(parent_attrs);
+    } else if (rule_name == "R") {
+        return 0;
     }
     
-    return result;
+    RuleList rules = (*rule_map)[rule_name];
+    Rule rule = rules.rules[rule_index];
+    
+    while (rule.op == kOpNext) {
+        rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+        rule_index = 0;
+        rules = (*rule_map)[rule_name];
+        rule = rules.rules[rule_index];
+    }
+    
+    if (rule.op == kOpAccept) {
+        return ComputeAttributeSum(parent_attrs);
+    } else if (rule.op == kOpReject) {
+        return 0;
+    }
+    
+    // Create the branch ranges. Inherit from the parent values, and update
+    // based on the rule attribute (left <- lower, right <- higher).
+    AttributeValue low = parent_attrs.value[rule.attr];
+    AttributeValue high = parent_attrs.value[rule.attr];
+    
+    std::string left_rule_name = rule_name;
+    u32 left_rule_index = rule_index + 1;
+    
+    std::string right_rule_name = rule_name;
+    u32 right_rule_index = rule_index + 1;
+
+    if (rule.op == kOpLess) {
+        low.max = rule.value - 1;
+        high.min = rule.value;
+        left_rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+        left_rule_index = 0;
+    } else if (rule.op == kOpGreater) {
+        low.max = rule.value;
+        high.min = rule.value + 1;
+        right_rule_name = std::string(rule.next_rule.start, rule.next_rule.size);
+        right_rule_index = 0;
+    }
+    
+    AttributeList left_attr = parent_attrs;
+    left_attr.value[rule.attr] = low;
+    u64 left_sum = ComputeAcceptedRulesSum(left_attr, left_rule_name, left_rule_index, rule_map);
+
+    AttributeList right_attr = parent_attrs;
+    right_attr.value[rule.attr] = high;
+    u64 right_sum = ComputeAcceptedRulesSum(right_attr, right_rule_name, right_rule_index, rule_map);
+    
+    return left_sum + right_sum;
 }
 
 
@@ -140,13 +201,11 @@ void Day19()
         return;
     }
     
-    fprintf(stdout, "Day 19 (initialization time: %.4f ms)\n", MillisecondsSince(run_time_start));
-    
     ParseState parser = { input_file.data, input_file.size, 0 };
     
-    // std::vector<RuleList> list;
-    std::unordered_map<std::string, RuleList> all_rules;
+    RuleMap all_rules;
     
+    fprintf(stdout, "Day 19\nInitialization time: %.4f ms\n", MillisecondsSince(run_time_start));
     u64 start_time = TimeNow();
     
     // Parse the rules.
@@ -206,12 +265,11 @@ void Day19()
             Advance(&parser);
         }
         
-        // list.push_back(rule_list);
         std::string rule_name(rule_list.name.start, rule_list.name.size);
         all_rules[rule_name] = rule_list;
     }
     
-    fprintf(stdout, "Rules parse time: %.2fms\n", MillisecondsSince(start_time));
+    fprintf(stdout, "Rules parse time: %.4f ms\n", MillisecondsSince(start_time));
     start_time = TimeNow();
     
     // Parse the components.
@@ -244,7 +302,7 @@ void Day19()
         components.push_back(c);
     }
     
-    fprintf(stdout, "Cmponents parse time: %.2fms\n", MillisecondsSince(start_time));
+    fprintf(stdout, "Components parse time: %.4f ms\n", MillisecondsSince(start_time));
     start_time = TimeNow();
 
     u64 part_1_sum = 0;
@@ -323,11 +381,22 @@ void Day19()
         // fprintf(stdout, " -> %c\n", accepted ? 'A' : 'R');
     }
     
-    fprintf(stdout, "Compute sum time: %.4f ms (total: %.4f ms)\n",
-            MillisecondsSince(start_time), MillisecondsSince(run_time_start));
-
-    fprintf(stdout, "Part 1 sum: %llu\n", part_1_sum);
+    fprintf(stdout, "Part 1 sum: %llu (%.4f ms)\n", part_1_sum, MillisecondsSince(start_time));
     
+    
+    // Part 2
+    start_time = TimeNow();
+    
+    AttributeList initial_attrs = {};
+    for (u32 i = kAttributeInvalid; i < kAttributeSize; ++i) {
+        initial_attrs.value[i] = { (Attribute) i, kMinAttrValue, kMaxAttrValue };
+    }
+    u64 part_2_sum = ComputeAcceptedRulesSum(initial_attrs, "in", 0, &all_rules);
+
+    fprintf(stdout, "Part 2 sum: %llu (%.4f ms)\n", part_2_sum, MillisecondsSince(start_time));
+    
+    fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
+
     CloseFile(&input_file);
 }
 
