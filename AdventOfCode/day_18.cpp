@@ -244,7 +244,7 @@ void Day18()
     start_time = TimeNow();
 
     Dimensions dim = FindGridDimensions(instructions);
-    fprintf(stdout, "Min: (r: %d, c: %d)\nMax: (r: %d, c: %d) found in %.4f ms\n",
+    fprintf(stdout, "Part 1 grid dimensions\n\tMin: (r: %d, c: %d)\n\tMax: (r: %d, c: %d) found in %.4f ms\n",
             dim.min.row, dim.min.col, dim.max.row, dim.max.col, MillisecondsSince(start_time));
     start_time = TimeNow();
     
@@ -321,6 +321,45 @@ void Day18()
     }
     
     fprintf(stdout, "Part 1 sum: %u (%.4f ms)\n", part_1_sum, MillisecondsSince(start_time));
+    
+    // Part 2
+    start_time = TimeNow();
+    
+    parser.offset = 0;
+    instructions.clear();
+    while (!AtEndOfFile(&parser)) {
+        char old_dir;
+        u32 old_value;
+        u32 dir, value;
+        sscanf(&parser.data[parser.offset], "%c %u (#%5x%x)\n", &old_dir, &old_value, &value, &dir);
+        Direction direction = kDirectionInvalid;
+        switch (dir) {
+            case 3:
+                direction = kDirectionUp;
+                break;
+            case 1:
+                direction = kDirectionDown;
+                break;
+            case 2:
+                direction = kDirectionLeft;
+                break;
+            case 0:
+                direction = kDirectionRight;
+                break;
+            default:
+                break;
+        }
+        Instruction inst = { direction, value };
+        instructions.push_back(inst);
+        while (!AtEndOfLine(&parser)) {
+            Advance(&parser);
+        }
+        Advance(&parser);
+    }
+ 
+    dim = FindGridDimensions(instructions);
+    fprintf(stdout, "Part 2 grid dimensions\n\tMin: (r: %d, c: %d)\n\tMax: (r: %d, c: %d) found in %.4f ms\n",
+            dim.min.row, dim.min.col, dim.max.row, dim.max.col, MillisecondsSince(start_time));
 
     fprintf(stdout, "Run time: %.4f ms\n", MillisecondsSince(run_time));
     
