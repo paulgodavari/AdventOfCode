@@ -15,6 +15,8 @@ static const char* input_file_name = "day_19.test_input";  // Part 1: 19114, par
 // static const char* input_file_name = "day_19.input";  // Part 1: 425811, part 2:
 
 static const u32 kMaxRules = 10;
+static const u32 kMinAttrValue = 1;
+static const u32 kMaxAttrValue = 4000;
 
 
 enum Operation
@@ -71,6 +73,42 @@ struct RuleList
 };
 
 
+struct AttributeValue
+{
+    Attribute attr;
+    u32 min;
+    u32 max;
+};
+
+
+struct Node
+{
+    std::string rule_name;
+    u32 rule_index;
+    AttributeValue ranges[kAttributeSize];
+    Node* left;
+    AttributeValue left_attr;
+    Node* right;
+    AttributeValue right_attr;
+};
+
+
+Node* CreateNode(AttributeValue parent_attrs[5], AttributeValue prev, std::string rule_name, u32 rule_index)
+{
+    Node* result = new Node;
+    
+    if (parent_attrs) {
+        memcpy(result->ranges, parent_attrs, sizeof(result->ranges));
+    } else {
+        for (u32 i = kAttributeInvalid; i < kAttributeSize; ++i) {
+            result->ranges[i] = { (Attribute) i, kMinAttrValue, kMaxAttrValue };
+        }
+    }
+    
+    return result;
+}
+
+
 Attribute AttributeFromString(String attr_str)
 {
     Attribute result = kAttributeInvalid;
@@ -102,7 +140,7 @@ void Day19()
         return;
     }
     
-    fprintf(stdout, "Day 19\n");
+    fprintf(stdout, "Day 19 (initialization time: %.4f)\n", MillisecondsSince(run_time_start    ));
     
     ParseState parser = { input_file.data, input_file.size, 0 };
     
