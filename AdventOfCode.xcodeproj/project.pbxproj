@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6611D5D42B33302600A1C56F /* day_20.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6611D5D32B33302600A1C56F /* day_20.cpp */; };
 		66539A072B2D6C5200613227 /* day_16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66539A062B2D6C5200613227 /* day_16.cpp */; };
 		66539A0E2B2F990E00613227 /* day_17.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66539A0D2B2F990E00613227 /* day_17.cpp */; };
 		66797C052B2A5ECB00777948 /* day_13.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66797C042B2A5ECB00777948 /* day_13.cpp */; };
@@ -43,6 +44,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6611D5D02B33301200A1C56F /* day_20.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_20.input; path = input/day_20.input; sourceTree = "<group>"; };
+		6611D5D12B33301200A1C56F /* day_20.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_20.test_input; path = input/day_20.test_input; sourceTree = "<group>"; };
+		6611D5D22B33301200A1C56F /* day_20.test_input2 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_20.test_input2; path = input/day_20.test_input2; sourceTree = "<group>"; };
+		6611D5D32B33302600A1C56F /* day_20.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_20.cpp; path = AdventOfCode/day_20.cpp; sourceTree = "<group>"; };
 		665399FE2B25211A00613227 /* day_09.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.input; path = input/day_09.input; sourceTree = "<group>"; };
 		665399FF2B25211A00613227 /* day_09.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_09.test_input; path = input/day_09.test_input; sourceTree = "<group>"; };
 		66539A022B265C4100613227 /* day_10.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.test_input; path = input/day_10.test_input; sourceTree = "<group>"; };
@@ -123,6 +128,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6611D5CF2B332FE100A1C56F /* Day 20 */ = {
+			isa = PBXGroup;
+			children = (
+				6611D5D32B33302600A1C56F /* day_20.cpp */,
+				6611D5D02B33301200A1C56F /* day_20.input */,
+				6611D5D12B33301200A1C56F /* day_20.test_input */,
+				6611D5D22B33301200A1C56F /* day_20.test_input2 */,
+			);
+			name = "Day 20";
+			sourceTree = "<group>";
+		};
 		66539A052B2D6C3C00613227 /* Day 16 */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +162,7 @@
 		66612A762B1A3A6E0056154B = {
 			isa = PBXGroup;
 			children = (
+				6611D5CF2B332FE100A1C56F /* Day 20 */,
 				66797C2E2B31ECEC00777948 /* Day 19 */,
 				66797C292B30A98000777948 /* Day 18 */,
 				66539A0A2B2F98ED00613227 /* Day 17 */,
@@ -429,6 +446,7 @@
 				66797C182B2A5EFB00777948 /* day_12.cpp in Sources */,
 				66797C192B2A5EFB00777948 /* day_08.cpp in Sources */,
 				66797C142B2A5EFB00777948 /* day_11.cpp in Sources */,
+				6611D5D42B33302600A1C56F /* day_20.cpp in Sources */,
 				66797C072B2A5EE200777948 /* day_01.cpp in Sources */,
 				66797C1A2B2A5EFB00777948 /* day_06.cpp in Sources */,
 				66797C052B2A5ECB00777948 /* day_13.cpp in Sources */,

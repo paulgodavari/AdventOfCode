@@ -140,7 +140,7 @@ void Day19()
         return;
     }
     
-    fprintf(stdout, "Day 19 (initialization time: %.4f)\n", MillisecondsSince(run_time_start    ));
+    fprintf(stdout, "Day 19 (initialization time: %.4f ms)\n", MillisecondsSince(run_time_start));
     
     ParseState parser = { input_file.data, input_file.size, 0 };
     
