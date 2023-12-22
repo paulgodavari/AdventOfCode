@@ -11,7 +11,7 @@
 
 
 // static const char* input_file_name = "day_22.test_input";  // Part 1: 5, part 2:
-static const char* input_file_name = "day_22.input";  // Part 1: , part 2:
+static const char* input_file_name = "day_22.input";  // Part 1: 505, part 2:
 
 
 struct Position
@@ -42,6 +42,14 @@ struct Brick
 bool operator==(const Brick& lhs, const Brick& rhs)
 {
     return (lhs.start == rhs.start) && (lhs.stop == rhs.stop);
+}
+
+
+bool ZCompare(const Brick& lhs, const Brick& rhs)
+{
+    u32 lz_min = std::min(lhs.start.z, lhs.stop.z);
+    u32 rz_min = std::min(rhs.start.z, rhs.stop.z);
+    return lz_min < rz_min;
 }
 
 
@@ -230,11 +238,16 @@ void Day22()
     
     // Position the bricks at the lowest possible z value in the grid.
     u64 start_time = TimeNow();
+    std::sort(input_bricks.begin(), input_bricks.end(), ZCompare);
+    fprintf(stdout, "Sort time: %.4f\n", MillisecondsSince(start_time));
+
+    start_time = TimeNow();
     Grid grid = {};
     std::vector<Brick> bricks;
     for (int i = 0; i < input_bricks.size(); ++i) {
         Brick brick = input_bricks[i];
         Brick new_brick = PositionFallingBrick(&grid, brick);
+        new_brick.id = i+1;
         AddBrickToGrid(&grid, new_brick);
         bricks.push_back(new_brick);
     }
