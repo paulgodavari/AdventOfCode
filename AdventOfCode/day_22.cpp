@@ -10,9 +10,11 @@
 #include <vector>
 
 
-// static const char* input_file_name = "day_22.test_input";  // Part 1: 5, part 2:
+// static const char* input_file_name = "day_22.test_input";  // Part 1: 5, part 2: 7
 static const char* input_file_name = "day_22.input";  // Part 1: 505, part 2:
 
+
+// 21745 too low
 
 struct Position
 {
@@ -107,7 +109,7 @@ void AddBrickToGrid(Grid* grid, Brick brick)
             u32 z_min = std::min(brick.start.z, brick.stop.z);
             u32 z_max = std::max(brick.start.z, brick.stop.z);
             for (int z = z_min; z <= z_max; ++z) {
-                assert(grid->space[x][y][z] == 0);
+                assert(grid->space[x][y][z] == 0 || grid->space[x][y][z] == brick.id);
                 grid->space[x][y][z] = brick.id;
             }
         }
@@ -133,12 +135,10 @@ void RemoveBrickFromGrid(Grid* grid, Brick brick)
 }
 
 
-bool CanRemoveBrickFromGrid(Grid* grid, Brick brick, const std::vector<Brick>& bricks)
+std::set<u32> FindVerticalNeighbours(Grid* grid, Brick brick)
 {
-    bool result = true;
+    std::set<u32> result;
     
-    // Find all bricks above us.
-    std::set<u32> neighbours;
     u32 z_test = std::max(brick.start.z, brick.stop.z) + 1;
 
     u32 x_min = std::min(brick.start.x, brick.stop.x);
@@ -148,25 +148,77 @@ bool CanRemoveBrickFromGrid(Grid* grid, Brick brick, const std::vector<Brick>& b
         u32 y_max = std::max(brick.start.y, brick.stop.y);
         for (int y = y_min; y <= y_max; ++y) {
             if (grid->space[x][y][z_test]) {
-                neighbours.insert(grid->space[x][y][z_test]);
+                result.insert(grid->space[x][y][z_test]);
             }
         }
     }
     
-    if (!neighbours.empty()) {
-        for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
-            u32 neighbour_index = *it - 1;
-            Brick neighbour = bricks[neighbour_index];
-            RemoveBrickFromGrid(grid, brick);
-            Brick new_position = PositionFallingBrick(grid, neighbour);
-            AddBrickToGrid(grid, brick);
-            if (new_position != neighbour) {
-                // This neighbour would fall without us.
-                result = false;
-                break;
-            }
+    return result;
+}
+
+
+bool CanRemoveBrickFromGrid(Grid* grid, Brick brick, const std::vector<Brick>& bricks)
+{
+    bool result = true;
+    
+    std::set<u32> neighbours = FindVerticalNeighbours(grid, brick);
+    for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+        u32 neighbour_index = *it - 1;
+        Brick neighbour = bricks[neighbour_index];
+        RemoveBrickFromGrid(grid, brick);
+        Brick new_position = PositionFallingBrick(grid, neighbour);
+        AddBrickToGrid(grid, brick);
+        if (new_position != neighbour) {
+            // This neighbour would fall without us.
+            result = false;
+            break;
         }
     }
+    
+    return result;
+}
+
+
+u32 ComputeTotalFall(Grid* grid, Brick brick, const std::vector<Brick>& bricks, std::set<u32>* fallen)
+{
+    u32 result = 0;
+
+    std::set<u32> falling_neighbours;
+    std::set<u32> neighbours = FindVerticalNeighbours(grid, brick);
+    RemoveBrickFromGrid(grid, brick);
+
+    for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+        u32 neighbour_index = *it - 1;
+        Brick neighbour = bricks[neighbour_index];
+        Brick new_position = PositionFallingBrick(grid, neighbour);
+        if (new_position != neighbour) {
+            // This neighbour would fall without us.
+            falling_neighbours.insert(neighbour.id);
+            fallen->insert(neighbour.id);
+        }
+    }
+
+    for (auto it = falling_neighbours.begin(); it != falling_neighbours.end(); ++it) {
+        u32 neighbour_index = *it - 1;
+        Brick neighbour = bricks[neighbour_index];
+        RemoveBrickFromGrid(grid, neighbour);
+    }
+    
+    for (auto it = falling_neighbours.begin(); it != falling_neighbours.end(); ++it) {
+        u32 neighbour_index = *it - 1;
+        Brick neighbour = bricks[neighbour_index];
+        result += ComputeTotalFall(grid, neighbour, bricks, fallen);
+    }
+
+    for (auto it = falling_neighbours.begin(); it != falling_neighbours.end(); ++it) {
+        u32 neighbour_index = *it - 1;
+        Brick neighbour = bricks[neighbour_index];
+        AddBrickToGrid(grid, neighbour);
+    }
+
+    AddBrickToGrid(grid, brick);
+
+    result += falling_neighbours.size();
     
     return result;
 }
@@ -262,9 +314,23 @@ void Day22()
             part_1_bricks++;
         }
     }
+    
     fprintf(stdout, "Check time: %.4f\n", MillisecondsSince(start_time));
-
     fprintf(stdout, "Part 1 number of bricks: %u\n", part_1_bricks);
+    
+    // Part 2
+    start_time = TimeNow();
+    u32 part_2_bricks = 0;
+    
+    std::set<u32> fallen;
+    for (int i = 0; i < bricks.size(); ++i) {
+        Brick brick = bricks[i];
+        part_2_bricks += ComputeTotalFall(&grid, brick, bricks, &fallen);
+    }
+
+    fprintf(stdout, "Part 2 number of bricks: %u (%u)\n", part_2_bricks, fallen.size());
+    fprintf(stdout, "Total fall time: %.4f\n", MillisecondsSince(start_time));
+
     fprintf(stdout, "Run time: %.4f ms\n", MillisecondsSince(run_time));
     
     CloseFile(&input_file);
