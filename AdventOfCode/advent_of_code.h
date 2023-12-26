@@ -111,4 +111,7 @@ void Day19();
 void Day20();
 void Day21();
 void Day22();
+void Day23();
+void Day24();
+void Day25();
 

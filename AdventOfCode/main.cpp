@@ -30,7 +30,10 @@ int main(int argc, char* argv[])
     // Day19();
     // Day20();  // --> Missing part 1, 2
     // Day21();  // --> Missing part 2
-    Day22();
+    // Day22();  // --> Missing part 2
+    // Day23();  // --> Missing part 1, 2
+    // Day24();  // --> Missing part 1, 2
+    Day25();
     
     return 0;
 }
