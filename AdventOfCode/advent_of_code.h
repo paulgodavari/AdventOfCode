@@ -34,7 +34,13 @@ struct String
 };
 #define CONST_STRING(x) (String) { (x), sizeof(x) - 1 }
 
+bool operator<(const String& lhs, const String& rhs);
 bool operator==(const String& lhs, const String& rhs);
+
+struct StringHash
+{
+    size_t operator()(const String& s) const;
+};
 
 bool MatchNumberKeyword(const char* line, int line_index, String keyword);
 
