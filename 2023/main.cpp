@@ -5,6 +5,7 @@
 
 
 #include "advent_of_code.h"
+#include "days.h"
 
 
 int main(int argc, char* argv[])
@@ -27,13 +28,13 @@ int main(int argc, char* argv[])
     // Day16();
     // Day17();  // --> Missing part 1, 2
     // Day18();  // --> Missing part 2
-    // Day19();
+    Day19();
     // Day20();  // --> Missing part 1, 2
     // Day21();  // --> Missing part 2
     // Day22();  // --> Missing part 2
     // Day23();  // --> Missing part 1, 2
     // Day24();  // --> Missing part 1, 2
-    Day25();
+    // Day25();
     
     return 0;
 }
