@@ -34,6 +34,7 @@
 		66A7DD112CFE4B6C00DA1C6E /* day_15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF92CFE4B6B00DA1C6E /* day_15.cpp */; };
 		66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCFA2CFE4B6B00DA1C6E /* day_24.cpp */; };
 		66A7DD132CFE4B6C00DA1C6E /* day_22.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCFB2CFE4B6B00DA1C6E /* day_22.cpp */; };
+		66A7DD5F2CFE528600DA1C6E /* day_01_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -135,6 +136,10 @@
 		66A7DD4B2CFE4CCD00DA1C6E /* day_04.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_04.input; path = 2023/input/day_04.input; sourceTree = "<group>"; };
 		66A7DD4C2CFE4CCD00DA1C6E /* day_12.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_12.test_input; path = 2023/input/day_12.test_input; sourceTree = "<group>"; };
 		66A7DD4D2CFE4CCD00DA1C6E /* day_16.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_16.test_input; path = 2023/input/day_16.test_input; sourceTree = "<group>"; };
+		66A7DD5C2CFE524F00DA1C6E /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = 2024/input/day_01.input; sourceTree = "<group>"; };
+		66A7DD5D2CFE524F00DA1C6E /* day_01.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input; path = 2024/input/day_01.test_input; sourceTree = "<group>"; };
+		66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_01_2024.cpp; path = 2024/day_01_2024.cpp; sourceTree = "<group>"; };
+		66A7DD602CFE535700DA1C6E /* days.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = days.h; path = util/days.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,31 +239,8 @@
 			children = (
 				66A7DCDF2CFE4B4100DA1C6E /* AdventOfCode */,
 				66A7DCD72CFE49DA00DA1C6E /* Util */,
-				66539A0F2B3B6A1D00613227 /* Day 25 */,
-				66539A122B3B6ADA00613227 /* Day 24 */,
-				66539A132B3B6AE400613227 /* Day 23 */,
-				6611D5DA2B35D66400A1C56F /* Day 22 */,
-				6611D5D52B348C9700A1C56F /* Day 21 */,
-				6611D5CF2B332FE100A1C56F /* Day 20 */,
-				66797C2E2B31ECEC00777948 /* Day 19 */,
-				66797C292B30A98000777948 /* Day 18 */,
-				66539A0A2B2F98ED00613227 /* Day 17 */,
-				66539A052B2D6C3C00613227 /* Day 16 */,
-				66797C242B2CAC0A00777948 /* Day 15 */,
-				66797C1F2B2B8B1B00777948 /* Day 14 */,
-				66797C032B2A5DFF00777948 /* Day 13 */,
-				66797C022B2A5DF900777948 /* Day 12 */,
-				66797C012B2A5DF400777948 /* Day 11 */,
-				66797C002B2A5DEF00777948 /* Day 10 */,
-				66797BFF2B2A5DE800777948 /* Day 09 */,
-				66797BFE2B2A5DE300777948 /* Day 08 */,
-				66797BFD2B2A5DDA00777948 /* Day 07 */,
-				66797BFC2B2A5DD200777948 /* Day 06 */,
-				66797BFB2B2A5DCC00777948 /* Day 05 */,
-				66797BFA2B2A5DC500777948 /* Day 04 */,
-				66797BF92B2A5DBB00777948 /* Day 03 */,
-				66797BF82B2A5DB300777948 /* Day 02 */,
-				66797BF72B2A5D5B00777948 /* Day 01 */,
+				66A7DD592CFE51CA00DA1C6E /* 2023 */,
+				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
 				66612A802B1A3A6E0056154B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -459,9 +441,60 @@
 		66A7DCDF2CFE4B4100DA1C6E /* AdventOfCode */ = {
 			isa = PBXGroup;
 			children = (
+				66A7DD602CFE535700DA1C6E /* days.h */,
 				66A7DCE02CFE4B5000DA1C6E /* main.cpp */,
 			);
 			name = AdventOfCode;
+			sourceTree = "<group>";
+		};
+		66A7DD592CFE51CA00DA1C6E /* 2023 */ = {
+			isa = PBXGroup;
+			children = (
+				66539A0F2B3B6A1D00613227 /* Day 25 */,
+				66539A122B3B6ADA00613227 /* Day 24 */,
+				66539A132B3B6AE400613227 /* Day 23 */,
+				6611D5DA2B35D66400A1C56F /* Day 22 */,
+				6611D5D52B348C9700A1C56F /* Day 21 */,
+				6611D5CF2B332FE100A1C56F /* Day 20 */,
+				66797C2E2B31ECEC00777948 /* Day 19 */,
+				66797C292B30A98000777948 /* Day 18 */,
+				66539A0A2B2F98ED00613227 /* Day 17 */,
+				66539A052B2D6C3C00613227 /* Day 16 */,
+				66797C242B2CAC0A00777948 /* Day 15 */,
+				66797C1F2B2B8B1B00777948 /* Day 14 */,
+				66797C032B2A5DFF00777948 /* Day 13 */,
+				66797C022B2A5DF900777948 /* Day 12 */,
+				66797C012B2A5DF400777948 /* Day 11 */,
+				66797C002B2A5DEF00777948 /* Day 10 */,
+				66797BFF2B2A5DE800777948 /* Day 09 */,
+				66797BFE2B2A5DE300777948 /* Day 08 */,
+				66797BFD2B2A5DDA00777948 /* Day 07 */,
+				66797BFC2B2A5DD200777948 /* Day 06 */,
+				66797BFB2B2A5DCC00777948 /* Day 05 */,
+				66797BFA2B2A5DC500777948 /* Day 04 */,
+				66797BF92B2A5DBB00777948 /* Day 03 */,
+				66797BF82B2A5DB300777948 /* Day 02 */,
+				66797BF72B2A5D5B00777948 /* Day 01 */,
+			);
+			name = 2023;
+			sourceTree = "<group>";
+		};
+		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
+			isa = PBXGroup;
+			children = (
+				66A7DD5B2CFE523C00DA1C6E /* Day 01 */,
+			);
+			name = 2024;
+			sourceTree = "<group>";
+		};
+		66A7DD5B2CFE523C00DA1C6E /* Day 01 */ = {
+			isa = PBXGroup;
+			children = (
+				66A7DD5C2CFE524F00DA1C6E /* day_01.input */,
+				66A7DD5D2CFE524F00DA1C6E /* day_01.test_input */,
+				66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */,
+			);
+			name = "Day 01";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -526,6 +559,7 @@
 				66A7DD092CFE4B6B00DA1C6E /* day_19.cpp in Sources */,
 				66A7DD0F2CFE4B6C00DA1C6E /* day_21.cpp in Sources */,
 				66A7DD002CFE4B6B00DA1C6E /* day_08.cpp in Sources */,
+				66A7DD5F2CFE528600DA1C6E /* day_01_2024.cpp in Sources */,
 				66A7DD082CFE4B6B00DA1C6E /* day_18.cpp in Sources */,
 				66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */,
 				66A7DD0C2CFE4B6C00DA1C6E /* day_07.cpp in Sources */,
@@ -678,6 +712,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = B47EZERG93;
 				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -689,6 +724,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = B47EZERG93;
 				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

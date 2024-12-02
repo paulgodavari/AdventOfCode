@@ -7,6 +7,7 @@
 #pragma once
 
 
+// 2023
 void Day01();
 void Day02();
 void Day03();
@@ -32,4 +33,8 @@ void Day22();
 void Day23();
 void Day24();
 void Day25();
+
+
+// 2024
+void Day01_2024();
 

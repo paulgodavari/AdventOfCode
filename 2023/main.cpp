@@ -4,8 +4,14 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
 
 
-#include "advent_of_code.h"
-#include "days.h"
+#include "util/advent_of_code.h"
+#include "util/days.h"
+
+
+void AoC2024()
+{
+    Day01_2024();
+}
 
 
 int main(int argc, char* argv[])
@@ -28,13 +34,15 @@ int main(int argc, char* argv[])
     // Day16();
     // Day17();  // --> Missing part 1, 2
     // Day18();  // --> Missing part 2
-    Day19();
+    // Day19();
     // Day20();  // --> Missing part 1, 2
     // Day21();  // --> Missing part 2
     // Day22();  // --> Missing part 2
     // Day23();  // --> Missing part 1, 2
     // Day24();  // --> Missing part 1, 2
     // Day25();
+    
+    AoC2024();
     
     return 0;
 }
