@@ -8,13 +8,7 @@
 #include "util/days.h"
 
 
-void AoC2024()
-{
-    Day01_2024();
-}
-
-
-int main(int argc, char* argv[])
+void AoC2023()
 {
     // Day01();
     // Day02();
@@ -41,7 +35,18 @@ int main(int argc, char* argv[])
     // Day23();  // --> Missing part 1, 2
     // Day24();  // --> Missing part 1, 2
     // Day25();
-    
+}
+
+
+void AoC2024()
+{
+    Day01_2024();
+}
+
+
+int main(int argc, char* argv[])
+{
+    // AoC2023();
     AoC2024();
     
     return 0;
