@@ -38,3 +38,4 @@ void Day25();
 // 2024
 void Day01_2024();
 void Day02_2024();
+void Day03_2024();
