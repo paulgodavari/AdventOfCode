@@ -490,9 +490,9 @@
 		66A7DD5B2CFE523C00DA1C6E /* Day 01 */ = {
 			isa = PBXGroup;
 			children = (
+				66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */,
 				66A7DD5C2CFE524F00DA1C6E /* day_01.input */,
 				66A7DD5D2CFE524F00DA1C6E /* day_01.test_input */,
-				66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */,
 			);
 			name = "Day 01";
 			sourceTree = "<group>";
