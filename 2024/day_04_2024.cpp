@@ -14,8 +14,8 @@ static const char* input_file_name = "../../2024/input/day_04.input";  // Part 1
 struct Grid
 {
     ParseState* parser;
-    u32 rows;
-    u32 cols;
+    i32 rows;
+    i32 cols;
 };
 
 
@@ -41,19 +41,19 @@ Grid ComputeDimentions(ParseState* parser)
         result.cols++;
     }
     result.cols++;  // Need to include the '\n' in our calculations.
-    result.rows = (u32) (parser->size / result.cols);
+    result.rows = (i32) (parser->size / result.cols);
     
     return result;
 }
 
 
-bool ValidPosition(Grid* grid, u32 row, u32 col)
+bool ValidPosition(Grid* grid, i32 row, i32 col)
 {
     return (row >= 0 && row < grid->rows) && (col >= 0 && col < grid->cols - 1);
 }
 
 
-char CharAtPosition(Grid* grid, u32 row, u32 col)
+char CharAtPosition(Grid* grid, i32 row, i32 col)
 {
     char result = 0;
     
@@ -66,7 +66,7 @@ char CharAtPosition(Grid* grid, u32 row, u32 col)
 }
 
 
-u32 SearchDirection(Grid* grid, u32 row, u32 col, Direction dir)
+u32 SearchDirection(Grid* grid, i32 row, i32 col, Direction dir)
 {
     u32 result = 0;
     
@@ -88,7 +88,7 @@ u32 SearchDirection(Grid* grid, u32 row, u32 col, Direction dir)
 }
 
 
-u32 SearchAllDirections(Grid* grid, u32 row, u32 col)
+u32 SearchAllDirections(Grid* grid, i32 row, i32 col)
 {
     u32 result = 0;
     
@@ -114,7 +114,7 @@ u32 SearchAllDirections(Grid* grid, u32 row, u32 col)
 }
 
 
-u32 CountMatches(Grid* grid, u32 row, u32 col)
+u32 CountMatches(Grid* grid, i32 row, i32 col)
 {
     u32 result = 0;
     
@@ -128,13 +128,13 @@ u32 CountMatches(Grid* grid, u32 row, u32 col)
 }
 
 
-bool SearchSlashChar(Grid* grid, u32 row, u32 col, Slash slash, char c1, char c2)
+bool SearchSlashChar(Grid* grid, i32 row, i32 col, Slash slash, char c1, char c2)
 {
     bool result = false;
 
     Direction dir = slash.dir[0];
-    u32 x = col + dir.x;
-    u32 y = row + dir.y;
+    i32 x = col + dir.x;
+    i32 y = row + dir.y;
     if (ValidPosition(grid, y, x) && (CharAtPosition(grid, y, x) == c1)) {
         dir = slash.dir[1];
         x = col + dir.x;
@@ -148,7 +148,7 @@ bool SearchSlashChar(Grid* grid, u32 row, u32 col, Slash slash, char c1, char c2
 }
 
 
-bool SearchSlash(Grid* grid, u32 row, u32 col, Slash slash)
+bool SearchSlash(Grid* grid, i32 row, i32 col, Slash slash)
 {
     bool result = false;
 
@@ -160,7 +160,7 @@ bool SearchSlash(Grid* grid, u32 row, u32 col, Slash slash)
 }
 
 
-u32 SearchStarDirections(Grid* grid, u32 row, u32 col)
+u32 SearchStarDirections(Grid* grid, i32 row, i32 col)
 {
     u32 result = 0;
 
@@ -175,7 +175,7 @@ u32 SearchStarDirections(Grid* grid, u32 row, u32 col)
 }
 
 
-u32 CountMASMatches(Grid* grid, u32 row, u32 col)
+u32 CountMASMatches(Grid* grid, i32 row, i32 col)
 {
     u32 result = 0;
     
