@@ -7,8 +7,8 @@
 #include "advent_of_code.h"
 
 
-// static const char* input_file_name = "../../2024/input/day_04.test_input";  // Part 1 =  18, Part 2 =
-static const char* input_file_name = "../../2024/input/day_04.input";  // Part 1 = 2514, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_04.test_input";  // Part 1 =  18, Part 2 = 9
+static const char* input_file_name = "../../2024/input/day_04.input";  // Part 1 = 2514, Part 2 = 1888
 
 
 struct Grid
@@ -23,6 +23,12 @@ struct Direction
 {
     i32 x;
     i32 y;
+};
+
+
+struct Slash
+{
+    Direction dir[2];
 };
 
 
@@ -122,6 +128,65 @@ u32 CountMatches(Grid* grid, u32 row, u32 col)
 }
 
 
+bool SearchSlashChar(Grid* grid, u32 row, u32 col, Slash slash, char c1, char c2)
+{
+    bool result = false;
+
+    Direction dir = slash.dir[0];
+    u32 x = col + dir.x;
+    u32 y = row + dir.y;
+    if (ValidPosition(grid, y, x) && (CharAtPosition(grid, y, x) == c1)) {
+        dir = slash.dir[1];
+        x = col + dir.x;
+        y = row + dir.y;
+        if (ValidPosition(grid, y, x) && (CharAtPosition(grid, y, x) == c2)) {
+            result = true;
+        }
+    }
+
+    return result;
+}
+
+
+bool SearchSlash(Grid* grid, u32 row, u32 col, Slash slash)
+{
+    bool result = false;
+
+    if (SearchSlashChar(grid, row, col, slash, 'M', 'S') || SearchSlashChar(grid, row, col, slash, 'S', 'M')) {
+        result = true;
+    }
+    
+    return result;
+}
+
+
+u32 SearchStarDirections(Grid* grid, u32 row, u32 col)
+{
+    u32 result = 0;
+
+    Slash forward_slash  = {{ { -1,  1 }, {  1, -1 } }};
+    Slash backward_slash = {{ { -1, -1 }, {  1,  1 } }};
+
+    if (SearchSlash(grid, row, col, forward_slash) && SearchSlash(grid, row, col, backward_slash)) {
+        result = 1;
+    }
+    
+    return result;
+}
+
+
+u32 CountMASMatches(Grid* grid, u32 row, u32 col)
+{
+    u32 result = 0;
+    
+    if (ValidPosition(grid, row, col) && (CharAtPosition(grid, row, col) == 'A')) {
+        result = SearchStarDirections(grid, row, col);
+    }
+    
+    return result;
+}
+
+
 void Day04_2024()
 {
     u64 run_time_start = TimeNow();
@@ -136,7 +201,6 @@ void Day04_2024()
     Grid grid = ComputeDimentions(&parser);
     
     u32 part1_count = 0;
-    
     for (int row = 0; row < grid.rows; ++row) {
         for (int col = 0; col < grid.cols - 1; ++col) {
             part1_count += CountMatches(&grid, row, col);
@@ -144,7 +208,12 @@ void Day04_2024()
     }
     
     u32 part2_count = 0;
-    
+    for (int row = 0; row < grid.rows; ++row) {
+        for (int col = 0; col < grid.cols - 1; ++col) {
+            part2_count += CountMASMatches(&grid, row, col);
+        }
+    }
+
     fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_count);
     fprintf(stdout, "2024: Day 04 part 2: %u\n", part2_count);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
