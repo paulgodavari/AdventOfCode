@@ -201,19 +201,15 @@ void Day04_2024()
     Grid grid = ComputeDimentions(&parser);
     
     u32 part1_count = 0;
+    u32 part2_count = 0;
+
     for (int row = 0; row < grid.rows; ++row) {
         for (int col = 0; col < grid.cols - 1; ++col) {
             part1_count += CountMatches(&grid, row, col);
-        }
-    }
-    
-    u32 part2_count = 0;
-    for (int row = 0; row < grid.rows; ++row) {
-        for (int col = 0; col < grid.cols - 1; ++col) {
             part2_count += CountMASMatches(&grid, row, col);
         }
     }
-
+    
     fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_count);
     fprintf(stdout, "2024: Day 04 part 2: %u\n", part2_count);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
