@@ -11,8 +11,8 @@
 #include <vector>
 
 
-static const char* input_file_name = "../../2024/input/day_05.test_input";  // Part 1 = 143, Part 2 = 123
-// static const char* input_file_name = "../../2024/input/day_05.input";  // Part 1 = 6498, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_05.test_input";  // Part 1 = 143, Part 2 = 123
+static const char* input_file_name = "../../2024/input/day_05.input";  // Part 1 = 6498, Part 2 = 5017
 
 
 void Day05_2024()
@@ -28,11 +28,12 @@ void Day05_2024()
     ParseState parser = { input_file.data, input_file.size, 0 };
     
     u32 part1_answer = 0;
-    
+    u32 part2_answer = 0;
+
     std::unordered_map<u32, std::bitset<100>> rules;
     
+    // Parse the rules
     while (!AtEndOfFile(&parser) && parser.data[parser.offset] != '\n') {
-        // Parse the rules
         u32 page = ParseNumber(&parser);
         assert(parser.data[parser.offset] == '|');
         Advance(&parser);
@@ -50,9 +51,10 @@ void Day05_2024()
             it->second.set(previous_page);
         }
     }
-    
+
+    // Move beyond the blank separator line
     Advance(&parser);
-    
+
     // Parse the page list
     while (!AtEndOfFile(&parser)) {
         std::vector<u32> pages;
@@ -80,13 +82,47 @@ void Day05_2024()
         Advance(&parser);
         
         if (correct) {
-            int index = pages.size() / 2;
+            // Part 1: Sum correct pages middle page
+            u32 index = (u32) pages.size() / 2;
             part1_answer += pages[index];
+        } else {
+            // Part 2: Fix incorrect pages sort order, then sum middle page.
+            //
+            // - Choose the first item in pages
+            // - Check if it is in any the other page's rules
+            //     - Yes: item can't be next, go to the next item in pages
+            //     - No: item can be next, put the item in sorted_pages and remove it from pages
+            // - Back to start (with a shrinking pages vector)
+            
+            std::vector<u32> sorted_pages;
+            
+            u32 index = 0;
+            
+            while (pages.size() > 0) {
+                bool is_first = true;
+                u32 page = pages[index];
+                for (int i = 0; i < pages.size(); ++i) {
+                    if (i != index) {
+                        auto it = rules.find(pages[i]);
+                        if (it != rules.end() && it->second[page]) {
+                            is_first = false;
+                            break;
+                        }
+                    }
+                }
+                if (is_first) {
+                    sorted_pages.push_back(page);
+                    pages.erase(pages.begin() + index);
+                    index = 0;
+                } else {
+                    index++;
+                }
+            }
+            
+            u32 middle_index = (u32) sorted_pages.size() / 2;
+            part2_answer += sorted_pages[middle_index];
         }
     }
-    
-    
-    u32 part2_answer = 0;
 
     fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_answer);
     fprintf(stdout, "2024: Day 04 part 2: %u\n", part2_answer);
