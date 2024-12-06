@@ -10,8 +10,8 @@
 #include <vector>
 
 
-// static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 =
-static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = , Part 2 =
+static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = , Part 2 =
 
 
 enum class Direction
@@ -120,9 +120,6 @@ Direction GetNextDirection(Direction direction)
 }
 
 
-u32 g_move_count = 0;
-
-
 Move FindNextMove(Grid* grid, Move last_move)
 {
     Move result = {};
@@ -154,10 +151,6 @@ Move FindNextMove(Grid* grid, Move last_move)
             last_move.direction = GetNextDirection(last_move.direction);
             result = FindNextMove(grid, last_move);
         } else {
-            if (square == '.') {
-                g_move_count++;
-                grid->parser->data[index] = 'X';
-            }
             result.position = next_position;
             result.direction = last_move.direction;
         }
@@ -165,6 +158,23 @@ Move FindNextMove(Grid* grid, Move last_move)
         // We're moving off the grid, so we're done.
         result.position = next_position;
         result.direction = last_move.direction;
+    }
+    
+    return result;
+}
+
+
+bool MarkedPosition(Grid* grid, Position position)
+{
+    bool result = false;
+    
+    i32 index = GridPositionToIndex(grid, position);
+    if (index >= 0 && index < grid->parser->size) {
+        char square = grid->parser->data[index];
+        if (square != 'X') {
+            grid->parser->data[index] = 'X';
+            result = true;
+        }
     }
     
     return result;
@@ -220,16 +230,17 @@ void Day06_2024()
     
     // Handle initial position.
     move.position = IndexToGridPosition(&grid, parser.offset);
-    i32 index = GridPositionToIndex(&grid, move.position);
-    parser.data[index] = 'X';
-    g_move_count++;
+    if (MarkedPosition(&grid, move.position)) {
+        part1_answer++;
+    }
     
     while (PositionIsInGrid(&grid, move.position)) {
         move = FindNextMove(&grid, move);
+        if (MarkedPosition(&grid, move.position)) {
+            part1_answer++;
+        }
     }
     
-    part1_answer = g_move_count;
-
     fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_answer);
     fprintf(stdout, "2024: Day 04 part 2: %u\n", part2_answer);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
