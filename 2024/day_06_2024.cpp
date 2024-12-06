@@ -6,12 +6,15 @@
 
 #include "advent_of_code.h"
 
+#include <set>
 #include <unordered_map>
 #include <vector>
 
 
-static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 =
-// static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = , Part 2 =
+// Part 2 took about 10 seconds (release) or 42 seconds (debug) to run on M1 Mac Mini.
+
+static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 = 6
+// static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = 4711, Part 2 = 1562
 
 
 enum class Direction
@@ -36,6 +39,14 @@ struct Move
     Position position;
     Direction direction;
 };
+
+
+bool operator<(const Move& lhs, const Move& rhs)
+{
+    if (lhs.position.x < rhs.position.x) return true;
+    if (lhs.position.x == rhs.position.x && lhs.position.y < rhs.position.y) return true;
+    return lhs.position.x == rhs.position.x && lhs.position.y == rhs.position.y && lhs.direction < rhs.direction;
+}
 
 
 struct Grid
@@ -181,6 +192,27 @@ bool MarkedPosition(Grid* grid, Position position)
 }
 
 
+bool HasLoop(Grid* grid, Move move)
+{
+    bool result = false;
+    
+    std::set<Move> moves;
+    moves.insert(move);
+    
+    while (PositionIsInGrid(grid, move.position)) {
+        move = FindNextMove(grid, move);
+        if (moves.find(move) != moves.end()) {
+            result = true;
+            break;
+        } else {
+            moves.insert(move);
+        }
+    }
+    
+    return result;
+}
+
+
 void Day06_2024()
 {
     u64 run_time_start = TimeNow();
@@ -195,7 +227,6 @@ void Day06_2024()
     Grid grid = ComputeGridDimensions(&parser);
     
     u32 part1_answer = 0;
-    u32 part2_answer = 0;
 
     // Find starting position.
     bool found_position = false;
@@ -233,12 +264,46 @@ void Day06_2024()
     if (MarkedPosition(&grid, move.position)) {
         part1_answer++;
     }
-    
+
+    Move initial_move = move;
+
     while (PositionIsInGrid(&grid, move.position)) {
         move = FindNextMove(&grid, move);
         if (MarkedPosition(&grid, move.position)) {
             part1_answer++;
         }
+    }
+    
+    CloseFile(&input_file);
+    
+    // Part 2. Reload the input file since it has been marked up. The initial position
+    // and direction are saved from part 1.
+    
+    input_file = ReadFile(input_file_name);
+    if (!input_file.handle) {
+        fprintf(stderr, "Error reading %s\n", input_file_name);
+        return;
+    }
+    
+    parser = { input_file.data, input_file.size, 0 };
+    grid = ComputeGridDimensions(&parser);
+
+    u32 part2_answer = 0;
+
+    i32 initial_index = GridPositionToIndex(&grid, initial_move.position);
+
+    for (int index = 0; index < parser.size; ++index) {
+        // fprintf(stdout, "Trying index=%d", index);
+        char square = parser.data[index];
+        if (index != initial_index && square != '#' && square != '\n') {
+            parser.data[index] = '#';
+            if (HasLoop(&grid, initial_move)) {
+                part2_answer++;
+                // fprintf(stdout, " FOUND LOOP (%u)", index, part2_answer);
+            }
+            parser.data[index] = square;
+        }
+        // fprintf(stdout, "\n", index);
     }
     
     fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_answer);
