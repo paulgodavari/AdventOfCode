@@ -201,9 +201,9 @@ File ReadFile(const char* file_name)
 }
 
 
-i32 ParseNumberInternal(ParseState* parser, bool allow_sign)
+i64 ParseNumberInternal(ParseState* parser, bool allow_sign)
 {
-    u32 number = 0;
+    u64 number = 0;
     bool number_found = false;
     bool done = false;
     bool is_negative = false;
@@ -227,7 +227,7 @@ i32 ParseNumberInternal(ParseState* parser, bool allow_sign)
             case '7':
             case '8':
             case '9': {
-                u32 digit = current - '0';
+                u64 digit = current - '0';
                 if (number_found) {
                     number = number * 10 + digit;
                 } else {
@@ -256,16 +256,16 @@ i32 ParseNumberInternal(ParseState* parser, bool allow_sign)
 }
 
 
-u32 ParseNumber(ParseState* parser)
+u64 ParseNumber(ParseState* parser)
 {
-    u32 number = (u32) ParseNumberInternal(parser, false);    
+    u64 number = (u64) ParseNumberInternal(parser, false);    
     return number;
 }
 
 
-i32 ParseSignedNumber(ParseState* parser)
+i64 ParseSignedNumber(ParseState* parser)
 {
-    i32 result = ParseNumberInternal(parser, true);
+    i64 result = ParseNumberInternal(parser, true);
     return result;
 }
 

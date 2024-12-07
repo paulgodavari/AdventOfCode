@@ -67,8 +67,8 @@ struct ParseState
 
 // Consumes leading non-digit characters, converts digit characters into a number,
 // returns the number. Parser will be pointing 1 character past the last digit.
-u32 ParseNumber(ParseState* parser);
-i32 ParseSignedNumber(ParseState* parser);
+u64 ParseNumber(ParseState* parser);
+i64 ParseSignedNumber(ParseState* parser);
 
 // Consumes leading non-alpha-digit characters. Parser will be pointing 1 character
 // past the last alpha-digit.

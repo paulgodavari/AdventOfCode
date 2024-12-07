@@ -30,9 +30,9 @@ void Day01_2024()
     ParseState parser = { input_file.data, input_file.size, 0 };
     
     while (!AtEndOfFile(&parser) && !AtEndOfLine(&parser)) {
-        i32 i1 = ParseNumber(&parser);
+        i32 i1 = (i32) ParseNumber(&parser);
         v1.push_back(i1);
-        i32 i2 = ParseNumber(&parser);
+        i32 i2 = (i32) ParseNumber(&parser);
         v2.push_back(i2);
         Advance(&parser);
         //fprintf(stdout, "%u: %u\n", i1, i2);

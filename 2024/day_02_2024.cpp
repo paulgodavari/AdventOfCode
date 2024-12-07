@@ -49,7 +49,7 @@ void Day02_2024()
         
         std::vector<u32> reports;
         while (!AtEndOfLine(&parser) && !AtEndOfFile(&parser)) {
-            u32 report = ParseNumber(&parser);
+            u32 report = (u32) ParseNumber(&parser);
             reports.push_back(report);
         }
         Advance(&parser);

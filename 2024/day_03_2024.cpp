@@ -82,11 +82,11 @@ Token MatchMul(ParseState* parser)
         if (MatchChar(parser, '(')) {
             Advance(parser);
             if (MatchDigit(parser)) {
-                op1 = ParseNumber(parser);
+                op1 = (u32) ParseNumber(parser);
                 if (MatchChar(parser, ',')) {
                     Advance(parser);
                     if (MatchDigit(parser)) {
-                        op2 = ParseNumber(parser);
+                        op2 = (u32) ParseNumber(parser);
                         if (MatchChar(parser, ')')) {
                             result = { TokenType::Mul, op1, op2 };
                         }

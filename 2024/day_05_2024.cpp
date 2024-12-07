@@ -34,10 +34,10 @@ void Day05_2024()
     
     // Parse the rules
     while (!AtEndOfFile(&parser) && parser.data[parser.offset] != '\n') {
-        u32 page = ParseNumber(&parser);
+        u32 page = (u32) ParseNumber(&parser);
         assert(parser.data[parser.offset] == '|');
         Advance(&parser);
-        u32 previous_page = ParseNumber(&parser);
+        u32 previous_page = (u32) ParseNumber(&parser);
         assert(parser.data[parser.offset] == '\n');
         Advance(&parser);
         
@@ -60,7 +60,7 @@ void Day05_2024()
         std::vector<u32> pages;
         bool correct = true;
         while (!AtEndOfLine(&parser)) {
-            u32 page = ParseNumber(&parser);
+            u32 page = (u32) ParseNumber(&parser);
             
             auto it = rules.find(page);
             if (it != rules.end()) {
