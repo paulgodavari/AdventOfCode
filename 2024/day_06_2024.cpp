@@ -13,8 +13,8 @@
 
 // Part 2 took about 10 seconds (release) or 42 seconds (debug) to run on M1 Mac Mini.
 
-static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 = 6
-// static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = 4711, Part 2 = 1562
+// static const char* input_file_name = "../../2024/input/day_06.test_input";  // Part 1 = 41, Part 2 = 6
+static const char* input_file_name = "../../2024/input/day_06.input";  // Part 1 = 4711, Part 2 = 1562
 
 
 enum class Direction
@@ -306,7 +306,7 @@ void Day06_2024()
         // fprintf(stdout, "\n", index);
     }
     
-    fprintf(stdout, "2024: Day 04 part 1: %u\n", part1_answer);
-    fprintf(stdout, "2024: Day 04 part 2: %u\n", part2_answer);
+    fprintf(stdout, "2024: Day 06 part 1: %u\n", part1_answer);
+    fprintf(stdout, "2024: Day 06 part 2: %u\n", part2_answer);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
 }

@@ -41,6 +41,7 @@
 		66CEE4B72CFFAEF100573BDC /* day_02_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66CEE4B62CFFAEF100573BDC /* day_02_2024.cpp */; };
 		66CEE4BC2CFFC4FC00573BDC /* day_03_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66CEE4BB2CFFC4FC00573BDC /* day_03_2024.cpp */; };
 		66CEE4C12D041ED300573BDC /* day_07_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66CEE4C02D041ED300573BDC /* day_07_2024.cpp */; };
+		66CEE4C82D05690600573BDC /* day_08_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66CEE4C72D05690600573BDC /* day_08_2024.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -164,6 +165,9 @@
 		66CEE4C02D041ED300573BDC /* day_07_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_07_2024.cpp; path = 2024/day_07_2024.cpp; sourceTree = "<group>"; };
 		66CEE4C22D041F5300573BDC /* day_07.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_07.test_input; path = 2024/input/day_07.test_input; sourceTree = "<group>"; };
 		66CEE4C32D041F5400573BDC /* day_07.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_07.input; path = 2024/input/day_07.input; sourceTree = "<group>"; };
+		66CEE4C52D0568C800573BDC /* day_08.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_08.input; path = 2024/input/day_08.input; sourceTree = "<group>"; };
+		66CEE4C62D0568C800573BDC /* day_08.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_08.test_input; path = 2024/input/day_08.test_input; sourceTree = "<group>"; };
+		66CEE4C72D05690600573BDC /* day_08_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_08_2024.cpp; path = 2024/day_08_2024.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -506,6 +510,7 @@
 		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
 			isa = PBXGroup;
 			children = (
+				66CEE4C42D0568B500573BDC /* Day 08 */,
 				66CEE4BF2D041EB300573BDC /* Day 07 */,
 				66A7DD6B2D035F4200DA1C6E /* Day 06 */,
 				66A7DD662D020B2700DA1C6E /* Day 05 */,
@@ -587,6 +592,16 @@
 			name = "Day 07";
 			sourceTree = "<group>";
 		};
+		66CEE4C42D0568B500573BDC /* Day 08 */ = {
+			isa = PBXGroup;
+			children = (
+				66CEE4C72D05690600573BDC /* day_08_2024.cpp */,
+				66CEE4C52D0568C800573BDC /* day_08.input */,
+				66CEE4C62D0568C800573BDC /* day_08.test_input */,
+			);
+			name = "Day 08";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -659,6 +674,7 @@
 				66A7DD0C2CFE4B6C00DA1C6E /* day_07.cpp in Sources */,
 				66A7DCFC2CFE4B6B00DA1C6E /* day_04.cpp in Sources */,
 				66A7DCFE2CFE4B6B00DA1C6E /* day_12.cpp in Sources */,
+				66CEE4C82D05690600573BDC /* day_08_2024.cpp in Sources */,
 				66A7DD012CFE4B6B00DA1C6E /* day_10.cpp in Sources */,
 				66A7DD0B2CFE4B6C00DA1C6E /* day_16.cpp in Sources */,
 				66A7DD032CFE4B6B00DA1C6E /* day_17.cpp in Sources */,

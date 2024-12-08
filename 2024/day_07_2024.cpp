@@ -114,7 +114,7 @@ void Day07_2024()
         }
     }
 
-    fprintf(stdout, "2024: Day 04 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 04 part 2: %llu\n", part2_answer);
+    fprintf(stdout, "2024: Day 07 part 1: %llu\n", part1_answer);
+    fprintf(stdout, "2024: Day 07 part 2: %llu\n", part2_answer);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
 }
