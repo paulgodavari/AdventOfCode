@@ -7,9 +7,8 @@
 
 #include <vector>
 
-
-// static const char* input_file_name = "../../2024/input/day_07.test_input";  // Part 1 = 3749, Part 2 = 
-static const char* input_file_name = "../../2024/input/day_07.input";  // Part 1 = 12839601725877, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_07.test_input";  // Part 1 = 3749, Part 2 = 11387
+static const char* input_file_name = "../../2024/input/day_07.input";  // Part 1 = 12839601725877, Part 2 = 149956401519484
 
 
 struct State
@@ -24,24 +23,47 @@ enum class Operation
 {
     Invalid = 0,
     Add,
-    Multiply
+    Multiply,
+    Concatenate
 };
 
 
-void ComputeValue(State* state, u64 value, Operation op, u32 index)
+u64 Concatenate(u64 a, u64 b)
 {
-    assert(op == Operation::Add || op == Operation::Multiply);
-    
+    int num_digits = (b == 0) ? 1 : (int) log10(b) + 1;  // Number of digits in 'b'
+    return a * pow(10, num_digits) + b;                  // Shift 'a' to the left and add 'b'
+}
+
+
+void ComputeValue(State* state, u64 value, Operation op, u32 index, bool use_concatenate = false)
+{
     u64 current_value = (*state->numbers)[index];
-    value = (op == Operation::Add) ? (value + current_value) : (value * current_value);
+    
+    switch (op) {
+        case Operation::Add:
+            value += current_value;
+            break;
+        case Operation::Multiply:
+            value *= current_value;
+            break;
+        case Operation::Concatenate:
+            value = Concatenate(value, current_value);
+            break;
+        default:
+            assert(0);
+            break;
+    }
     
     if (index == state->numbers->size() - 1) {
         if (value == state->expected_value) {
             state->match_count += 1;
         }
     } else {
-        ComputeValue(state, value, Operation::Add, index + 1);
-        ComputeValue(state, value, Operation::Multiply, index + 1);
+        ComputeValue(state, value, Operation::Add, index + 1, use_concatenate);
+        ComputeValue(state, value, Operation::Multiply, index + 1, use_concatenate);
+        if (use_concatenate) {
+            ComputeValue(state, value, Operation::Concatenate, index + 1, use_concatenate);
+        }
     }
 }
 
@@ -80,6 +102,15 @@ void Day07_2024()
         
         if (state.match_count > 0) {
             part1_answer += value;
+            part2_answer += value;
+        } else {
+            bool use_concatenate = true;
+            ComputeValue(&state, numbers[index], Operation::Add, index + 1, use_concatenate);
+            ComputeValue(&state, numbers[index], Operation::Multiply, index + 1, use_concatenate);
+            ComputeValue(&state, numbers[index], Operation::Concatenate, index + 1, use_concatenate);
+            if (state.match_count > 0) {
+                part2_answer += value;
+            }
         }
     }
 
