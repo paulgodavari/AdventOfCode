@@ -11,7 +11,7 @@
 #include <unordered_map>
 
 
-// static const char* input_file_name = "../../2024/input/day_08.test_input";  // Part 1 = 14, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_08.test_input";  // Part 1 = 14, Part 2 = 34
 static const char* input_file_name = "../../2024/input/day_08.input";  // Part 1 = 381, Part 2 =
 
 
@@ -93,6 +93,17 @@ bool IsValidPosition(Grid* grid, Position position)
 }
 
 
+void AddPositionToMap(std::unordered_map<Position, u32>* position_map, Position position)
+{
+    auto it = position_map->find(position);
+    if (it != position_map->end()) {
+        it->second++;
+    } else {
+        (*position_map)[position] = 1;
+    }
+}
+
+
 void Day08_2024()
 {
     u64 run_time_start = TimeNow();
@@ -136,35 +147,45 @@ void Day08_2024()
                     Position antinode1 = positions[i] + diff;
                     Position antinode2 = positions[j] - diff;
                     if (IsValidPosition(&grid, antinode1)) {
-                        auto it = position_map.find(antinode1);
-                        if (it != position_map.end()) {
-                            it->second++;
-                        } else {
-                            position_map[antinode1] = 1;
-                        }
+                        AddPositionToMap(&position_map, antinode1);
                     }
                     if (IsValidPosition(&grid, antinode2)) {
-                        auto it = position_map.find(antinode2);
-                        if (it != position_map.end()) {
-                            it->second++;
-                        } else {
-                            position_map[antinode2] = 1;
-                        }
+                        AddPositionToMap(&position_map, antinode2);
                     }
                 }
             }
         }
-        //fprintf(stdout, "Freq: %c -> ", frequency);
-        //for (int index = 0; index < positions.size(); ++index) {
-        //    fprintf(stdout, "(%d, %d) ", positions[index].col, positions[index].row);
-        //}
-        //fprintf(stdout, "\n");
     }
     
     u64 part1_answer = position_map.size();
     
+    // Part 2: compute the antinodes along a line formed by each pair
+    position_map.clear();
     
-    u64 part2_answer = 0;
+    for (auto& [frequency, positions] : frequencies) {
+        if (positions.size() > 1) {
+            for (int i = 0; i < positions.size() - 1; ++i) {
+                for (int j = i + 1; j < positions.size(); ++j) {
+                    Position diff = positions[i] - positions[j];
+                    Position next_antinode = positions[i] + diff;
+                    while (IsValidPosition(&grid, next_antinode)) {
+                        AddPositionToMap(&position_map, next_antinode);
+                        next_antinode = next_antinode + diff;
+                    }
+                    AddPositionToMap(&position_map, positions[i]);
+
+                    next_antinode = positions[j] - diff;
+                    while (IsValidPosition(&grid, next_antinode)) {
+                        AddPositionToMap(&position_map, next_antinode);
+                        next_antinode = next_antinode - diff;
+                    }
+                    AddPositionToMap(&position_map, positions[j]);
+                }
+            }
+        }
+    }
+
+    u64 part2_answer = position_map.size();
     
     fprintf(stdout, "2024: Day 08 part 1: %llu\n", part1_answer);
     fprintf(stdout, "2024: Day 08 part 2: %llu\n", part2_answer);
