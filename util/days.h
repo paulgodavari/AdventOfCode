@@ -45,4 +45,4 @@ void Day06_2024();
 void Day07_2024();
 void Day08_2024();
 void Day09_2024();
-
+void Day10_2024();
