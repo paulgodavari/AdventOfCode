@@ -8,21 +8,8 @@
 
 #include <vector>
 
-// IDs: 10
-// Files: 28
-// Space: 14
-// Total blocks: 42
-
-// IDs: 10000
-// Files: 49902
-// Space: 45168
-// Total blocks: 95070
-
-// too high:
-// 6353658456323
-
-// static const char* input_file_name = "../../2024/input/day_09.test_input";  // Part 1 = 1928, Part 2 =
-static const char* input_file_name = "../../2024/input/day_09.input";  // Part 1 = , Part 2 =
+static const char* input_file_name = "../../2024/input/day_09.test_input";  // Part 1 = 1928, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_09.input";  // Part 1 = 6353658451014, Part 2 =
 
 
 enum class BlockType : u16
@@ -86,7 +73,7 @@ void PrintBlocks(const std::vector<Block>& blocks)
         if (blocks[i].type == BlockType::Space) {
             fprintf(stdout, ".");
         } else {
-            fprintf(stdout, "%d", blocks[i].id);
+            fprintf(stdout, "%x", blocks[i].id);
         }
     }
     fprintf(stdout, "\n");
@@ -131,19 +118,21 @@ void Day09_2024()
     }
 
     i32 space_index = 0;
-    i32 file_index = blocks.size() - 1;
+    i32 file_index = (i32) blocks.size() - 1;
     
     // PrintBlocks(blocks);
     
     while (space_index < file_index) {
         space_index = NextSpaceIndex(&blocks, space_index);
         file_index = LastFileIndex(&blocks, file_index);
-        assert(blocks[space_index].type == BlockType::Space);
-        assert(blocks[file_index].type == BlockType::File);
-        blocks[space_index] = blocks[file_index];
-        blocks[file_index] = { BlockType::Space };
-        space_index++;
-        file_index--;
+        if (space_index < file_index) {
+            assert(blocks[space_index].type == BlockType::Space);
+            assert(blocks[file_index].type == BlockType::File);
+            blocks[space_index] = blocks[file_index];
+            blocks[file_index] = { BlockType::Space };
+            space_index++;
+            file_index--;
+        }
     }
 
     // PrintBlocks(blocks);
@@ -153,12 +142,6 @@ void Day09_2024()
             part1_answer += index * blocks[index].id;
         }
     }
-
-
-    fprintf(stdout, "IDs: %u\n", id_count);
-    fprintf(stdout, "Files: %u\n", file_count);
-    fprintf(stdout, "Space: %u\n", space_count);
-    fprintf(stdout, "Total blocks: %u\n", file_count + space_count);
 
     fprintf(stdout, "2024: Day 09 part 1: %llu\n", part1_answer);
     fprintf(stdout, "2024: Day 09 part 2: %llu\n", part2_answer);
