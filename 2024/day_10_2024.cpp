@@ -9,8 +9,8 @@
 #include <unordered_set>
 
 
-// static const char* input_file_name = "../../2024/input/day_10.test_input";  // Part 1 = 36, Part 2 =
-static const char* input_file_name = "../../2024/input/day_10.input";  // Part 1 = 461, Part 2 =
+// static const char* input_file_name = "../../2024/input/day_10.test_input";  // Part 1 = 36, Part 2 = 81
+static const char* input_file_name = "../../2024/input/day_10.input";  // Part 1 = 461, Part 2 = 875
 
 
 struct Grid
@@ -99,38 +99,46 @@ static i32 ValueAtPosition(Grid* grid, Position position)
 }
 
 
-void ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails);
+u32 ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails);
 
-void SearchDirection(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
+u32 SearchDirection(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
 {
+    u32 result = 0;
+    
     if (IsValidPosition(grid, position)) {
         i32 new_value = ValueAtPosition(grid, position);
         if (new_value == value + 1) {
             if (new_value == 9) {
                 trails->insert(position);
+                result += 1;
             } else {
-                ComputeTrailValue(grid, position, new_value, trails);
+                result += ComputeTrailValue(grid, position, new_value, trails);
             }
         }
     }
+    
+    return result;
 }
 
 
-void ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
+u32 ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
 {
     // Recursively search up, right, down, left.
+    u32 result = 0;
     
     Position up = { position.row - 1, position.col };
-    SearchDirection(grid, up, value, trails);
+    result += SearchDirection(grid, up, value, trails);
 
     Position right = { position.row, position.col + 1 };
-    SearchDirection(grid, right, value, trails);
+    result += SearchDirection(grid, right, value, trails);
 
     Position down = { position.row + 1, position.col };
-    SearchDirection(grid, down, value, trails);
+    result += SearchDirection(grid, down, value, trails);
 
     Position left = { position.row, position.col - 1 };
-    SearchDirection(grid, left, value, trails);
+    result += SearchDirection(grid, left, value, trails);
+    
+    return result;
 }
 
 
@@ -148,8 +156,9 @@ void Day10_2024()
     Grid grid = ComputeGrid(&parser);
     
     
-    // Part 1: Search for each trailhead (char == '0') and recursively search it.
+    // Search for each trailhead (char == '0') and recursively search it.
     u64 part1_answer = 0;
+    u64 part2_answer = 0;
 
     for (i32 row = 0; row < grid.rows; ++row) {
         for (i32 col = 0; col < grid.cols - 1; ++col) {
@@ -158,14 +167,12 @@ void Day10_2024()
             char current = parser.data[offset];
             if (current == '0') {
                 std::unordered_set<Position> trails;
-                ComputeTrailValue(&grid, position, 0, &trails);
+                part2_answer += ComputeTrailValue(&grid, position, 0, &trails);
                 part1_answer += trails.size();
             }
         }
     }
     
-    u64 part2_answer = 0;
-
     fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
     fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
