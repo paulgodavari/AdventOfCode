@@ -30,7 +30,6 @@ namespace std {
     template <>
     struct hash<Position> {
         std::size_t operator()(const Position& p) const {
-            // Combine the two integers into a unique hash
             return std::hash<int>()(p.col) ^ (std::hash<int>()(p.row) << 1);
         }
     };

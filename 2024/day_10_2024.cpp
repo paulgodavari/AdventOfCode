@@ -36,7 +36,6 @@ namespace std {
     template <>
     struct hash<Position> {
         std::size_t operator()(const Position& p) const {
-            // Combine the two integers into a unique hash
             return std::hash<int>()(p.col) ^ (std::hash<int>()(p.row) << 1);
         }
     };
@@ -79,7 +78,7 @@ u32 OffsetFromPosition(Grid* grid, Position position)
 
 static bool IsValidPosition(Grid* grid, Position position)
 {
-    return (position.col >= 0 && position.col < grid->cols -1) && (position.row >= 0 && position.row < grid->rows);
+    return (position.col >= 0 && position.col < grid->cols - 1) && (position.row >= 0 && position.row < grid->rows);
 }
 
 
@@ -110,7 +109,7 @@ u32 SearchDirection(Grid* grid, Position position, u32 value, std::unordered_set
         if (new_value == value + 1) {
             if (new_value == 9) {
                 trails->insert(position);
-                result += 1;
+                result = 1;
             } else {
                 result += ComputeTrailValue(grid, position, new_value, trails);
             }
