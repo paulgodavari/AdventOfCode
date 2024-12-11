@@ -64,11 +64,11 @@ void AddStoneToMap(std::unordered_map<u64, u64>* stone_map, u64 stone, u64 count
 }
 
 
-u64 ComputeStoneCount(std::unordered_map<u64, u64>* map, u32 blinks)
+u64 ComputeStoneCount(const std::unordered_map<u64, u64>& map, u32 blinks)
 {
     u64 result = 0;
 
-    std::unordered_map<u64, u64> stone_map = *map;
+    std::unordered_map<u64, u64> stone_map = map;
 
     u32 current_blinks = 0;
     while (current_blinks < blinks) {
@@ -119,8 +119,8 @@ void Day11_2024()
         }
     }
 
-    u64 part1_answer = ComputeStoneCount(&stone_map, 25);
-    u64 part2_answer = ComputeStoneCount(&stone_map, 75);
+    u64 part1_answer = ComputeStoneCount(stone_map, 25);
+    u64 part2_answer = ComputeStoneCount(stone_map, 75);
 
     fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
     fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
