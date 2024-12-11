@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		665CF14D2D08EDB4007AF325 /* day_10_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF14C2D08EDB4007AF325 /* day_10_2024.cpp */; };
+		665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1512D0A0440007AF325 /* day_11_2024.cpp */; };
 		66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */; };
 		66A7DCE12CFE4B5000DA1C6E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE02CFE4B5000DA1C6E /* main.cpp */; };
 		66A7DCE32CFE4B6100DA1C6E /* day_25.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */; };
@@ -62,6 +63,9 @@
 		665CF14A2D08ED9C007AF325 /* day_10.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.input; path = 2024/input/day_10.input; sourceTree = "<group>"; };
 		665CF14B2D08ED9C007AF325 /* day_10.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.test_input; path = 2024/input/day_10.test_input; sourceTree = "<group>"; };
 		665CF14C2D08EDB4007AF325 /* day_10_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_10_2024.cpp; path = 2024/day_10_2024.cpp; sourceTree = "<group>"; };
+		665CF14F2D0A0429007AF325 /* day_11.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_11.input; path = 2024/input/day_11.input; sourceTree = "<group>"; };
+		665CF1502D0A0429007AF325 /* day_11.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_11.test_input; path = 2024/input/day_11.test_input; sourceTree = "<group>"; };
+		665CF1512D0A0440007AF325 /* day_11_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_11_2024.cpp; path = 2024/day_11_2024.cpp; sourceTree = "<group>"; };
 		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
 		66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = util/advent_of_code.cpp; sourceTree = "<group>"; };
 		66A7DCD92CFE49FA00DA1C6E /* advent_of_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = advent_of_code.h; path = util/advent_of_code.h; sourceTree = "<group>"; };
@@ -278,6 +282,16 @@
 				665CF14B2D08ED9C007AF325 /* day_10.test_input */,
 			);
 			name = "Day 10";
+			sourceTree = "<group>";
+		};
+		665CF14E2D0A03D8007AF325 /* Day 11 */ = {
+			isa = PBXGroup;
+			children = (
+				665CF1512D0A0440007AF325 /* day_11_2024.cpp */,
+				665CF14F2D0A0429007AF325 /* day_11.input */,
+				665CF1502D0A0429007AF325 /* day_11.test_input */,
+			);
+			name = "Day 11";
 			sourceTree = "<group>";
 		};
 		66612A762B1A3A6E0056154B = {
@@ -528,6 +542,7 @@
 		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
 			isa = PBXGroup;
 			children = (
+				665CF14E2D0A03D8007AF325 /* Day 11 */,
 				665CF1492D08ED91007AF325 /* Day 10 */,
 				66B7F4A42D0757BF00A113E8 /* Day 09 */,
 				66CEE4C42D0568B500573BDC /* Day 08 */,
@@ -699,6 +714,7 @@
 				66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */,
 				66CEE4B72CFFAEF100573BDC /* day_02_2024.cpp in Sources */,
 				66CEE4C12D041ED300573BDC /* day_07_2024.cpp in Sources */,
+				665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */,
 				66A7DD682D020B3900DA1C6E /* day_05_2024.cpp in Sources */,
 				66A7DD6F2D035F6700DA1C6E /* day_06_2024.cpp in Sources */,
 				66A7DD0C2CFE4B6C00DA1C6E /* day_07.cpp in Sources */,
