@@ -6,11 +6,12 @@
 
 #include "advent_of_code.h"
 
+#include <unordered_map>
 #include <vector>
 
 
 // static const char* input_file_name = "../../2024/input/day_11.test_input";  // Part 1 = 55312, Part 2 =
-static const char* input_file_name = "../../2024/input/day_11.input";  // Part 1 = 198075, Part 2 =
+static const char* input_file_name = "../../2024/input/day_11.input";  // Part 1 = 198075, Part 2 = 235571309320764
 
 
 struct Digits
@@ -52,6 +53,49 @@ Digits SplitNumberInHalf(u64 number)
 }
 
 
+void AddStoneToMap(std::unordered_map<u64, u64>* stone_map, u64 stone, u64 count)
+{
+    auto it = stone_map->find(stone);
+    if (it != stone_map->end()) {
+        it->second += count;
+    } else {
+        (*stone_map)[stone] = count;
+    }
+}
+
+
+u64 ComputeStoneCount(std::unordered_map<u64, u64>* map, u32 blinks)
+{
+    u64 result = 0;
+
+    std::unordered_map<u64, u64> stone_map = *map;
+
+    u32 current_blinks = 0;
+    while (current_blinks < blinks) {
+        std::unordered_map<u64, u64> new_stone_map;
+        for (auto [stone, count] : stone_map) {
+            if (stone == 0) {
+                AddStoneToMap(&new_stone_map, 1, count);
+            } else if (NumberOfDigits(stone) % 2 == 0) {
+                Digits digits = SplitNumberInHalf(stone);
+                AddStoneToMap(&new_stone_map, digits.left, count);
+                AddStoneToMap(&new_stone_map, digits.right, count);
+            } else {
+                AddStoneToMap(&new_stone_map, stone * 2024, count);
+            }
+        }
+        current_blinks++;
+        stone_map = std::move(new_stone_map);
+    }
+    
+    for (auto& [stone, count] : stone_map) {
+        result += count;
+    }
+    
+    return result;
+}
+
+
 void Day11_2024()
 {
     u64 run_time_start = TimeNow();
@@ -64,34 +108,19 @@ void Day11_2024()
     
     ParseState parser = { input_file.data, input_file.size, 0 };
     
-    std::vector<u64> stones;
+    std::unordered_map<u64, u64> stone_map;
     while (!AtEndOfLine(&parser)) {
         u64 number = ParseNumber(&parser);
-        stones.push_back(number);
-    }
-    
-    u32 blinks = 0;
-    while (blinks < 25) {
-        std::vector<u64> new_stones;
-        for (int index = 0; index < stones.size(); ++index) {
-            u64 stone = stones[index];
-            if (stone == 0) {
-                new_stones.push_back(1);
-            } else if (NumberOfDigits(stone) % 2 == 0) {
-                Digits digits = SplitNumberInHalf(stone);
-                new_stones.push_back(digits.left);
-                new_stones.push_back(digits.right);
-            } else {
-                new_stones.push_back(stone * 2024);
-            }
+        auto it = stone_map.find(number);
+        if (it != stone_map.end()) {
+            it->second++;
+        } else {
+            stone_map[number] = 1;
         }
-        blinks++;
-        stones = new_stones;
     }
-    
-    u64 part1_answer = stones.size();
-    u64 part2_answer = 0;
 
+    u64 part1_answer = ComputeStoneCount(&stone_map, 25);
+    u64 part2_answer = ComputeStoneCount(&stone_map, 75);
 
     fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
     fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
