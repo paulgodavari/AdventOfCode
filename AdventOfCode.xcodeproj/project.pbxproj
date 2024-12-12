@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		662128082D0ABA4600658341 /* day_12_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 662128072D0ABA4600658341 /* day_12_2024.cpp */; };
 		665CF14D2D08EDB4007AF325 /* day_10_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF14C2D08EDB4007AF325 /* day_10_2024.cpp */; };
 		665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1512D0A0440007AF325 /* day_11_2024.cpp */; };
 		66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */; };
@@ -60,6 +61,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		662128052D0ABA2300658341 /* day_12.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_12.test_input; path = 2024/input/day_12.test_input; sourceTree = "<group>"; };
+		662128062D0ABA2300658341 /* day_12.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_12.input; path = 2024/input/day_12.input; sourceTree = "<group>"; };
+		662128072D0ABA4600658341 /* day_12_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_12_2024.cpp; path = 2024/day_12_2024.cpp; sourceTree = "<group>"; };
 		665CF14A2D08ED9C007AF325 /* day_10.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.input; path = 2024/input/day_10.input; sourceTree = "<group>"; };
 		665CF14B2D08ED9C007AF325 /* day_10.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_10.test_input; path = 2024/input/day_10.test_input; sourceTree = "<group>"; };
 		665CF14C2D08EDB4007AF325 /* day_10_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_10_2024.cpp; path = 2024/day_10_2024.cpp; sourceTree = "<group>"; };
@@ -222,6 +226,16 @@
 				66A7DD312CFE4CCB00DA1C6E /* day_22.test_input */,
 			);
 			name = "Day 22";
+			sourceTree = "<group>";
+		};
+		662128042D0ABA0F00658341 /* Day 12 */ = {
+			isa = PBXGroup;
+			children = (
+				662128072D0ABA4600658341 /* day_12_2024.cpp */,
+				662128062D0ABA2300658341 /* day_12.input */,
+				662128052D0ABA2300658341 /* day_12.test_input */,
+			);
+			name = "Day 12";
 			sourceTree = "<group>";
 		};
 		66539A052B2D6C3C00613227 /* Day 16 */ = {
@@ -542,6 +556,7 @@
 		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
 			isa = PBXGroup;
 			children = (
+				662128042D0ABA0F00658341 /* Day 12 */,
 				665CF14E2D0A03D8007AF325 /* Day 11 */,
 				665CF1492D08ED91007AF325 /* Day 10 */,
 				66B7F4A42D0757BF00A113E8 /* Day 09 */,
@@ -713,6 +728,7 @@
 				66A7DD082CFE4B6B00DA1C6E /* day_18.cpp in Sources */,
 				66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */,
 				66CEE4B72CFFAEF100573BDC /* day_02_2024.cpp in Sources */,
+				662128082D0ABA4600658341 /* day_12_2024.cpp in Sources */,
 				66CEE4C12D041ED300573BDC /* day_07_2024.cpp in Sources */,
 				665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */,
 				66A7DD682D020B3900DA1C6E /* day_05_2024.cpp in Sources */,
