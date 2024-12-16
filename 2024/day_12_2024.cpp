@@ -262,7 +262,7 @@ Move GetNextMove(Grid* grid, Move previous_move)
             if (IsValidPosition(grid, test)) {
             } else {
                 // Going up, but no valid position above so we have a border.
-                result.position = previous_move;
+                result.position = previous_move.position;
                 result.direction = Direction::Right;
             }
             break;
@@ -364,7 +364,7 @@ void Day12_2024()
         part2_answer += sides * positions.size();
     }
     
-    fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
+    fprintf(stdout, "2024: Day 12 part 1: %llu\n", part1_answer);
+    fprintf(stdout, "2024: Day 12 part 2: %llu\n", part2_answer);
     fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
 }
