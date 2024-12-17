@@ -11,6 +11,7 @@
 		665CF14D2D08EDB4007AF325 /* day_10_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF14C2D08EDB4007AF325 /* day_10_2024.cpp */; };
 		665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1512D0A0440007AF325 /* day_11_2024.cpp */; };
 		665CF1722D10F072007AF325 /* day_13_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1712D10F072007AF325 /* day_13_2024.cpp */; };
+		665CF1772D122D36007AF325 /* day_14_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1762D122D36007AF325 /* day_14_2024.cpp */; };
 		66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */; };
 		66A7DCE12CFE4B5000DA1C6E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE02CFE4B5000DA1C6E /* main.cpp */; };
 		66A7DCE32CFE4B6100DA1C6E /* day_25.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */; };
@@ -74,6 +75,9 @@
 		665CF16F2D10F060007AF325 /* day_13.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_13.test_input; path = 2024/input/day_13.test_input; sourceTree = "<group>"; };
 		665CF1702D10F060007AF325 /* day_13.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_13.input; path = 2024/input/day_13.input; sourceTree = "<group>"; };
 		665CF1712D10F072007AF325 /* day_13_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_13_2024.cpp; path = 2024/day_13_2024.cpp; sourceTree = "<group>"; };
+		665CF1742D122D24007AF325 /* day_14.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.test_input; path = 2024/input/day_14.test_input; sourceTree = "<group>"; };
+		665CF1752D122D24007AF325 /* day_14.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.input; path = 2024/input/day_14.input; sourceTree = "<group>"; };
+		665CF1762D122D36007AF325 /* day_14_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_14_2024.cpp; path = 2024/day_14_2024.cpp; sourceTree = "<group>"; };
 		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
 		66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = util/advent_of_code.cpp; sourceTree = "<group>"; };
 		66A7DCD92CFE49FA00DA1C6E /* advent_of_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = advent_of_code.h; path = util/advent_of_code.h; sourceTree = "<group>"; };
@@ -315,11 +319,21 @@
 		665CF16E2D10F052007AF325 /* Day 13 */ = {
 			isa = PBXGroup;
 			children = (
+				665CF1712D10F072007AF325 /* day_13_2024.cpp */,
 				665CF1702D10F060007AF325 /* day_13.input */,
 				665CF16F2D10F060007AF325 /* day_13.test_input */,
-				665CF1712D10F072007AF325 /* day_13_2024.cpp */,
 			);
 			name = "Day 13";
+			sourceTree = "<group>";
+		};
+		665CF1732D122D18007AF325 /* Day 14 */ = {
+			isa = PBXGroup;
+			children = (
+				665CF1762D122D36007AF325 /* day_14_2024.cpp */,
+				665CF1752D122D24007AF325 /* day_14.input */,
+				665CF1742D122D24007AF325 /* day_14.test_input */,
+			);
+			name = "Day 14";
 			sourceTree = "<group>";
 		};
 		66612A762B1A3A6E0056154B = {
@@ -570,6 +584,7 @@
 		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
 			isa = PBXGroup;
 			children = (
+				665CF1732D122D18007AF325 /* Day 14 */,
 				665CF16E2D10F052007AF325 /* Day 13 */,
 				662128042D0ABA0F00658341 /* Day 12 */,
 				665CF14E2D0A03D8007AF325 /* Day 11 */,
@@ -739,6 +754,7 @@
 				66A7DD092CFE4B6B00DA1C6E /* day_19.cpp in Sources */,
 				66A7DD0F2CFE4B6C00DA1C6E /* day_21.cpp in Sources */,
 				66A7DD002CFE4B6B00DA1C6E /* day_08.cpp in Sources */,
+				665CF1772D122D36007AF325 /* day_14_2024.cpp in Sources */,
 				66A7DD5F2CFE528600DA1C6E /* day_01_2024.cpp in Sources */,
 				66A7DD082CFE4B6B00DA1C6E /* day_18.cpp in Sources */,
 				66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */,

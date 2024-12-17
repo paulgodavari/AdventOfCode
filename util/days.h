@@ -49,4 +49,4 @@ void Day10_2024();
 void Day11_2024();
 void Day12_2024();
 void Day13_2024();
-
+void Day14_2024();
