@@ -6,6 +6,8 @@
 
 #include "advent_of_code.h"
 
+#include <vector>
+
 
 // static const char* input_file_name = "../../2024/input/day_14.test_input";  // Part 1 = 12, Part 2 =
 static const char* input_file_name = "../../2024/input/day_14.input";  // Part 1 = 218965032, Part 2 =
@@ -15,6 +17,13 @@ struct Position
 {
     i32 row;
     i32 col;
+};
+
+
+struct Motion
+{
+    Position position;
+    Position velocity;
 };
 
 
@@ -94,6 +103,7 @@ void Day14_2024()
     
     u32 count[grid.rows][grid.cols] = {};
 
+    std::vector<Motion> original_state;
     
     while (!AtEndOfFile(&parser)) {
         Position position;
@@ -109,8 +119,10 @@ void Day14_2024()
         velocity.row = (i32) ParseSignedNumber(&parser);
         Advance(&parser);
         
+        original_state.push_back({ position, velocity });
+        
         Position final = ComputeFinalPosition(grid, position, velocity, 100);
-        fprintf(stdout, "Start: (%d, %d), Final: (%d, %d)\n", position.col, position.row, final.col, final.row);
+        // fprintf(stdout, "Start: (%d, %d), Final: (%d, %d)\n", position.col, position.row, final.col, final.row);
         
         count[final.row][final.col] += 1;
     }

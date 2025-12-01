@@ -12,6 +12,7 @@
 		665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1512D0A0440007AF325 /* day_11_2024.cpp */; };
 		665CF1722D10F072007AF325 /* day_13_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1712D10F072007AF325 /* day_13_2024.cpp */; };
 		665CF1772D122D36007AF325 /* day_14_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665CF1762D122D36007AF325 /* day_14_2024.cpp */; };
+		666A9CCC2EDE21EA0063C2EA /* day_01_2025.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666A9CCB2EDE21EA0063C2EA /* day_01_2025.cpp */; };
 		66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */; };
 		66A7DCE12CFE4B5000DA1C6E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE02CFE4B5000DA1C6E /* main.cpp */; };
 		66A7DCE32CFE4B6100DA1C6E /* day_25.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */; };
@@ -79,6 +80,9 @@
 		665CF1752D122D24007AF325 /* day_14.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.input; path = 2024/input/day_14.input; sourceTree = "<group>"; };
 		665CF1762D122D36007AF325 /* day_14_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_14_2024.cpp; path = 2024/day_14_2024.cpp; sourceTree = "<group>"; };
 		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
+		666A9CCB2EDE21EA0063C2EA /* day_01_2025.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_01_2025.cpp; sourceTree = "<group>"; };
+		666A9CCE2EDE3FB10063C2EA /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = input/day_01.input; sourceTree = "<group>"; };
+		666A9CCF2EDE3FB10063C2EA /* day_01.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input; path = input/day_01.test_input; sourceTree = "<group>"; };
 		66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = util/advent_of_code.cpp; sourceTree = "<group>"; };
 		66A7DCD92CFE49FA00DA1C6E /* advent_of_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = advent_of_code.h; path = util/advent_of_code.h; sourceTree = "<group>"; };
 		66A7DCE02CFE4B5000DA1C6E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = 2023/main.cpp; sourceTree = "<group>"; };
@@ -343,6 +347,7 @@
 				66A7DCD72CFE49DA00DA1C6E /* Util */,
 				66A7DD592CFE51CA00DA1C6E /* 2023 */,
 				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
+				666A9CCA2EDE21B20063C2EA /* 2025 */,
 				66612A802B1A3A6E0056154B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -353,6 +358,24 @@
 				66612A7F2B1A3A6E0056154B /* AdventOfCode */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		666A9CCA2EDE21B20063C2EA /* 2025 */ = {
+			isa = PBXGroup;
+			children = (
+				666A9CCD2EDE3F920063C2EA /* Day 01 */,
+			);
+			path = 2025;
+			sourceTree = "<group>";
+		};
+		666A9CCD2EDE3F920063C2EA /* Day 01 */ = {
+			isa = PBXGroup;
+			children = (
+				666A9CCE2EDE3FB10063C2EA /* day_01.input */,
+				666A9CCF2EDE3FB10063C2EA /* day_01.test_input */,
+				666A9CCB2EDE21EA0063C2EA /* day_01_2025.cpp */,
+			);
+			name = "Day 01";
 			sourceTree = "<group>";
 		};
 		66797BF72B2A5D5B00777948 /* Day 01 */ = {
@@ -779,6 +802,7 @@
 				66A7DD052CFE4B6B00DA1C6E /* day_13.cpp in Sources */,
 				66A7DD0E2CFE4B6C00DA1C6E /* day_03.cpp in Sources */,
 				66A7DD042CFE4B6B00DA1C6E /* day_09.cpp in Sources */,
+				666A9CCC2EDE21EA0063C2EA /* day_01_2025.cpp in Sources */,
 				66A7DD072CFE4B6B00DA1C6E /* day_14.cpp in Sources */,
 				66A7DCFF2CFE4B6B00DA1C6E /* day_02.cpp in Sources */,
 				66A7DD112CFE4B6C00DA1C6E /* day_15.cpp in Sources */,

@@ -53,14 +53,21 @@ void AoC2024()
     // Day11_2024();
     // Day12_2024();  // Missing part 2
     // Day13_2024();
-    Day14_2024();
+    // Day14_2024();
+}
+
+
+void AoC2025()
+{
+    Day01_2025();
 }
 
 
 int main(int argc, char* argv[])
 {
     // AoC2023();
-    AoC2024();
+    // AoC2024();
+    AoC2025();
     
     return 0;
 }
