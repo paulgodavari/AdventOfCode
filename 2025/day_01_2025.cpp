@@ -6,8 +6,8 @@
 
 #include "advent_of_code.h"
 
-static const char* input_file_name = "../../2025/input/day_01.test_input";  // Part 1 = 3, Part 2 =
-// static const char* input_file_name = "../../2025/input/day_01.input";  // Part 1 = , Part 2 =
+// static const char* input_file_name = "../../2025/input/day_01.test_input";  // Part 1 = 3, Part 2 = 
+static const char* input_file_name = "../../2025/input/day_01.input";  // Part 1 = 1152, Part 2 =
 
 
 void Day01_2025()
@@ -34,7 +34,8 @@ void Day01_2025()
     while (fscanf(input_file.handle, " %c%d", &direction, &steps) == 2) {
         if (direction == 'L' || direction == 'R') {
             int sign = direction == 'L' ? -1 : 1;
-            position += sign * steps;
+            int new_position = (position + sign * steps) % 100;
+            position = new_position < 0 ? (100 + new_position) : new_position;
             if (position == 0) {
                 part1_answer++;
             }
