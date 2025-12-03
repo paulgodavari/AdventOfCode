@@ -55,5 +55,6 @@ void Day14_2024();
 // 2025
 void Day01_2025();
 void Day02_2025();
+void Day03_2025();
 
 
