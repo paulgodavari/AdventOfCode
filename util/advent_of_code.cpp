@@ -26,18 +26,18 @@ u64 TimeNow()
 
 f64 MillisecondsSince(u64 start_time)
 {
-    f64 result = mach_absolute_time();
+    u64 now = mach_absolute_time();
+    u64 elapsed = now - start_time;
     
     static dispatch_once_t time_init_token;
-
     dispatch_once(&time_init_token, ^{
         mach_timebase_info(&g_time_base);
         if (g_time_base.denom > 0) {
-            g_scale = ((f64) (g_time_base.numer / g_time_base.denom)) / NSEC_PER_MSEC;
+            g_scale = ((f64) g_time_base.numer / (f64) g_time_base.denom) / NSEC_PER_MSEC;
         }
     });
-    
-    result = (result - start_time) * g_scale;
+
+    f64 result = (f64) elapsed * g_scale;
 
     return result;
 }
