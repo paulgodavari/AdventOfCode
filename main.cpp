@@ -6,6 +6,7 @@
 
 #include "util/days.h"
 
+#include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -44,7 +45,9 @@ static void PrintUsage(FILE* output)
     fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--test] [--input FILE]\n"
                     "       aoc --help\n"
                     "Run from the project root. --test uses example.txt, with example-1.txt as a fallback.\n"
-                    "--input overrides the selected input. It requires a year and day and takes a path relative to AdventOfCodeData/.\n");
+                    "aoc checks results against answers.txt when an answer is available for the selected input.\n"
+                    "--input overrides the selected input and skips that check.\n"
+                    "It requires a year and day and takes a path relative to AdventOfCodeData/.\n");
 }
 
 
@@ -126,6 +129,46 @@ static bool ParseOptions(int argc, char* argv[], Options* options)
 }
 
 
+static bool ReadSavedAnswer(const Part& part, bool use_example, i64* answer)
+{
+    char path[PATH_MAX];
+    snprintf(path, sizeof(path), "%s/%d/%02d/answers.txt", kDataDirectory, part.year, part.day);
+    FILE* file = fopen(path, "r");
+    if (!file) {
+        return false;
+    }
+
+    char* line = nullptr;
+    size_t capacity = 0;
+    bool found = true;
+    for (int number = 0; number < part.number; ++number) {
+        if (getline(&line, &capacity, file) < 0) {
+            found = false;
+            break;
+        }
+    }
+    fclose(file);
+
+    // Each line starts with the example answer and can end with the real answer.
+    const char* start = line;
+    int column_count = use_example ? 1 : 2;
+    intmax_t value = 0;
+    for (int column = 0; found && column < column_count; ++column) {
+        errno = 0;
+        char* end = nullptr;
+        value = strtoimax(start, &end, 10);
+        found = end != start && errno == 0 && value >= INT64_MIN && value <= INT64_MAX && (*end == '\0' || isspace((unsigned char) *end));
+        start = end;
+    }
+
+    free(line);
+    if (found) {
+        *answer = (i64) value;
+    }
+    return found;
+}
+
+
 static bool RunPart(const Part& part, const Options& options)
 {
     char path[PATH_MAX];
@@ -165,8 +208,19 @@ static bool RunPart(const Part& part, const Options& options)
         return false;
     }
 
-    printf("%d Day %02d Part %d: %" PRId64 "\n", part.year, part.day, part.number, answer);
-    return true;
+    printf("%d Day %02d Part %d: %" PRId64, part.year, part.day, part.number, answer);
+    i64 expected = 0;
+    bool success = true;
+    if (!options.input_path && ReadSavedAnswer(part, options.use_example, &expected)) {
+        success = answer == expected;
+        if (success) {
+            printf(" (matches saved answer)");
+        } else {
+            printf(" (expected %" PRId64 ")", expected);
+        }
+    }
+    putchar('\n');
+    return success;
 }
 
 
