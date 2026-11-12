@@ -57,7 +57,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--day 2"
+            argument = "--day 21"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
