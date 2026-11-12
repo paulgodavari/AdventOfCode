@@ -6,10 +6,12 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <string.h>
 
 
-const String kNumbers[] = {
+static const String kNumbers[] = {
     CONST_STRING("zero"),
     CONST_STRING("one"),
     CONST_STRING("two"),
@@ -23,113 +25,70 @@ const String kNumbers[] = {
 };
 
 
-const size_t kLineBufferSize = 1024;
-
-static const char* input_file = "day_01.input";  // 55017 (part 1), 53539 (part 2)
-// static const char* input_file = "day_01.test_input1";  // 142 (part 1)
-// static const char* input_file = "day_01.test_input2";  // 281 (part 2)
-
-
-int GetCalibrationValueFromLine(const char* line, ssize_t line_size, int current_line_count)
+static int GetCalibrationValueFromLine(const char* line, size_t line_size, bool use_words)
 {
     int first_digit = -1;
     int last_digit = -1;
-    
-    int index = 0;
-    bool end_of_line = false;
-    
-    while (index < line_size && !end_of_line) {
+
+    // Advance one character at a time so number words can overlap.
+    for (size_t index = 0; index < line_size; ++index) {
         int digit = -1;
-        int index_advance = 1;
-        const char current_char = line[index];
-        switch (current_char) {
-            case '\n': {
-                end_of_line = true;
-                index_advance = 0;
-                break;
-            }
-                
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                digit = current_char - '0';
-                break;
-            }
-
-            case 'e':
-            case 'f':
-            case 'n':
-            case 'o':
-            case 's':
-            case 't':
-            case 'z': {
-                for (int nindex = 0; nindex < 10; ++nindex) {
-                    if (MatchNumberKeyword(line, index, kNumbers[nindex])) {
-                        digit = nindex;
-                        break;
-                    }
+        char character = line[index];
+        if (character >= '0' && character <= '9') {
+            digit = character - '0';
+        } else if (use_words) {
+            for (int number = 0; number < 10; ++number) {
+                String keyword = kNumbers[number];
+                if (keyword.size <= line_size - index && MatchNumberKeyword(line + index, 0, keyword)) {
+                    digit = number;
+                    break;
                 }
-                break;
-            }
-
-            default: {
-                break;
             }
         }
-        
-        if (digit >= 0 && digit < 10) {
+
+        if (digit >= 0) {
             if (first_digit < 0) {
                 first_digit = digit;
             }
             last_digit = digit;
         }
-        
-        index += index_advance;
     }
 
-    int calibration_value = first_digit * 10 + last_digit;
-    
-    fprintf(stdout, "%d: %.*s (%d bytes) -> (%d, %d) = %d\n",
-            current_line_count, (int) index, line, (int) index,
-            first_digit, last_digit, calibration_value);
-
-    return calibration_value;
+    return first_digit < 0 ? -1 : first_digit * 10 + last_digit;
 }
 
 
-void Day01()
+static bool SolveDay01(const File* input_file, bool use_words, i64* answer)
 {
-    FILE* f = fopen(input_file, "r");
-    if (!f) {
-        fprintf(stderr, "Failed to open: %s\n", input_file);
-    }
+    i64 total = 0;
+    size_t offset = 0;
+    while (offset < input_file->size) {
+        const char* line = input_file->data + offset;
+        size_t remaining = input_file->size - offset;
+        const char* line_end = (const char*) memchr(line, '\n', remaining);
+        size_t line_size = line_end ? (size_t) (line_end - line) : remaining;
 
-    size_t line_buffer_size = kLineBufferSize;
-    char* line_buffer = new char[line_buffer_size];
-
-    int calibration_value = 0;
-    
-    int line_count = 0;
-    ssize_t bytes_read = 0;
-    while (bytes_read >= 0) {
-        bytes_read = getline(&line_buffer, &line_buffer_size, f);
-        if (bytes_read >= 0) {
-            line_count++;
-            calibration_value += GetCalibrationValueFromLine(line_buffer, line_buffer_size, line_count);
+        int calibration_value = GetCalibrationValueFromLine(line, line_size, use_words);
+        if (calibration_value < 0 || total > INT64_MAX - calibration_value) {
+            return false;
         }
+
+        total += calibration_value;
+        offset += line_size + (line_end ? 1 : 0);
     }
-    
-    fprintf(stdout, "Calibration value: %d (%d lines from %s)\n",
-            calibration_value, line_count, input_file);
-    
-    delete [] line_buffer;
-    
-    fclose(f);
+
+    *answer = total;
+    return true;
+}
+
+
+bool Day01Part1(const File* input_file, i64* answer)
+{
+    return SolveDay01(input_file, false, answer);
+}
+
+
+bool Day01Part2(const File* input_file, i64* answer)
+{
+    return SolveDay01(input_file, true, answer);
 }

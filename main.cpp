@@ -35,6 +35,8 @@ struct Part
 
 static const char kDataDirectory[] = "AdventOfCodeData";
 static const Part kParts[] = {
+    { 2023, 1, 1, Day01Part1 },
+    { 2023, 1, 2, Day01Part2 },
     { 2023, 6, 1, Day06Part1 },
     { 2023, 6, 2, Day06Part2 },
 };
@@ -44,7 +46,8 @@ static void PrintUsage(FILE* output)
 {
     fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--test] [--input FILE]\n"
                     "       aoc --help\n"
-                    "Run from the project root. --test uses example.txt, with example-1.txt as a fallback.\n"
+                    "Run from the project root. --test selects test_input.txt. A regular run selects input.txt.\n"
+                    "Part-specific files such as test_input2.txt or input2.txt take priority.\n"
                     "aoc checks results against answers.txt when an answer is available for the selected input.\n"
                     "--input overrides the selected input and skips that check.\n"
                     "It requires a year and day and takes a path relative to AdventOfCodeData/.\n");
@@ -169,27 +172,38 @@ static bool ReadSavedAnswer(const Part& part, bool use_example, i64* answer)
 }
 
 
-static bool RunPart(const Part& part, const Options& options)
+static int FindInputPath(const Part& part, const Options& options, char* path, size_t capacity)
 {
-    char path[PATH_MAX];
-    int length = 0;
     if (options.input_path) {
-        length = snprintf(path, sizeof(path), "%s/%s", kDataDirectory, options.input_path);
-    } else {
-        const char* filename = part.number == 1 ? "1.txt" : "2.txt";
-        const char* fallback_filename = "input.txt";
-        if (options.use_example) {
-            filename = "example.txt";
-            fallback_filename = "example-1.txt";
-        }
+        return snprintf(path, capacity, "%s/%s", kDataDirectory, options.input_path);
+    }
 
-        length = snprintf(path, sizeof(path), "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, filename);
+    char part_filename[32];
+    char legacy_part_filename[32];
+    snprintf(part_filename, sizeof(part_filename), options.use_example ? "test_input%d.txt" : "input%d.txt", part.number);
+    snprintf(legacy_part_filename, sizeof(legacy_part_filename), options.use_example ? "example-%d.txt" : "%d.txt", part.number);
+
+    // Try the old names too so the runner can read days whose files still use them.
+    const char* test_filenames[] = { part_filename, "test_input.txt", "example.txt", legacy_part_filename, "example-1.txt", nullptr };
+    const char* real_filenames[] = { part_filename, legacy_part_filename, "input.txt", nullptr };
+    const char* const* filenames = options.use_example ? test_filenames : real_filenames;
+    for (int index = 0; filenames[index]; ++index) {
+        int length = snprintf(path, capacity, "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, filenames[index]);
         struct stat file_info = {};
-        if (stat(path, &file_info) == -1 && errno == ENOENT) {
-            length = snprintf(path, sizeof(path), "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, fallback_filename);
+        if (length < 0 || (size_t) length >= capacity || stat(path, &file_info) == 0 || errno != ENOENT) {
+            return length;
         }
     }
 
+    const char* shared_filename = options.use_example ? "test_input.txt" : "input.txt";
+    return snprintf(path, capacity, "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, shared_filename);
+}
+
+
+static bool RunPart(const Part& part, const Options& options)
+{
+    char path[PATH_MAX];
+    int length = FindInputPath(part, options, path, sizeof(path));
     if (length < 0 || (size_t) length >= sizeof(path)) {
         fprintf(stderr, "Could not form the input path.\n");
         return false;
