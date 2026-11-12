@@ -41,6 +41,12 @@ struct String
 bool operator<(const String& lhs, const String& rhs);
 bool operator==(const String& lhs, const String& rhs);
 
+// Returns a line of text and advances input past the line ending.
+String ReadLine(String* input);
+
+// Reads a signed decimal integer and advances input when the read succeeds.
+bool ReadInteger(String* input, i64* number);
+
 struct StringHash
 {
     size_t operator()(const String& s) const;

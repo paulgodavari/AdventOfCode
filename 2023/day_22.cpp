@@ -1,20 +1,20 @@
 // day_22.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
+#include <algorithm>
 #include <set>
 #include <vector>
 
 
-// static const char* input_file_name = "day_22.test_input";  // Part 1: 5, part 2: 7
-static const char* input_file_name = "day_22.input";  // Part 1: 505, part 2:
 
 
-// 21745 too low
+
+namespace {
 
 struct Position
 {
@@ -30,7 +30,6 @@ static bool operator==(const Position& lhs, const Position& rhs)
 }
 
 
-static const Position kMaxDimension = { 10, 10, 365 };
 
 
 struct Brick
@@ -57,14 +56,21 @@ bool ZCompare(const Brick& lhs, const Brick& rhs)
 
 struct Grid
 {
-    u32 space[kMaxDimension.x][kMaxDimension.y][kMaxDimension.z];
+    size_t height;
+    size_t depth;
+    std::vector<u32> space;
+
+    u32& At(int x, int y, int z)
+    {
+        return space[((size_t) x * height + y) * depth + z];
+    }
 };
 
 
 Brick PositionFallingBrick(Grid* grid, Brick brick)
 {
     Brick result = brick;
-    
+
     i32 z_drop = 0;
     bool done_falling = false;
     for (int z = brick.start.z; z > 1; --z) {
@@ -75,7 +81,7 @@ Brick PositionFallingBrick(Grid* grid, Brick brick)
             u32 y_min = std::min(brick.start.y, brick.stop.y);
             u32 y_max = std::max(brick.start.y, brick.stop.y);
             for (int y = y_min; y <= y_max; ++y) {
-                if (grid->space[x][y][z_test]) {
+                if (grid->At(x, y, z_test)) {
                     done_falling = true;
                     break;
                 }
@@ -90,10 +96,10 @@ Brick PositionFallingBrick(Grid* grid, Brick brick)
             z_drop++;
         }
     }
-    
+
     result.start.z -= z_drop;
     result.stop.z -= z_drop;
-        
+
     return result;
 }
 
@@ -109,8 +115,8 @@ void AddBrickToGrid(Grid* grid, Brick brick)
             u32 z_min = std::min(brick.start.z, brick.stop.z);
             u32 z_max = std::max(brick.start.z, brick.stop.z);
             for (int z = z_min; z <= z_max; ++z) {
-                assert(grid->space[x][y][z] == 0 || grid->space[x][y][z] == brick.id);
-                grid->space[x][y][z] = brick.id;
+                assert(grid->At(x, y, z) == 0 || grid->At(x, y, z) == brick.id);
+                grid->At(x, y, z) = brick.id;
             }
         }
     }
@@ -128,7 +134,7 @@ void RemoveBrickFromGrid(Grid* grid, Brick brick)
             u32 z_min = std::min(brick.start.z, brick.stop.z);
             u32 z_max = std::max(brick.start.z, brick.stop.z);
             for (int z = z_min; z <= z_max; ++z) {
-                grid->space[x][y][z] = 0;
+                grid->At(x, y, z) = 0;
             }
         }
     }
@@ -138,7 +144,7 @@ void RemoveBrickFromGrid(Grid* grid, Brick brick)
 std::set<u32> FindVerticalNeighbours(Grid* grid, Brick brick)
 {
     std::set<u32> result;
-    
+
     u32 z_test = std::max(brick.start.z, brick.stop.z) + 1;
 
     u32 x_min = std::min(brick.start.x, brick.stop.x);
@@ -147,12 +153,12 @@ std::set<u32> FindVerticalNeighbours(Grid* grid, Brick brick)
         u32 y_min = std::min(brick.start.y, brick.stop.y);
         u32 y_max = std::max(brick.start.y, brick.stop.y);
         for (int y = y_min; y <= y_max; ++y) {
-            if (grid->space[x][y][z_test]) {
-                result.insert(grid->space[x][y][z_test]);
+            if (grid->At(x, y, z_test)) {
+                result.insert(grid->At(x, y, z_test));
             }
         }
     }
-    
+
     return result;
 }
 
@@ -160,7 +166,7 @@ std::set<u32> FindVerticalNeighbours(Grid* grid, Brick brick)
 bool CanRemoveBrickFromGrid(Grid* grid, Brick brick, const std::vector<Brick>& bricks)
 {
     bool result = true;
-    
+
     std::set<u32> neighbours = FindVerticalNeighbours(grid, brick);
     for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
         u32 neighbour_index = *it - 1;
@@ -174,12 +180,12 @@ bool CanRemoveBrickFromGrid(Grid* grid, Brick brick, const std::vector<Brick>& b
             break;
         }
     }
-    
+
     return result;
 }
 
 
-u32 ComputeTotalFall(Grid* grid, Brick brick, const std::vector<Brick>& bricks, std::set<u32>* fallen)
+[[maybe_unused]] u32 ComputeTotalFall(Grid* grid, Brick brick, const std::vector<Brick>& bricks, std::set<u32>* fallen)
 {
     u32 result = 0;
 
@@ -203,7 +209,7 @@ u32 ComputeTotalFall(Grid* grid, Brick brick, const std::vector<Brick>& bricks, 
         Brick neighbour = bricks[neighbour_index];
         RemoveBrickFromGrid(grid, neighbour);
     }
-    
+
     for (auto it = falling_neighbours.begin(); it != falling_neighbours.end(); ++it) {
         u32 neighbour_index = *it - 1;
         Brick neighbour = bricks[neighbour_index];
@@ -219,121 +225,79 @@ u32 ComputeTotalFall(Grid* grid, Brick brick, const std::vector<Brick>& bricks, 
     AddBrickToGrid(grid, brick);
 
     result += falling_neighbours.size();
-    
+
     return result;
 }
 
-
-void Day22()
+bool ReadPosition(String* line, Position* position)
 {
-    fprintf(stdout, "Day 22\n");
-
-    u64 run_time = TimeNow();
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
-    }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-
-    std::vector<Brick> input_bricks;
-    Position min = {};
-    Position max = {};
-    
-    while (!AtEndOfFile(&parser)) {
-        Brick brick = {};
-        brick.id = (u32) input_bricks.size() + 1;
-        
-        brick.start.x = ParseNumber(&parser);
-        Advance(&parser);
-        brick.start.y = ParseNumber(&parser);
-        Advance(&parser);
-        brick.start.z = ParseNumber(&parser);
-
-        assert(parser.data[parser.offset] == '~');
-        Advance(&parser);
-
-        brick.stop.x = ParseNumber(&parser);
-        Advance(&parser);
-        brick.stop.y = ParseNumber(&parser);
-        Advance(&parser);
-        brick.stop.z = ParseNumber(&parser);
-
-        assert(parser.data[parser.offset] == '\n');
-        Advance(&parser);
-
-        // Find the min and max dimensions.
-        min.x = std::min(min.x, brick.start.x);
-        min.x = std::min(min.x, brick.stop.x);
-        min.y = std::min(min.y, brick.start.y);
-        min.y = std::min(min.y, brick.stop.y);
-        min.z = std::min(min.z, brick.start.z);
-        min.z = std::min(min.z, brick.stop.z);
-
-        max.x = std::max(max.x, brick.start.x);
-        max.x = std::max(max.x, brick.stop.x);
-        max.y = std::max(max.y, brick.start.y);
-        max.y = std::max(max.y, brick.stop.y);
-        max.z = std::max(max.z, brick.start.z);
-        max.z = std::max(max.z, brick.stop.z);
-
-        input_bricks.push_back(brick);
-    }
-    
-    fprintf(stdout, "Found %u bricks, min=(%u, %u, %u), max=(%u, %u, %u)\n",
-            (u32) input_bricks.size(), min.x, min.y, min.z, max.x, max.y, max.z);
-    fprintf(stdout, "Initialization time: %.4f\n", MillisecondsSince(run_time));
-    
-    // Part 1
-    
-    // Position the bricks at the lowest possible z value in the grid.
-    u64 start_time = TimeNow();
-    std::sort(input_bricks.begin(), input_bricks.end(), ZCompare);
-    fprintf(stdout, "Sort time: %.4f\n", MillisecondsSince(start_time));
-
-    start_time = TimeNow();
-    Grid grid = {};
-    std::vector<Brick> bricks;
-    for (int i = 0; i < input_bricks.size(); ++i) {
-        Brick brick = input_bricks[i];
-        Brick new_brick = PositionFallingBrick(&grid, brick);
-        new_brick.id = i+1;
-        AddBrickToGrid(&grid, new_brick);
-        bricks.push_back(new_brick);
-    }
-    fprintf(stdout, "Falling time: %.4f\n", MillisecondsSince(start_time));
-
-    // For each brick, find all bricks vertically adjacent and see if those will fall.
-    start_time = TimeNow();
-    u32 part_1_bricks = 0;
-    for (int i = 0; i < bricks.size(); ++i) {
-        Brick brick = bricks[i];
-        if (CanRemoveBrickFromGrid(&grid, brick, bricks)) {
-            part_1_bricks++;
+    i32* values[] = { &position->x, &position->y, &position->z };
+    for (int index = 0; index < 3; ++index) {
+        i64 value = 0;
+        if (!ReadInteger(line, &value) || value < 0 || value >= INT32_MAX - 1) {
+            return false;
+        }
+        *values[index] = (i32) value;
+        if (index < 2) {
+            if (!line->size || *line->start != ',') {
+                return false;
+            }
+            ++line->start;
+            --line->size;
         }
     }
-    
-    fprintf(stdout, "Check time: %.4f\n", MillisecondsSince(start_time));
-    fprintf(stdout, "Part 1 number of bricks: %u\n", part_1_bricks);
-    
-    // Part 2
-    start_time = TimeNow();
-    u32 part_2_bricks = 0;
-    
-    std::set<u32> fallen;
-    for (int i = 0; i < bricks.size(); ++i) {
-        Brick brick = bricks[i];
-        part_2_bricks += ComputeTotalFall(&grid, brick, bricks, &fallen);
-    }
-
-    fprintf(stdout, "Part 2 number of bricks: %u (%u)\n", part_2_bricks, fallen.size());
-    fprintf(stdout, "Total fall time: %.4f\n", MillisecondsSince(start_time));
-
-    fprintf(stdout, "Run time: %.4f ms\n", MillisecondsSince(run_time));
-    
-    CloseFile(&input_file);
+    return position->z > 0;
 }
 
+} // namespace
 
+
+bool Day22Part1(const File* input_file, i64* answer)
+{
+    String input = { input_file->data, input_file->size };
+    std::vector<Brick> bricks;
+    Position maximum = {};
+    while (input.size) {
+        String line = ReadLine(&input);
+        Position first = {};
+        Position second = {};
+        if (!ReadPosition(&line, &first) || !line.size || *line.start != '~') {
+            return false;
+        }
+        ++line.start;
+        --line.size;
+        if (!ReadPosition(&line, &second) || line.size || bricks.size() >= INT32_MAX) {
+            return false;
+        }
+
+        Position start = { std::min(first.x, second.x), std::min(first.y, second.y), std::min(first.z, second.z) };
+        Position stop = { std::max(first.x, second.x), std::max(first.y, second.y), std::max(first.z, second.z) };
+        bricks.push_back({ 0, start, stop });
+        maximum.x = std::max(maximum.x, stop.x);
+        maximum.y = std::max(maximum.y, stop.y);
+        maximum.z = std::max(maximum.z, stop.z);
+    }
+
+    Grid grid = { (size_t) maximum.y + 1, (size_t) maximum.z + 2, {} };
+    size_t cells = (size_t) maximum.x + 1;
+    if (__builtin_mul_overflow(cells, grid.height, &cells) || __builtin_mul_overflow(cells, grid.depth, &cells) ||
+        cells > grid.space.max_size()) {
+        return false;
+    }
+    grid.space.resize(cells);
+
+    std::sort(bricks.begin(), bricks.end(), ZCompare);
+    for (size_t index = 0; index < bricks.size(); ++index) {
+        Brick brick = PositionFallingBrick(&grid, bricks[index]);
+        brick.id = (u32) index + 1;
+        AddBrickToGrid(&grid, brick);
+        bricks[index] = brick;
+    }
+
+    i64 removable = 0;
+    for (Brick brick : bricks) {
+        removable += CanRemoveBrickFromGrid(&grid, brick, bricks);
+    }
+    *answer = removable;
+    return true;
+}

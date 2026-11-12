@@ -1,255 +1,127 @@
 // day_15.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <ctype.h>
+#include <string.h>
 
 
-// static const char* input_file_name = "day_15.test_input";  // Part 1: 1320, part2: 145
-static const char* input_file_name = "day_15.input";  // Part 1: 512797, part2: 262454
-
-static const u32 kMaxBoxes = 256;
+static const int kBoxCount = 256;
 
 
-enum Operation
+struct Lens
 {
-    kCommandInvalid = 0,
-    kCommandDash,
-    kCommandEquals
-};
-
-
-struct Command
-{
+    Lens* next;
     String label;
-    Operation op;
-    u32 value;
+    i64 focal_length;
 };
 
 
-struct HashBucket
+static u32 ComputeHash(String word)
 {
-    HashBucket* next;
-    String label;
-    u32 value;
-};
-
-
-struct HashMap
-{
-    HashBucket* box[kMaxBoxes];
-};
-
-
-u32 ComputeHash(String word)
-{
-    u32 result = 0;
-    
-    for (int i = 0; i < word.size; ++i) {
-        result += (u32) word.start[i];
-        result *= 17;
-        result = result % 256;
+    u32 hash = 0;
+    for (size_t index = 0; index < word.size; ++index) {
+        hash = (hash + (u8) word.start[index]) * 17 % kBoxCount;
     }
-    
-    return result;
+    return hash;
 }
 
 
-Command ParseCommand(String op_code)
+static bool ProcessStep(String step, Lens** boxes)
 {
-    Command result = {};
-    
-    ParseState parser = { (char*)op_code.start, op_code.size, 0 };
-    
-    bool parsing_label = true;
-    while (parser.offset < parser.size) {
-        char c = parser.data[parser.offset];
-        switch (c) {
-            case '=': {
-                result.op = kCommandEquals;
-                parsing_label = false;
-                Advance(&parser);
-                break;
-            }
-            case '-': {
-                result.op = kCommandDash;
-                parsing_label = false;
-                Advance(&parser);
-                break;
-            }
-            default: {
-                if (parsing_label) {
-                    result.label = ParseWord(&parser);
-                } else {
-                    result.value = ParseNumber(&parser);
-                }
-                break;
-            }
-        }
+    size_t index = 0;
+    while (index < step.size && isalnum((unsigned char) step.start[index])) {
+        ++index;
     }
-    
-    return result;
+    if (!index || index == step.size) {
+        return false;
+    }
+
+    String label = { step.start, index };
+    char operation = step.start[index++];
+    Lens** link = &boxes[ComputeHash(label)];
+    while (*link && !((*link)->label == label)) {
+        link = &(*link)->next;
+    }
+
+    if (operation == '-' && index == step.size) {
+        if (*link) {
+            Lens* removed = *link;
+            *link = removed->next;
+            delete removed;
+        }
+        return true;
+    }
+
+    String length = { step.start + index, step.size - index };
+    i64 focal_length = 0;
+    if (operation != '=' || !ReadInteger(&length, &focal_length) || length.size || focal_length < 0) {
+        return false;
+    }
+
+    if (*link) {
+        (*link)->focal_length = focal_length;
+    } else {
+        *link = new Lens { nullptr, label, focal_length };
+    }
+    return true;
 }
 
 
-void ProcessCommand(HashMap* hash_map, Command cmd)
+static bool SolveDay15(const File* input_file, bool focus, i64* answer)
 {
-    u32 box_index = ComputeHash(cmd.label);
-    
-    switch (cmd.op) {
-        case kCommandDash: {
-            if (hash_map->box[box_index]) {
-                HashBucket* next = hash_map->box[box_index];
-                HashBucket* current = nullptr;
-                while (next) {
-                    if (cmd.label == next->label) {
-                        if (current) {
-                            current->next = next->next;
-                        } else {
-                            hash_map->box[box_index] = next->next;
-                        }
-                        delete next;
-                        break;
-                    }                    
-                    current = next;
-                    next = next->next;
-                }
-            }
-            break;
-        }
-        case kCommandEquals: {
-            if (!hash_map->box[box_index]) {
-                hash_map->box[box_index] = new HashBucket { nullptr, cmd.label, cmd.value };
+    String input = { input_file->data, input_file->size };
+    Lens* boxes[kBoxCount] = {};
+    i64 total = 0;
+    bool success = true;
+    while (success && input.size) {
+        String line = ReadLine(&input);
+        while (success && line.size) {
+            const char* comma = (const char*) memchr(line.start, ',', line.size);
+            size_t size = comma ? (size_t) (comma - line.start) : line.size;
+            String step = { line.start, size };
+            if (focus) {
+                success = ProcessStep(step, boxes);
             } else {
-                // Search for an existing entry with the same label.
-                bool found_entry = false;
-                HashBucket* next = hash_map->box[box_index];
-                HashBucket* current = next;
-                while (next) {
-                    if (cmd.label == next->label) {
-                        found_entry = true;
-                        next->value = cmd.value;
-                        break;
-                    }
-                    current = next;
-                    next = next->next;
-                }
-                if (!found_entry) {
-                    current->next = new HashBucket { nullptr, cmd.label, cmd.value };
-                }
+                success = !__builtin_add_overflow(total, (i64) ComputeHash(step), &total);
             }
-            break;
-        }
-        default: {
-            break;
+            size += comma != nullptr;
+            line.start += size;
+            line.size -= size;
         }
     }
-    
+
+    for (int box = 0; box < kBoxCount; ++box) {
+        i64 slot = 1;
+        while (Lens* lens = boxes[box]) {
+            i64 power = 0;
+            if (success) {
+                success = !__builtin_mul_overflow(box + 1, slot, &power) &&
+                          !__builtin_mul_overflow(power, lens->focal_length, &power) &&
+                          !__builtin_add_overflow(total, power, &total);
+            }
+            boxes[box] = lens->next;
+            delete lens;
+            ++slot;
+        }
+    }
+
+    *answer = total;
+    return success;
 }
 
 
-u32 ScoreHashMap(HashMap* hash_map)
+bool Day15Part1(const File* input_file, i64* answer)
 {
-    u32 result = 0;
-    
-    for (int i = 0; i < kMaxBoxes; ++i) {
-        u32 box_sum = 0;
-        u32 box_score = i + 1;
-        if (hash_map->box[i]) {
-            HashBucket* next = hash_map->box[i];
-            u32 bucket_count = 1;
-            while (next) {
-                box_sum += box_score * bucket_count * next->value;
-                next = next->next;
-                bucket_count++;
-            }
-        }
-        result += box_sum;
-    }
-    
-    return result;
+    return SolveDay15(input_file, false, answer);
 }
 
 
-void DumpHashMap(HashMap* hash_map)
+bool Day15Part2(const File* input_file, i64* answer)
 {
-    fprintf(stdout, "\n");
-    
-    for (int i = 0; i < kMaxBoxes; ++i) {
-        if (hash_map->box[i]) {
-            fprintf(stdout, "Box %d: ", i);
-            HashBucket* next = hash_map->box[i];
-            while (next) {
-                fprintf(stdout, "[%.*s %u] ", (int) next->label.size, next->label.start, next->value);
-                next = next->next;
-            }
-            fprintf(stdout, "\n");
-        }
-    }
-    
-    fprintf(stdout, "\n");
+    return SolveDay15(input_file, true, answer);
 }
-
-
-void Day15()
-{
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
-    }
-    
-    fprintf(stdout, "Day 15\n");
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    u32 part_1_sum = 0;
-    size_t word_length = 0;
-    const char* word_start = nullptr;
-    
-    HashMap hash_map = {};
-
-    while (!AtEndOfFile(&parser)) {
-        char c = parser.data[parser.offset];
-        switch (c) {
-            case ',':
-            case '\n': {
-                String op_code = { word_start, word_length };
-                
-                // Part 1
-                u32 hash = ComputeHash(op_code);
-                // fprintf(stdout, "Found word: %.*s -> %u\n", (int) op_code.size, op_code.start, hash);
-                part_1_sum += hash;
-                word_start = nullptr;
-                word_length = 0;
-                
-                // Part 2
-                Command cmd = ParseCommand(op_code);
-                // fprintf(stdout, "Command label: %.*s, op: %u, value: %u\n",
-                //         (int) cmd.label.size, cmd.label.start, cmd.op, cmd.value);
-                ProcessCommand(&hash_map, cmd);
-                // DumpHashMap(&hash_map);
-                break;
-            }
-            default: {
-                if (!word_start) {
-                    word_start = parser.data + parser.offset;
-                }
-                word_length++;
-                break;
-            }
-        }
-        Advance(&parser);
-    }
-
-    u32 part_2_sum = ScoreHashMap(&hash_map);
-    
-    fprintf(stdout, "Day 15: part 1 sum: %u\n", part_1_sum);
-    fprintf(stdout, "Day 15: part 2 sum: %u\n", part_2_sum);
-        
-    CloseFile(&input_file);
-}
-
-

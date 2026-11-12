@@ -1,138 +1,92 @@
 // day_11.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <vector>
 
 
-// static const char* input_file_name = "day_11.test_input";  // Part 1: 374, part 2: (10, 1030), (100, 8410)
-static const char* input_file_name = "day_11.input";  // Part 1: , part 2: 731244261352
-
-
-static const u32 kMaxGalaxies = 512;
-static const u32 kMaxRows = 140;
-static const u32 kMaxCols = 140;  // 141 if including the '\n' character.
-
-// static const u32 kEmptyAdjustment = 1;
-// static const u32 kEmptyAdjustment = 10-1;
-// static const u32 kEmptyAdjustment = 100-1;
-static const u32 kEmptyAdjustment = 1000000-1;
-
-
-struct Position
+struct Galaxy
 {
-    i32 row;
-    i32 col;
+    i64 row;
+    i64 col;
 };
 
 
-void Day11()
+static bool SolveDay11(const File* input_file, i64 expansion, i64* answer)
 {
-    fprintf(stdout, "Day 11\n");
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading file: %s\n", input_file_name);
-        return;
-    }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    u32 galaxy_count = 0;
-    Position galaxy_map[kMaxGalaxies] = {};
-    
-    bool row_has_galaxy[kMaxRows] = {};
-    bool col_has_galaxy[kMaxCols] = {};
-    
-    i32 rows = 0;
-    i32 cols = 0;
-    while (!AtEndOfFile(&parser)) {
-        cols = 0;
-        while (!AtEndOfLine(&parser)) {
-            char current_char = parser.data[parser.offset];
-            if (current_char == '#') {
-                galaxy_map[galaxy_count] = { rows, cols };
-                galaxy_count++;
-                col_has_galaxy[cols] = true;
-                row_has_galaxy[rows] = true;
+    String input = { input_file->data, input_file->size };
+    std::vector<Galaxy> galaxies;
+    std::vector<bool> occupied_columns;
+    i64 row = 0;
+    while (input.size) {
+        String line = ReadLine(&input);
+        if (row == 0) {
+            occupied_columns.resize(line.size);
+        }
+        if (!line.size || line.size != occupied_columns.size()) {
+            return false;
+        }
+
+        bool occupied = false;
+        for (size_t col = 0; col < line.size; ++col) {
+            if (line.start[col] == '#') {
+                galaxies.push_back({ row, (i64) col });
+                occupied_columns[col] = true;
+                occupied = true;
+            } else if (line.start[col] != '.') {
+                return false;
             }
-            cols++;
-            Advance(&parser);
         }
-        rows++;
-        Advance(&parser);
-    }
-    
-    fprintf(stdout, "Galaxy count: %u (r: %u, c: %u)\n", galaxy_count, rows, cols);
-    
-    i32 empty_row_count = 0;
-    fprintf(stdout, "Empty rows:  ");
-    for (int i = 0; i < rows; ++i) {
-        if (!row_has_galaxy[i]) {
-            empty_row_count++;
-            fprintf(stdout, "%d ", i);
-        }
-    }
-    fprintf(stdout, " (%d)\n", empty_row_count);
-
-    i32 empty_col_count = 0;
-    fprintf(stdout, "Empty cols:  ");
-    for (int i = 0; i < cols; ++i) {
-        if (!col_has_galaxy[i]) {
-            empty_col_count++;
-            fprintf(stdout, "%d ", i);
-        }
-    }
-    fprintf(stdout, " (%d)\n", empty_col_count);
-    
-    // Expand the positions of the galaxies.
-    // Create a list of adjustments for each column.
-    i32 col_adjustment[kMaxCols] = {};
-    i32 current_adjustment = 0;
-    for (int i = 0; i < cols; ++i) {
-        if (!col_has_galaxy[i]) {
-            current_adjustment += kEmptyAdjustment;
-        }
-        col_adjustment[i] = current_adjustment;
-    }
-
-    // Create a list of adjustments for each row.
-    i32 row_adjustment[kMaxRows] = {};
-    current_adjustment = 0;
-    for (int i = 0; i < rows; ++i) {
-        if (!row_has_galaxy[i]) {
-            current_adjustment += kEmptyAdjustment;
-        }
-        row_adjustment[i] = current_adjustment;
-    }
-    
-    // Adjust the positions of each galaxy.
-    for (int i = 0; i < galaxy_count; ++i) {
-        Position old_pos = galaxy_map[i];
-        Position new_pos = { old_pos.row + row_adjustment[old_pos.row],
-                             old_pos.col + col_adjustment[old_pos.col] };
-        galaxy_map[i] = new_pos;
-        // fprintf(stdout, "(%u, %u) --> (%u, %u)\n", old_pos.row, old_pos.col, new_pos.row, new_pos.col);
-    }
-    
-    // Compute the distances between each pair of galaxies.
-    u64 distance_sum = 0;
-    u32 count = 0;
-    for (int i = 0; i < galaxy_count; ++i) {
-        Position g1 = galaxy_map[i];
-        for (int j = i; j < galaxy_count; ++j) {
-            Position g2 = galaxy_map[j];
-            u64 distance = abs(g2.row - g1.row) + abs(g2.col - g1.col);
-            //fprintf(stdout, "%d: (%u, %u) - (%u, %u) = %llu\n", count, g2.row, g2.col, g1.row, g1.col, distance);
-            distance_sum += distance;
-            count++;
+        if (__builtin_add_overflow(row, occupied ? 1 : expansion, &row)) {
+            return false;
         }
     }
 
-    fprintf(stdout, "Day 11: distance sum: %llu\n", distance_sum);
+    std::vector<i64> column_positions(occupied_columns.size());
+    i64 position = 0;
+    for (size_t col = 0; col < occupied_columns.size(); ++col) {
+        column_positions[col] = position;
+        if (__builtin_add_overflow(position, occupied_columns[col] ? 1 : expansion, &position)) {
+            return false;
+        }
+    }
+    for (Galaxy& galaxy : galaxies) {
+        galaxy.col = column_positions[galaxy.col];
+    }
 
-    CloseFile(&input_file);
+    i64 total = 0;
+    for (size_t first = 0; first < galaxies.size(); ++first) {
+        for (size_t second = first + 1; second < galaxies.size(); ++second) {
+            i64 row_distance = galaxies[second].row - galaxies[first].row;
+            i64 col_distance = llabs(galaxies[second].col - galaxies[first].col);
+            if (__builtin_add_overflow(total, row_distance, &total) || __builtin_add_overflow(total, col_distance, &total)) {
+                return false;
+            }
+        }
+    }
+
+    *answer = total;
+    return true;
 }
 
+
+bool Day11Part1(const File* input_file, i64* answer)
+{
+    return SolveDay11(input_file, 2, answer);
+}
+
+
+bool Day11Part2(const File* input_file, i64* answer)
+{
+    return SolveDay11(input_file, 1000000, answer);
+}
+
+
+bool Day11Part2Test(const File* input_file, i64* answer)
+{
+    return SolveDay11(input_file, 10, answer);
+}

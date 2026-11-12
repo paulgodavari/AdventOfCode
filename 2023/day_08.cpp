@@ -1,178 +1,290 @@
 // day_08.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
-// static const char* input_file_name = "day_08.test_input";  // Part 1: 2
-// static const char* input_file_name = "day_08.test_input2";  // Part 1: 6
-// static const char* input_file_name = "day_08.test_input3";  // Part 2:
-static const char* input_file_name = "day_08.input";  // Part 1: 19199, Part 2: 13663968099527
-
-// Part 2 computes 14895418084045582289, need to find the least common multiple of all steps:
-//    0: Steps: 13939
-//    1: Steps: 17621
-//    2: Steps: 11309
-//    3: Steps: 20777
-//    4: Steps: 19199
-//    5: Steps: 15517
-//
-//    LCM: 13663968099527
+#include <vector>
 
 
-static const u32 kMaxIndexValue = 26*26*26;
+static const int kAlphabetSize = 36;
+static const int kNodeCount = kAlphabetSize * kAlphabetSize * kAlphabetSize;
 
 
-struct IndexPair
+struct DesertNode
 {
-    u32 left;
-    u32 right;
+    int left;
+    int right;
 };
 
 
-u32 StringToIndex(String str)
+struct DesertMap
 {
-    u32 result = 0;
-    
-    for (int i = 0; i < str.size; ++i) {
-        u32 num = str.start[i] - 'A';
-        result = result * 26 + num;
+    String directions;
+    std::vector<DesertNode> nodes;
+};
+
+
+struct DesertPosition
+{
+    int node;
+    size_t direction;
+};
+
+
+struct DesertCycle
+{
+    i64 prefix;
+    i64 period;
+    std::vector<i64> finishes;
+};
+
+
+static int NodeDigit(char character)
+{
+    if (character >= 'A' && character <= 'Z') {
+        return character - 'A';
     }
-    
-    return result;
+    if (character >= '0' && character <= '9') {
+        return 26 + character - '0';
+    }
+    return -1;
 }
 
 
-void Day08()
+static int ReadNode(String* line)
 {
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
+    size_t index = 0;
+    while (index < line->size && NodeDigit(line->start[index]) < 0) {
+        ++index;
     }
-    
-    u32 index_count = 0;
-    IndexPair table[kMaxIndexValue] = {};
-    
-    u32 a_count = 0;
-    u32 table_a[10] = {};
-    u32 z_count = 0;
-    u32 table_z[10] = {};
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    String directions = ParseWord(&parser);
-    Advance(&parser, 2);
-    
-    while (!AtEndOfFile(&parser)) {
-        String index = ParseWord(&parser);
-        assert(index.size == 3);
-        Advance(&parser, 4);
-        String left = ParseWord(&parser);
-        assert(left.size == 3);
-        Advance(&parser, 2);
-        String right = ParseWord(&parser);
-        assert(right.size == 3);
-        Advance(&parser);
-        assert(AtEndOfLine(&parser));
-        
-        u32 i = StringToIndex(index);
-        IndexPair p = { StringToIndex(left), StringToIndex(right) };
-        assert(table[i].left == 0);
-        assert(table[i].right == 0);
-        table[i] = p;
-        
-        if (index.start[2] == 'A') {
-            table_a[a_count] = i;
-            a_count++;
-            // fprintf(stdout, "a: %.*s\n", (int) index.size, index.start);
-        } else if (index.start[2] == 'Z') {
-            table_z[z_count] = i;
-            z_count++;
-            // fprintf(stdout, "z: %.*s\n", (int) index.size, index.start);
+
+    int node = 0;
+    int count = 0;
+    for (; index < line->size && NodeDigit(line->start[index]) >= 0; ++index) {
+        if (++count > 3) {
+            return -1;
         }
-        
-//        fprintf(stdout, "%u: %.*s -> [%.*s, %.*s]",
-//                index_count,
-//                (int) index.size, index.start,
-//                (int) left.size, left.start,
-//                (int) right.size, right.start);
-//        fprintf(stdout, "   (%u -> [%u, %u])", i, p.left, p.right);
-//        fprintf(stdout, "\n");
-
-        index_count++;
-        Advance(&parser);
+        node = node * kAlphabetSize + NodeDigit(line->start[index]);
     }
 
-    u64 steps = 0;
-
-    // Part 1: Steps from AAA to ZZZ.
-    u32 current_index = StringToIndex(CONST_STRING("AAA"));
-    u32 final_index = StringToIndex(CONST_STRING("ZZZ"));
-
-    bool done = false;
-    while (!done) {
-        for (int i = 0; i < directions.size; ++i) {
-            if (directions.start[i] == 'L') {
-                current_index = table[current_index].left;
-            } else {
-                assert(directions.start[i] == 'R');
-                current_index = table[current_index].right;
-            }
-            steps++;
-            if (current_index == final_index) {
-                done = true;
-                break;
-            }
-        }
-        
-        if (!done) {
-            // fprintf(stdout, "Restarting directions\n");
-        }
-    }
-
-    fprintf(stdout, "Part 1 steps: %llu\n", steps);
-
-    // Part 2: All indices ending in 'A' to all ending in 'Z'.
-    u64 steps_to_z[10] = {};
-    
-    for (int a = 0; a < a_count; ++a) {
-        steps = 0;
-        current_index = table_a[a];
-        bool done = false;
-        while (!done) {
-            bool found_z = false;
-            for (int i = 0; i < directions.size; ++i) {
-                if (directions.start[i] == 'L') {
-                    current_index = table[current_index].left;
-                } else {
-                    current_index = table[current_index].right;
-                }
-                steps++;
-                for (int z = 0; z < a_count; ++z) {
-                    if (current_index == table_z[z]) {
-                        fprintf(stdout, "%d: Steps: %llu\n", a, steps);
-                        steps_to_z[a] = steps;
-                        found_z = true;
-                        break;
-                    }
-                }
-                if (found_z) {
-                    done = true;
-                    break;
-                }
-            }
-        }
-    }
-    
-    u64 steps_required = 1;
-    for (int s = 0; s < a_count; ++s) {
-        steps_required *= steps_to_z[s];
-    }
-
-    fprintf(stdout, "Part 2 steps: %llu\n", steps_required);
+    line->start += index;
+    line->size -= index;
+    return count == 3 ? node : -1;
 }
 
 
+static bool ReadDesertMap(const File* input_file, DesertMap* map)
+{
+    String input = { input_file->data, input_file->size };
+    map->directions = ReadLine(&input);
+    if (!map->directions.size) {
+        return false;
+    }
+    for (size_t index = 0; index < map->directions.size; ++index) {
+        char direction = map->directions.start[index];
+        if (direction != 'L' && direction != 'R') {
+            return false;
+        }
+    }
+
+    map->nodes.assign(kNodeCount, { -1, -1 });
+    while (input.size) {
+        String line = ReadLine(&input);
+        if (!line.size) {
+            continue;
+        }
+        int node = ReadNode(&line);
+        int left = ReadNode(&line);
+        int right = ReadNode(&line);
+        if (node < 0 || left < 0 || right < 0 || map->nodes[node].left >= 0) {
+            return false;
+        }
+        map->nodes[node] = { left, right };
+    }
+
+    return true;
+}
+
+
+static DesertPosition NextPosition(const DesertMap& map, DesertPosition position)
+{
+    if (position.node < 0) {
+        return position;
+    }
+    DesertNode node = map.nodes[position.node];
+    int next = map.directions.start[position.direction] == 'L' ? node.left : node.right;
+    if (next < 0) {
+        return { -1, 0 };
+    }
+    return { next, (position.direction + 1) % map.directions.size };
+}
+
+
+static bool SamePosition(DesertPosition first, DesertPosition second)
+{
+    return first.node == second.node && first.direction == second.direction;
+}
+
+
+static DesertCycle FindCycle(const DesertMap& map, int node, bool ghosts)
+{
+    DesertPosition start = { node, 0 };
+    DesertPosition slow = NextPosition(map, start);
+    DesertPosition fast = NextPosition(map, slow);
+    while (!SamePosition(slow, fast)) {
+        slow = NextPosition(map, slow);
+        fast = NextPosition(map, NextPosition(map, fast));
+    }
+
+    DesertCycle cycle = {};
+    slow = start;
+    while (!SamePosition(slow, fast)) {
+        slow = NextPosition(map, slow);
+        fast = NextPosition(map, fast);
+        ++cycle.prefix;
+    }
+
+    fast = NextPosition(map, slow);
+    cycle.period = 1;
+    while (!SamePosition(slow, fast)) {
+        fast = NextPosition(map, fast);
+        ++cycle.period;
+    }
+
+    int z = NodeDigit('Z');
+    int zzz = (z * kAlphabetSize + z) * kAlphabetSize + z;
+    DesertPosition position = start;
+    for (i64 step = 0; step < cycle.prefix + cycle.period; ++step) {
+        if (ghosts ? position.node % kAlphabetSize == z : position.node == zzz) {
+            cycle.finishes.push_back(step);
+        }
+        position = NextPosition(map, position);
+    }
+    return cycle;
+}
+
+
+static i64 CommonPeriod(i64 first, i64 second)
+{
+    i64 divisor = first;
+    i64 remainder = second;
+    while (remainder) {
+        i64 next = divisor % remainder;
+        divisor = remainder;
+        remainder = next;
+    }
+
+    i64 result = 0;
+    return __builtin_mul_overflow(first / divisor, second, &result) ? 0 : result;
+}
+
+
+static i64 NextFinish(const DesertCycle& cycle, i64 at)
+{
+    i64 best = -1;
+    for (i64 finish : cycle.finishes) {
+        if (finish < at) {
+            if (finish < cycle.prefix) {
+                continue;
+            }
+            i64 distance = at - finish;
+            i64 repeats = distance / cycle.period + (distance % cycle.period != 0);
+            if (repeats > (INT64_MAX - finish) / cycle.period) {
+                continue;
+            }
+            finish += repeats * cycle.period;
+        }
+        if (best < 0 || finish < best) {
+            best = finish;
+        }
+    }
+    return best;
+}
+
+
+bool Day08Part1(const File* input_file, i64* answer)
+{
+    DesertMap map = {};
+    if (!ReadDesertMap(input_file, &map) || map.nodes[0].left < 0) {
+        return false;
+    }
+    DesertCycle cycle = FindCycle(map, 0, false);
+    if (cycle.finishes.empty()) {
+        return false;
+    }
+    *answer = cycle.finishes[0];
+    return true;
+}
+
+
+bool Day08Part2(const File* input_file, i64* answer)
+{
+    DesertMap map = {};
+    if (!ReadDesertMap(input_file, &map)) {
+        return false;
+    }
+
+    std::vector<DesertCycle> cycles;
+    i64 aligned_period = 1;
+    bool aligned = true;
+    i64 prefix = 0;
+    i64 period = 1;
+    for (int node = 0; node < kNodeCount; node += kAlphabetSize) {
+        if (map.nodes[node].left < 0) {
+            continue;
+        }
+        cycles.push_back(FindCycle(map, node, true));
+        const DesertCycle& cycle = cycles.back();
+        if (cycle.finishes.empty()) {
+            return false;
+        }
+
+        i64 first = cycle.finishes[0];
+        // The original routes finish at every positive multiple of their first finish.
+        if (cycle.period % first || (u64) ((cycle.prefix + cycle.period - 1) / first) != cycle.finishes.size()) {
+            aligned = false;
+        }
+        for (i64 finish : cycle.finishes) {
+            aligned = aligned && finish % first == 0;
+        }
+        if (aligned_period) {
+            aligned_period = CommonPeriod(aligned_period, first);
+        }
+        if (cycle.prefix > prefix) {
+            prefix = cycle.prefix;
+        }
+        if (period) {
+            period = CommonPeriod(period, cycle.period);
+        }
+    }
+    if (cycles.empty()) {
+        return false;
+    }
+    if (aligned) {
+        *answer = aligned_period;
+        return aligned_period != 0;
+    }
+
+    i64 limit = period && period - 1 <= INT64_MAX - prefix ? prefix + (period - 1) : INT64_MAX;
+    for (i64 step = 1; step <= limit;) {
+        i64 next = step;
+        for (const DesertCycle& cycle : cycles) {
+            i64 finish = NextFinish(cycle, step);
+            if (finish < 0) {
+                return false;
+            }
+            if (finish > next) {
+                next = finish;
+            }
+        }
+        if (next == step) {
+            *answer = step;
+            return true;
+        }
+        step = next;
+    }
+    return false;
+}

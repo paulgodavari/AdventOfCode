@@ -1,108 +1,75 @@
 // day_09.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <vector>
 
 
-// static const char* input_file_name = "day_09.test_input";  // Part 1: 114, part 2: 2
-static const char* input_file_name = "day_09.input";  // Part 1: 1819125966, part 2: 1140
-
-static const int kMaxSamples = 100;
-static const int kMaxRows = 200;
-
-
-struct History
+static bool SolveDay09(const File* input_file, bool backwards, i64* answer)
 {
-    u32 count;
-    i32 samples[kMaxSamples];
-};
-
-
-i32 PredictNextValue(History* history)
-{
-    i32 result = 0;
-    
-    // fprintf(stdout, "    ");
-    History diffs = {};
-    u32 zero_count = 0;
-    for (int i = 1; i < history->count; ++i) {
-        i32 diff = history->samples[i] - history->samples[i-1];
-        diffs.samples[diffs.count] = diff;
-        diffs.count++;
-        if (diff == 0) {
-            zero_count++;
+    String input = { input_file->data, input_file->size };
+    std::vector<i64> samples;
+    i64 total = 0;
+    while (input.size) {
+        String line = ReadLine(&input);
+        samples.clear();
+        i64 number = 0;
+        while (ReadInteger(&line, &number)) {
+            samples.push_back(number);
         }
-        // fprintf(stdout, "%d, ", diff);        
+        for (size_t index = 0; index < line.size; ++index) {
+            if (line.start[index] != ' ' && line.start[index] != '\t') {
+                return false;
+            }
+        }
+        if (samples.empty()) {
+            return false;
+        }
+
+        i64 prediction = 0;
+        bool subtract = false;
+        for (size_t count = samples.size(); count; --count) {
+            i64 value = backwards ? samples[0] : samples[count - 1];
+            bool overflow = subtract ? __builtin_sub_overflow(prediction, value, &prediction)
+                                     : __builtin_add_overflow(prediction, value, &prediction);
+            if (overflow) {
+                return false;
+            }
+            subtract = backwards && !subtract;
+
+            bool all_zero = true;
+            for (size_t index = 0; index + 1 < count; ++index) {
+                if (__builtin_sub_overflow(samples[index + 1], samples[index], &samples[index])) {
+                    return false;
+                }
+                all_zero = all_zero && samples[index] == 0;
+            }
+            if (all_zero) {
+                break;
+            }
+        }
+
+        if (__builtin_add_overflow(total, prediction, &total)) {
+            return false;
+        }
     }
-    // fprintf(stdout, "    \n");
-    
-    if (zero_count == diffs.count) {
-        // We're done, return something.
-        // fprintf(stdout, " -> %d\n", result);
-        return 0;
-    } else {
-        result = PredictNextValue(&diffs);
-    }
-    
-    // Part 1:
-    // result += diffs.samples[diffs.count-1];
-    
-    // Part 2:
-    result = diffs.samples[0] - result;
-    
-    // fprintf(stdout, " -> %d\n", result);
-    
-    return result;
+
+    *answer = total;
+    return true;
 }
 
 
-void Day09()
+bool Day09Part1(const File* input_file, i64* answer)
 {
-    fprintf(stdout, "Day 09\n");
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
-    }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    History table[kMaxRows] = {};
-    
-    u32 line_count = 0;
-    while (!AtEndOfFile(&parser)) {
-        History* history = &table[line_count];
-        while (!AtEndOfLine(&parser)) {
-            history->samples[history->count] = ParseSignedNumber(&parser);
-            history->count++;
-        }
-        Advance(&parser);
-        line_count++;
-    }
-
-    i64 prediction_sum = 0;
-    
-    for (int row = 0; row < line_count; ++row) {
-        // fprintf(stdout, "%u: ", row);
-        History* history = &table[row];
-        for (int i = 0; i < history->count; ++i) {
-            // fprintf(stdout, "%u, ", history->samples[i]);
-        }
-        // fprintf(stdout, "\n");
-        i32 prediction = PredictNextValue(history);
-        
-        // Part 1:
-        // prediction_sum += prediction + history->samples[history->count-1];
-        
-        // Part 2:
-        prediction_sum += history->samples[0] - prediction;
-    }
-    
-    fprintf(stdout, "Prediction sum: %lld\n", prediction_sum);
+    return SolveDay09(input_file, false, answer);
 }
 
 
+bool Day09Part2(const File* input_file, i64* answer)
+{
+    return SolveDay09(input_file, true, answer);
+}

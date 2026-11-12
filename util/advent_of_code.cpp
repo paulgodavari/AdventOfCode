@@ -7,6 +7,7 @@
 #include "advent_of_code.h"
 
 #include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include <dispatch/dispatch.h>
@@ -260,6 +261,60 @@ u64 ParseNumber(ParseState* parser)
 {
     u64 number = (u64) ParseNumberInternal(parser, false);    
     return number;
+}
+
+
+String ReadLine(String* input)
+{
+    if (input->size == 0) {
+        return {};
+    }
+
+    const char* end = (const char*) memchr(input->start, '\n', input->size);
+    size_t size = end ? (size_t) (end - input->start) : input->size;
+    size_t consumed = size + (end ? 1 : 0);
+    String line = { input->start, size };
+    if (size && line.start[size - 1] == '\r') {
+        --line.size;
+    }
+
+    input->start += consumed;
+    input->size -= consumed;
+    return line;
+}
+
+
+bool ReadInteger(String* input, i64* number)
+{
+    size_t offset = 0;
+    while (offset < input->size && (input->start[offset] == ' ' || input->start[offset] == '\t')) {
+        ++offset;
+    }
+
+    bool negative = offset < input->size && input->start[offset] == '-';
+    if (negative || (offset < input->size && input->start[offset] == '+')) {
+        ++offset;
+    }
+
+    size_t start = offset;
+    u64 limit = (u64) INT64_MAX + negative;
+    u64 value = 0;
+    while (offset < input->size && input->start[offset] >= '0' && input->start[offset] <= '9') {
+        u64 digit = input->start[offset] - '0';
+        if (value > (limit - digit) / 10) {
+            return false;
+        }
+        value = value * 10 + digit;
+        ++offset;
+    }
+    if (offset == start) {
+        return false;
+    }
+
+    *number = (value > (u64) INT64_MAX) ? INT64_MIN : (negative ? -(i64) value : (i64) value);
+    input->start += offset;
+    input->size -= offset;
+    return true;
 }
 
 

@@ -1,17 +1,15 @@
 // day_14.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
 #include <unordered_map>
-#include <vector>
+#include <string.h>
 
 
-static const char* input_file_name = "day_14.test_input";  // Part 1: 136, part 2: 64
-// static const char* input_file_name = "day_14.input";  // Part 1: 108826, part 2: 99291
 
 static const u32 kMaxRows = 100;
 static const u32 kMaxCols = 100;
@@ -19,22 +17,22 @@ static const u32 kMaxCols = 100;
 static const u32 kCycles = 1000000000;
 
 
-struct Grid
+struct PlatformGrid
 {
     u32 rows;
     u32 cols;
     char items[kMaxRows][kMaxCols];
-    
-    bool operator==(const Grid& rhs) const
+
+    bool operator==(const PlatformGrid& rhs) const
     {
         return memcmp(items, rhs.items, kMaxCols * kMaxRows * sizeof(char)) == 0;
     }
 };
 
 
-struct GridHash
+struct PlatformGridHash
 {
-    std::size_t operator()(const Grid& grid) const
+    std::size_t operator()(const PlatformGrid& grid) const
     {
         std::hash<char> hasher;
         std::size_t hash = 0;
@@ -49,18 +47,7 @@ struct GridHash
 
 
 
-void PrintGrid(Grid* grid)
-{
-    for (int row = 0; row < grid->rows; ++row) {
-        for (int col = 0; col < grid->cols; ++col) {
-            fprintf(stdout, "%c", grid->items[row][col]);
-        }
-        fprintf(stdout, "\n");
-    }
-}
-
-
-void TiltGridNorth(Grid* grid)
+static void TiltGridNorth(PlatformGrid* grid)
 {
     for (int col = 0; col < grid->cols; ++col) {
         i32 adjust = 0;
@@ -92,7 +79,7 @@ void TiltGridNorth(Grid* grid)
     }
 }
 
-void TiltGridSouth(Grid* grid)
+static void TiltGridSouth(PlatformGrid* grid)
 {
     for (int col = 0; col < grid->cols; ++col) {
         i32 adjust = 0;
@@ -125,7 +112,7 @@ void TiltGridSouth(Grid* grid)
 }
 
 
-void TiltGridEast(Grid* grid)
+static void TiltGridEast(PlatformGrid* grid)
 {
     for (int row = 0; row < grid->rows; ++row) {
         i32 adjust = 0;
@@ -158,7 +145,7 @@ void TiltGridEast(Grid* grid)
 }
 
 
-void TiltGridWest(Grid* grid)
+static void TiltGridWest(PlatformGrid* grid)
 {
     for (int row = 0; row < grid->rows; ++row) {
         i32 adjust = 0;
@@ -191,10 +178,10 @@ void TiltGridWest(Grid* grid)
 }
 
 
-u32 ScoreGrid(Grid* grid)
+static u32 ScoreGrid(PlatformGrid* grid)
 {
     u32 result = 0;
-    
+
     for (int row = 0; row < grid->rows; ++row) {
         u32 row_count = 0;
         for (int col = 0; col < grid->cols; ++col) {
@@ -204,81 +191,69 @@ u32 ScoreGrid(Grid* grid)
         }
         result += row_count * (grid->rows - row);
     }
-    
+
     return result;
 }
 
-
-void Day14()
+static bool ReadPlatform(const File* input_file, PlatformGrid* grid)
 {
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
+    String input = { input_file->data, input_file->size };
+    while (input.size) {
+        String row = ReadLine(&input);
+        if (!row.size || row.size > kMaxCols || grid->rows == kMaxRows || (grid->rows && row.size != grid->cols)) {
+            return false;
+        }
+        grid->cols = (u32) row.size;
+        for (u32 col = 0; col < grid->cols; ++col) {
+            char cell = row.start[col];
+            if (cell != '.' && cell != '#' && cell != 'O') {
+                return false;
+            }
+            grid->items[grid->rows][col] = cell;
+        }
+        ++grid->rows;
     }
-    
-    fprintf(stdout, "Day 14\n");
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
+    return grid->rows != 0;
+}
 
-    Grid grid = {};
-    
-    while (!AtEndOfFile(&parser)) {
-        u32 columns = 0;
-        while (!AtEndOfLine(&parser)) {
-            char c = parser.data[parser.offset];
-            grid.items[grid.rows][columns] = c;
-            columns++;
-            Advance(&parser);
-        }
-        Advance(&parser);
-        grid.rows++;
-        if (grid.cols < columns) {
-            grid.cols = columns;
-        }
-        columns = 0;
+
+bool Day14Part1(const File* input_file, i64* answer)
+{
+    PlatformGrid grid = {};
+    if (!ReadPlatform(input_file, &grid)) {
+        return false;
     }
-    
-    fprintf(stdout, "Rows: %u, cols: %u\n", grid.rows, grid.cols);
-    
-    // PrintGrid(&grid);
-    // fprintf(stdout, "\n\n");
-    // TiltGridNorth(&grid);
-    // u32 score = ScoreGrid(&grid);
-    // fprintf(stdout, "Part 1 score: %u\n", score);
-    // PrintGrid(&grid);
-    
-    std::unordered_map<Grid, u32, GridHash> grid_map;
-    std::vector<u32> scores;
-    
-    for (int cycle = 0; cycle < kCycles; ++cycle) {
+
+    TiltGridNorth(&grid);
+    *answer = ScoreGrid(&grid);
+    return true;
+}
+
+
+bool Day14Part2(const File* input_file, i64* answer)
+{
+    PlatformGrid grid = {};
+    if (!ReadPlatform(input_file, &grid)) {
+        return false;
+    }
+
+    std::unordered_map<PlatformGrid, u32, PlatformGridHash> seen;
+    seen.emplace(grid, 0);
+    u32 cycle = 0;
+    while (cycle < kCycles) {
         TiltGridNorth(&grid);
         TiltGridWest(&grid);
         TiltGridSouth(&grid);
         TiltGridEast(&grid);
-        
-        auto it = grid_map.find(grid);
-        if (it != grid_map.end()) {
-            u32 found_cycle = it->second;
-            u32 period = cycle - found_cycle;
-            u32 index = (kCycles - found_cycle) % period;
-            u32 offset = found_cycle - 1 + index;
-            u32 final_score = scores[offset];
-            fprintf(stdout, "Day 14 part 2: final_score: %u (period: %u)\n", final_score, period);
-            break;
-        } else {
-            u32 score = ScoreGrid(&grid);
-            scores.push_back(score);
-            grid_map[grid] = cycle;
-        }
+        ++cycle;
 
-        if (cycle % 1000000 == 0) {
-            fprintf(stdout, "Cycles %u\n", cycle);
+        auto entry = seen.emplace(grid, cycle);
+        if (!entry.second) {
+            u32 period = cycle - entry.first->second;
+            cycle += (kCycles - cycle) / period * period;
         }
     }
-    
 
-    CloseFile(&input_file);
+    *answer = ScoreGrid(&grid);
+    return true;
 }
-
-

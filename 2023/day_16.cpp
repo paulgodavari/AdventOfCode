@@ -1,291 +1,141 @@
 // day_16.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <vector>
 
 
-static const char* input_file_name = "day_16.test_input";  // Part 1: 46, part2: 51
-// static const char* input_file_name = "day_16.input";  // Part 1: 7472, part2: 7716
-
-static const u32 kMaxRows = 110;
-static const u32 kMaxColumns = 110;
-
-
-enum Direction
+enum BeamDirection
 {
-    kDirectionInvalid = 0,
-    kDirectionUp,
-    kDirectionDown,
-    kDirectionLeft,
-    kDirectionRight,
-    kDirectionSize
+    kBeamUp,
+    kBeamRight,
+    kBeamDown,
+    kBeamLeft,
 };
 
 
-struct Position
+struct Beam
 {
-    i32 row;
-    i32 col;
+    int row;
+    int col;
+    BeamDirection direction;
 };
 
 
-struct Move
+static Beam Step(Beam beam)
 {
-    Direction dir;
-    Position pos;
-};
-
-
-struct GridItem
-{
-    // First position is used for having been visited at all.
-    bool visited[kDirectionSize];
-};
-
-
-struct Grid
-{
-    u32 rows;
-    u32 cols;
-    GridItem items[kMaxRows][kMaxColumns];
-};
-
-
-bool ValidPosition(Grid* grid, Position position)
-{
-    bool result = ((position.row >= 0) && (position.row < grid->rows) &&
-                   (position.col >= 0) && (position.col < (grid->cols - 1)));
-    return result;
+    const int row_delta[] = { -1, 0, 1, 0 };
+    const int col_delta[] = { 0, 1, 0, -1 };
+    beam.row += row_delta[beam.direction];
+    beam.col += col_delta[beam.direction];
+    return beam;
 }
 
 
-void TraceLightRay(ParseState* parser, Grid* visited_grid, Move move)
+static i64 TraceLight(const std::vector<String>& rows, Beam start)
 {
-    while (ValidPosition(visited_grid, move.pos)) {
-        if (visited_grid->items[move.pos.row][move.pos.col].visited[move.dir]) {
-            // Already visited from this direction, we can skip the rest of the path.
-            return;
-        }
-        
-        // Mark as visited:
-        visited_grid->items[move.pos.row][move.pos.col].visited[0] = true;
-        visited_grid->items[move.pos.row][move.pos.col].visited[move.dir] = true;
-        
-        u32 offset = move.pos.row * visited_grid->cols + move.pos.col;
-        char terrain = parser->data[offset];
-        switch (terrain) {
-            case '.': {
-                switch (move.dir) {
-                    case kDirectionUp:
-                        move.pos.row--;
-                        break;
-                    case kDirectionDown:
-                        move.pos.row++;
-                        break;
-                    case kDirectionLeft:
-                        move.pos.col--;
-                        break;
-                    case kDirectionRight:
-                        move.pos.col++;
-                        break;
-                    default:
-                        assert(0);
-                        break;
-                }
+    int height = (int) rows.size();
+    int width = (int) rows[0].size;
+    std::vector<u8> visited((size_t) height * width);
+    std::vector<Beam> pending = { start };
+    i64 energized = 0;
+    while (!pending.empty()) {
+        Beam beam = pending.back();
+        pending.pop_back();
+        while (beam.row >= 0 && beam.row < height && beam.col >= 0 && beam.col < width) {
+            u8& cell = visited[(size_t) beam.row * width + beam.col];
+            u8 direction = 1 << beam.direction;
+            if (cell & direction) {
                 break;
             }
-            case '\\': {
-                switch (move.dir) {
-                    case kDirectionUp:
-                        move.pos.col--;
-                        move.dir = kDirectionLeft;                        
-                        break;
-                    case kDirectionDown:
-                        move.pos.col++;
-                        move.dir = kDirectionRight;                        
-                        break;
-                    case kDirectionLeft:
-                        move.pos.row--;
-                        move.dir = kDirectionUp;                        
-                        break;
-                    case kDirectionRight:
-                        move.pos.row++;
-                        move.dir = kDirectionDown;
-                        break;
-                    default:
-                        assert(0);
-                        break;
-                }
-                break;
-            }
-            case '/': {
-                switch (move.dir) {
-                    case kDirectionUp:
-                        move.pos.col++;
-                        move.dir = kDirectionRight;                        
-                        break;
-                    case kDirectionDown:
-                        move.pos.col--;
-                        move.dir = kDirectionLeft;                        
-                        break;
-                    case kDirectionLeft:
-                        move.pos.row++;
-                        move.dir = kDirectionDown;                        
-                        break;
-                    case kDirectionRight:
-                        move.pos.row--;
-                        move.dir = kDirectionUp;
-                        break;
-                    default:
-                        assert(0);
-                        break;
-                }
-                break;
-            }
-            case '-': {
-                switch (move.dir) {
-                    case kDirectionUp:
-                    case kDirectionDown: {
-                        Move left = { kDirectionLeft, { move.pos.row, move.pos.col - 1 } };
-                        TraceLightRay(parser, visited_grid, left);
-                        Move right = { kDirectionRight, { move.pos.row, move.pos.col + 1 } };
-                        TraceLightRay(parser, visited_grid, right);
-                        break;
+            energized += cell == 0;
+            cell |= direction;
+
+            switch (rows[beam.row].start[beam.col]) {
+                case '/':
+                    beam.direction = (BeamDirection) (beam.direction ^ 1);
+                    break;
+                case '\\':
+                    beam.direction = (BeamDirection) (beam.direction ^ 3);
+                    break;
+                case '-':
+                    if (beam.direction == kBeamUp || beam.direction == kBeamDown) {
+                        pending.push_back(Step({ beam.row, beam.col, kBeamLeft }));
+                        beam.direction = kBeamRight;
                     }
-                    case kDirectionLeft:
-                        move.pos.col--;
-                        break;
-                    case kDirectionRight:
-                        move.pos.col++;
-                        break;
-                    default:
-                        assert(0);
-                        break;
-                }
-                break;
-            }
-            case '|': {
-                switch (move.dir) {
-                    case kDirectionUp:
-                        move.pos.row--;
-                        break;
-                    case kDirectionDown:
-                        move.pos.row++;
-                        break;
-                    case kDirectionLeft:
-                    case kDirectionRight: {
-                        Move up = { kDirectionUp, { move.pos.row - 1, move.pos.col } };
-                        TraceLightRay(parser, visited_grid, up);
-                        Move down = { kDirectionDown, { move.pos.row + 1, move.pos.col } };
-                        TraceLightRay(parser, visited_grid, down);
-                        break;
+                    break;
+                case '|':
+                    if (beam.direction == kBeamLeft || beam.direction == kBeamRight) {
+                        pending.push_back(Step({ beam.row, beam.col, kBeamUp }));
+                        beam.direction = kBeamDown;
                     }
-                    default:
-                        assert(0);
-                        break;
-                }
-                break;
+                    break;
             }
-            default: {
-                assert(0);
-                break;
-            }
-        }        
+
+            beam = Step(beam);
+        }
     }
+    return energized;
 }
 
 
-u32 ScoreLightRayTrace(ParseState* parser, Grid* grid, Move starting_move)
+static bool SolveDay16(const File* input_file, bool all_edges, i64* answer)
 {
-    u32 result = 0;
-    
-    TraceLightRay(parser, grid, starting_move);
-    
-    for (int row = 0; row < grid->rows; ++row) {
-        for (int col = 0; col < (grid->cols - 1); ++col) {
-            if (grid->items[row][col].visited[0]) {
-                result++;
+    String input = { input_file->data, input_file->size };
+    std::vector<String> rows;
+    while (input.size) {
+        String row = ReadLine(&input);
+        if (!row.size || row.size > INT32_MAX || rows.size() >= INT32_MAX || (!rows.empty() && row.size != rows[0].size)) {
+            return false;
+        }
+        for (size_t col = 0; col < row.size; ++col) {
+            char cell = row.start[col];
+            if (cell != '.' && cell != '/' && cell != '\\' && cell != '-' && cell != '|') {
+                return false;
             }
         }
+        rows.push_back(row);
     }
-    
-    return result;
+    if (rows.empty()) {
+        return false;
+    }
+
+    if (!all_edges) {
+        *answer = TraceLight(rows, { 0, 0, kBeamRight });
+        return true;
+    }
+
+    i64 best = 0;
+    int height = (int) rows.size();
+    int width = (int) rows[0].size;
+    for (int col = 0; col < width; ++col) {
+        i64 down = TraceLight(rows, { 0, col, kBeamDown });
+        i64 up = TraceLight(rows, { height - 1, col, kBeamUp });
+        if (down > best) best = down;
+        if (up > best) best = up;
+    }
+    for (int row = 0; row < height; ++row) {
+        i64 right = TraceLight(rows, { row, 0, kBeamRight });
+        i64 left = TraceLight(rows, { row, width - 1, kBeamLeft });
+        if (right > best) best = right;
+        if (left > best) best = left;
+    }
+    *answer = best;
+    return true;
 }
 
 
-void Day16()
+bool Day16Part1(const File* input_file, i64* answer)
 {
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading: %s\n", input_file_name);
-        return;
-    }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    u32 column_count = 0;
-    while (!AtEndOfLine(&parser)) {
-        column_count++;
-        Advance(&parser);
-    }
-    column_count++;  // '\n' character
-    u32 row_count = (int) input_file.size / column_count;
-    fprintf(stdout, "rows: %u, cols: %u\n", row_count, column_count);
-    
-    // Reset
-    parser.offset = 0;
-    
-    // Part 1 ----------------------------
-    
-    Grid visited = { row_count, column_count };
-    Move inital_pos = { kDirectionRight };
-    
-    u32 energized = ScoreLightRayTrace(&parser, &visited, inital_pos);
-    fprintf(stdout, "Day 16 part 1 energized: %u\n", energized);
-    
-    // Part 2 ----------------------------
-    
-    energized = 0;
-    
-    // Check all the column possibilities.
-    for (int col = 0; col < (visited.cols - 1); ++col) {
-        inital_pos = { kDirectionDown, { 0, col } };
-        visited = {  row_count, column_count };
-        u32 enery_col = ScoreLightRayTrace(&parser, &visited, inital_pos);
-        if (enery_col > energized) {
-            energized = enery_col;
-        }
-        
-        inital_pos = { kDirectionUp, { (i32) visited.rows - 1, col } };
-        visited = { row_count, column_count };
-        enery_col = ScoreLightRayTrace(&parser, &visited, inital_pos);
-        if (enery_col > energized) {
-            energized = enery_col;
-        }
-    }
-
-    // Check all the row possibilities.
-    for (int row = 0; row < visited.rows; ++row) {
-        inital_pos = { kDirectionRight, { row, 0 } };
-        visited = { row_count, column_count };
-        u32 enery_row = ScoreLightRayTrace(&parser, &visited, inital_pos);
-        if (enery_row > energized) {
-            energized = enery_row;
-        }
-        
-        inital_pos = { kDirectionLeft, { row, (i32) visited.cols - 2 } };
-        visited = { row_count, column_count };
-        enery_row = ScoreLightRayTrace(&parser, &visited, inital_pos);
-        if (enery_row > energized) {
-            energized = enery_row;
-        }
-    }
-    
-    fprintf(stdout, "Day 16 part 2 energized: %u\n", energized);
-    
-    CloseFile(&input_file);
+    return SolveDay16(input_file, false, answer);
 }
 
 
+bool Day16Part2(const File* input_file, i64* answer)
+{
+    return SolveDay16(input_file, true, answer);
+}

@@ -30,6 +30,7 @@ struct Part
     int day;
     int number;
     bool (*solve)(const File* input_file, i64* answer);
+    bool (*solve_test)(const File* input_file, i64* answer) = nullptr;
 };
 
 
@@ -39,8 +40,52 @@ static const Part kParts[] = {
     { 2023, 1, 2, Day01Part2 },
     { 2023, 2, 1, Day02Part1 },
     { 2023, 2, 2, Day02Part2 },
+    { 2023, 3, 1, Day03Part1 },
+    { 2023, 3, 2, Day03Part2 },
+    { 2023, 4, 1, Day04Part1 },
+    { 2023, 4, 2, Day04Part2 },
+    { 2023, 5, 1, Day05Part1 },
+    { 2023, 5, 2, Day05Part2 },
     { 2023, 6, 1, Day06Part1 },
     { 2023, 6, 2, Day06Part2 },
+    { 2023, 7, 1, Day07Part1 },
+    { 2023, 7, 2, Day07Part2 },
+    { 2023, 8, 1, Day08Part1 },
+    { 2023, 8, 2, Day08Part2 },
+    { 2023, 9, 1, Day09Part1 },
+    { 2023, 9, 2, Day09Part2 },
+    { 2023, 10, 1, Day10Part1 },
+    { 2023, 10, 2, Day10Part2 },
+    { 2023, 11, 1, Day11Part1 },
+    { 2023, 11, 2, Day11Part2, Day11Part2Test },
+    { 2023, 12, 1, Day12Part1 },
+    { 2023, 12, 2, nullptr },
+    { 2023, 13, 1, Day13Part1 },
+    { 2023, 13, 2, Day13Part2 },
+    { 2023, 14, 1, Day14Part1 },
+    { 2023, 14, 2, Day14Part2 },
+    { 2023, 15, 1, Day15Part1 },
+    { 2023, 15, 2, Day15Part2 },
+    { 2023, 16, 1, Day16Part1 },
+    { 2023, 16, 2, Day16Part2 },
+    { 2023, 17, 1, nullptr },
+    { 2023, 17, 2, nullptr },
+    { 2023, 18, 1, Day18Part1 },
+    { 2023, 18, 2, nullptr },
+    { 2023, 19, 1, Day19Part1 },
+    { 2023, 19, 2, Day19Part2 },
+    { 2023, 20, 1, nullptr },
+    { 2023, 20, 2, nullptr },
+    { 2023, 21, 1, Day21Part1, Day21Part1Test },
+    { 2023, 21, 2, nullptr },
+    { 2023, 22, 1, Day22Part1 },
+    { 2023, 22, 2, nullptr },
+    { 2023, 23, 1, nullptr },
+    { 2023, 23, 2, nullptr },
+    { 2023, 24, 1, nullptr },
+    { 2023, 24, 2, nullptr },
+    { 2023, 25, 1, nullptr },
+    { 2023, 25, 2, nullptr },
 };
 
 
@@ -204,6 +249,11 @@ static int FindInputPath(const Part& part, const Options& options, char* path, s
 
 static bool RunPart(const Part& part, const Options& options)
 {
+    if (!part.solve) {
+        printf("%d Day %02d Part %d: unfinished\n", part.year, part.day, part.number);
+        return options.part == 0;
+    }
+
     char path[PATH_MAX];
     int length = FindInputPath(part, options, path, sizeof(path));
     if (length < 0 || (size_t) length >= sizeof(path)) {
@@ -217,7 +267,8 @@ static bool RunPart(const Part& part, const Options& options)
     }
 
     i64 answer = 0;
-    bool solved = part.solve(&input_file, &answer);
+    auto solve = options.use_example && part.solve_test ? part.solve_test : part.solve;
+    bool solved = solve(&input_file, &answer);
     CloseFile(&input_file);
     if (!solved) {
         fprintf(stderr, "%d Day %02d Part %d: invalid input or answer out of range in %s.\n", part.year, part.day, part.number, path);
