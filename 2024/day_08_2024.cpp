@@ -1,192 +1,91 @@
 // day_08_2024.cpp
 // AdventOfCode
 //
-// Copyright (c) 2024 Paul Godavari. All rights reserved. 
+// Copyright (c) 2024 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
-
+#include <numeric>
 #include <vector>
-#include <unordered_map>
 
 
-// static const char* input_file_name = "../../2024/input/day_08.test_input";  // Part 1 = 14, Part 2 = 34
-static const char* input_file_name = "../../2024/input/day_08.input";  // Part 1 = 381, Part 2 =
-
-
-struct Position
+struct Antenna
 {
-    i32 col;
-    i32 row;
-    
-    bool operator==(const Position& other) const {
-        return col == other.col && row == other.row;
-    }
+    i64 row;
+    i64 col;
 };
 
 
-namespace std {
-    template <>
-    struct hash<Position> {
-        std::size_t operator()(const Position& p) const {
-            return std::hash<int>()(p.col) ^ (std::hash<int>()(p.row) << 1);
-        }
-    };
-}
-
-
-Position operator-(const Position& lhs, const Position& rhs)
+static bool MarkAntinode(const GridView& grid, std::vector<bool>* marked, i64 row, i64 col, i64* count)
 {
-    Position result = { lhs.col - rhs.col, lhs.row - rhs.row };
-    return result;
-}
-
-
-Position operator+(const Position& lhs, const Position& rhs)
-{
-    Position result = { lhs.col + rhs.col, lhs.row + rhs.row };
-    return result;
-}
-
-
-// Final column in every row is '\n' which we need for row/col calculation,
-// but is considered an invalid position.
-
-struct Grid
-{
-    ParseState* parser;
-    i32 rows;
-    i32 cols;
-};
-
-
-Grid ComputeGrid(ParseState* parser)
-{
-    Grid result = { parser, 0, 0 };
-    
-    while (parser->data[result.cols] != '\n') {
-        result.cols++;
+    if (row < 0 || row >= grid.rows || col < 0 || col >= grid.cols) {
+        return false;
     }
-    result.cols++;  // Include the newline in our calculations
-    result.rows = (i32) parser->size / result.cols;
-    
-    return result;
-}
 
-
-Position OffsetToGridPosition(Grid* grid, u32 offset)
-{
-    Position result = {};
-    
-    result.row = offset / grid->cols;
-    result.col = offset % grid->cols;
-    
-    return result;
-}
-
-
-bool IsValidPosition(Grid* grid, Position position)
-{
-    return (position.col >= 0 && position.col < grid->cols - 1) && (position.row >= 0 && position.row < grid->rows);
-}
-
-
-void AddPositionToMap(std::unordered_map<Position, u32>* position_map, Position position)
-{
-    auto it = position_map->find(position);
-    if (it != position_map->end()) {
-        it->second++;
-    } else {
-        (*position_map)[position] = 1;
+    size_t index = (size_t) row * grid.cols + col;
+    if (!(*marked)[index]) {
+        (*marked)[index] = true;
+        ++*count;
     }
+    return true;
 }
 
 
-void Day08_2024()
+static bool SolveDay08(const File* input_file, bool harmonics, i64* answer)
 {
-    u64 run_time_start = TimeNow();
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading %s\n", input_file_name);
-        return;
+    GridView grid = {};
+    if (!ReadGrid(input_file, &grid)) {
+        return false;
     }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    Grid grid = ComputeGrid(&parser);
-    
-    // Part 1: Find all the frequencies and their positions in the grid.
-    std::unordered_map<char, std::vector<Position>> frequencies;
-    while (!AtEndOfFile(&parser)) {
-        char current = parser.data[parser.offset];
-        Position position = OffsetToGridPosition(&grid, parser.offset);
-        if (current != '\n' && current != '.') {
-            assert(IsValidPosition(&grid, position));
-            auto it = frequencies.find(current);
-            if (it != frequencies.end()) {
-                it->second.push_back(position);
-            } else {
-                std::vector<Position> positions;
-                positions.push_back(position);
-                frequencies[current] = positions;
+
+    std::vector<Antenna> frequencies[256];
+    for (i32 row = 0; row < grid.rows; ++row) {
+        for (i32 col = 0; col < grid.cols; ++col) {
+            u8 cell = (u8) GridCell(grid, row, col);
+            if (cell != '.') {
+                frequencies[cell].push_back({ row, col });
             }
         }
-        Advance(&parser);
     }
-    
-    // Part 1: For each frequency, compute the antinodes for each pair of positions.
-    std::unordered_map<Position, u32> position_map;
-    for (auto& [frequency, positions] : frequencies) {
-        if (positions.size() > 1) {
-            for (int i = 0; i < positions.size() - 1; ++i) {
-                for (int j = i + 1; j < positions.size(); ++j) {
-                    Position diff = positions[i] - positions[j];
-                    Position antinode1 = positions[i] + diff;
-                    Position antinode2 = positions[j] - diff;
-                    if (IsValidPosition(&grid, antinode1)) {
-                        AddPositionToMap(&position_map, antinode1);
-                    }
-                    if (IsValidPosition(&grid, antinode2)) {
-                        AddPositionToMap(&position_map, antinode2);
-                    }
+
+    std::vector<bool> marked((size_t) grid.rows * grid.cols);
+    i64 count = 0;
+    for (const auto& antennas : frequencies) {
+        for (size_t first = 0; first < antennas.size(); ++first) {
+            for (size_t second = first + 1; second < antennas.size(); ++second) {
+                Antenna a = antennas[first];
+                Antenna b = antennas[second];
+                i64 dr = b.row - a.row;
+                i64 dc = b.col - a.col;
+                if (!harmonics) {
+                    MarkAntinode(grid, &marked, a.row - dr, a.col - dc, &count);
+                    MarkAntinode(grid, &marked, b.row + dr, b.col + dc, &count);
+                    continue;
+                }
+
+                i64 divisor = std::gcd(dr, dc);
+                dr /= divisor;
+                dc /= divisor;
+                for (i64 row = a.row, col = a.col; MarkAntinode(grid, &marked, row, col, &count); row += dr, col += dc) {
+                }
+                for (i64 row = a.row - dr, col = a.col - dc; MarkAntinode(grid, &marked, row, col, &count); row -= dr, col -= dc) {
                 }
             }
         }
     }
-    
-    u64 part1_answer = position_map.size();
-    
-    // Part 2: compute the antinodes along a line formed by each pair
-    position_map.clear();
-    
-    for (auto& [frequency, positions] : frequencies) {
-        if (positions.size() > 1) {
-            for (int i = 0; i < positions.size() - 1; ++i) {
-                for (int j = i + 1; j < positions.size(); ++j) {
-                    Position diff = positions[i] - positions[j];
-                    Position next_antinode = positions[i] + diff;
-                    while (IsValidPosition(&grid, next_antinode)) {
-                        AddPositionToMap(&position_map, next_antinode);
-                        next_antinode = next_antinode + diff;
-                    }
-                    AddPositionToMap(&position_map, positions[i]);
+    *answer = count;
+    return true;
+}
 
-                    next_antinode = positions[j] - diff;
-                    while (IsValidPosition(&grid, next_antinode)) {
-                        AddPositionToMap(&position_map, next_antinode);
-                        next_antinode = next_antinode - diff;
-                    }
-                    AddPositionToMap(&position_map, positions[j]);
-                }
-            }
-        }
-    }
 
-    u64 part2_answer = position_map.size();
-    
-    fprintf(stdout, "2024: Day 08 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 08 part 2: %llu\n", part2_answer);
-    fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
+bool Day08Part1_2024(const File* input_file, i64* answer)
+{
+    return SolveDay08(input_file, false, answer);
+}
+
+
+bool Day08Part2_2024(const File* input_file, i64* answer)
+{
+    return SolveDay08(input_file, true, answer);
 }

@@ -1,225 +1,130 @@
 // day_09_2024.cpp
 // AdventOfCode
 //
-// Copyright (c) 2024 Paul Godavari. All rights reserved. 
+// Copyright (c) 2024 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
 #include <vector>
 
-// static const char* input_file_name = "../../2024/input/day_09.test_input";  // Part 1 = 1928, Part 2 = 2858
-static const char* input_file_name = "../../2024/input/day_09.input";  // Part 1 = 6353658451014, Part 2 = 6382582136592
 
-
-enum class BlockType : u16
+struct DiskSpan
 {
-    Space = 0,
-    File
+    i64 start;
+    i64 length;
 };
 
 
-struct Block
+struct DiskFile
 {
-    BlockType type;
-    u16 id;
+    DiskSpan span;
+    i64 id;
 };
 
 
-struct Span
+static bool ReadDiskMap(const File* file, String* map)
 {
-    BlockType type;
-    u16 id;
-    u32 index;
-    u32 size;
-};
-
-
-void AddBlocks(std::vector<Block>* blocks, u16 id, u16 count, BlockType type)
-{
-    Block block = { type, id };
-    for (int i = 0; i < count; ++i) {
-        blocks->push_back(block);
+    String input = { file->data, file->size };
+    *map = ReadLine(&input);
+    if (!map->size || map->size > (u64) INT64_MAX / 9 || input.size) {
+        return false;
     }
-}
-
-
-u32 NextSpaceIndex(std::vector<Block>* blocks, i32 start_index)
-{
-    u32 result = blocks->size();
-    
-    while (start_index < blocks->size()) {
-        if ((*blocks)[start_index].type == BlockType::Space) {
-            result = start_index;
-            break;
-        }
-        start_index++;
-    }
-    
-    return result;
-}
-
-
-u32 LastFileIndex(std::vector<Block>* blocks, i32 start_index)
-{
-    u32 result = 0;
-    
-    while (start_index >= 0) {
-        if ((*blocks)[start_index].type == BlockType::File) {
-            result = start_index;
-            break;
-        }
-        start_index--;
-    }
-    
-    return result;
-}
-
-
-void PrintBlocks(const std::vector<Block>& blocks)
-{
-    for (int i = 0; i < blocks.size(); ++i) {
-        if (blocks[i].type == BlockType::Space) {
-            fprintf(stdout, ".");
-        } else {
-            fprintf(stdout, "%x", blocks[i].id);
+    for (size_t index = 0; index < map->size; ++index) {
+        if (map->start[index] < '0' || map->start[index] > '9') {
+            return false;
         }
     }
-    fprintf(stdout, "\n");
+    return true;
 }
 
 
-void PrintSpan(const std::vector<Span>& spans)
+static bool AddChecksum(i64 index, i64 id, i64* total)
 {
-    for (int i = 0; i < spans.size(); ++i) {
-        Span span = spans[i];
-        if (span.type == BlockType::Space) {
-            for (int j = 0; j < span.size; ++j) {
-                fprintf(stdout, ".");
+    i64 value = 0;
+    return !__builtin_mul_overflow(index, id, &value) && !__builtin_add_overflow(*total, value, total);
+}
+
+
+bool Day09Part1_2024(const File* input_file, i64* answer)
+{
+    String map = {};
+    if (!ReadDiskMap(input_file, &map)) {
+        return false;
+    }
+
+    std::vector<i64> blocks;
+    for (size_t index = 0; index < map.size; ++index) {
+        i64 id = index % 2 ? -1 : (i64) (index / 2);
+        blocks.insert(blocks.end(), map.start[index] - '0', id);
+    }
+
+    i64 total = 0;
+    size_t last = blocks.size();
+    for (size_t first = 0; first < last; ++first) {
+        i64 id = blocks[first];
+        if (id < 0) {
+            do {
+                --last;
+            } while (last > first && blocks[last] < 0);
+            if (last == first) {
+                break;
             }
-        } else {
-            for (int j = 0; j < span.size; ++j) {
-                fprintf(stdout, "%x", span.id);
-            }
+            id = blocks[last];
+        }
+        if (!AddChecksum((i64) first, id, &total)) {
+            return false;
         }
     }
-    fprintf(stdout, "\n");
+    *answer = total;
+    return true;
 }
 
 
-void Day09_2024()
+bool Day09Part2_2024(const File* input_file, i64* answer)
 {
-    u64 run_time_start = TimeNow();
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading %s\n", input_file_name);
-        return;
+    String map = {};
+    if (!ReadDiskMap(input_file, &map)) {
+        return false;
     }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    u64 part1_answer = 0;
-    
-    u32 id_count = 0;
-    u32 space_count = 0;
-    u32 file_count = 0;
-    bool is_file = true;
-    
-    std::vector<Block> blocks;
-    blocks.reserve(100000);
-    
-    while (!AtEndOfLine(&parser)) {
-        u32 digit = (u32) (parser.data[parser.offset] - '0');
-        if (is_file) {
-            file_count += digit;
-            AddBlocks(&blocks, id_count, digit, BlockType::File);
-            id_count++;
-        } else {
-            space_count += digit;
-            AddBlocks(&blocks, 0, digit, BlockType::Space);
+
+    std::vector<DiskFile> files;
+    std::vector<DiskSpan> spaces;
+    i64 start = 0;
+    for (size_t index = 0; index < map.size; ++index) {
+        i64 length = map.start[index] - '0';
+        if (length) {
+            if (index % 2 == 0) {
+                files.push_back({ { start, length }, (i64) (index / 2) });
+            } else if (!spaces.empty() && spaces.back().start + spaces.back().length == start) {
+                spaces.back().length += length;
+            } else {
+                spaces.push_back({ start, length });
+            }
         }
-        is_file = !is_file;
-        parser.offset++;
+        start += length;
     }
 
-    i32 space_index = 0;
-    i32 file_index = (i32) blocks.size() - 1;
-    
-    // PrintBlocks(blocks);
-    
-    while (space_index < file_index) {
-        space_index = NextSpaceIndex(&blocks, space_index);
-        file_index = LastFileIndex(&blocks, file_index);
-        if (space_index < file_index) {
-            assert(blocks[space_index].type == BlockType::Space);
-            assert(blocks[file_index].type == BlockType::File);
-            blocks[space_index] = blocks[file_index];
-            blocks[file_index] = { BlockType::Space };
-            space_index++;
-            file_index--;
-        }
-    }
-
-    // PrintBlocks(blocks);
-    
-    for (int index = 0; index < blocks.size(); ++index) {
-        if (blocks[index].type == BlockType::File) {
-            part1_answer += index * blocks[index].id;
-        }
-    }
-    
-    // Part 2. Reset everything and re-parse.
-    parser.offset = 0;
-    is_file = true;
-    id_count = 0;
-
-    u32 index = 0;
-    std::vector<Span> files;
-    std::vector<Span> spaces;
-
-    while (!AtEndOfLine(&parser)) {
-        u32 digit = (u32) (parser.data[parser.offset] - '0');
-        if (is_file) {
-            Span span = { BlockType::File, (u16) id_count, index, digit };
-            files.push_back(span);
-            id_count++;
-        } else {
-            Span span = { BlockType::Space, 0, index, digit };
-            spaces.push_back(span);
-        }
-        is_file = !is_file;
-        parser.offset++;
-        index += digit;
-    }
-
-    // PrintSpan(spans);
-    
-    // Try to find the first that fits for each file, last file first.
-    for (int i = files.size() - 1; i > 0; --i) {
-        Span& file = files[i];
-        for (int j = 0; j < spaces.size(); ++j) {
-            Span& space = spaces[j];
-            if (space.index < file.index && space.size >= file.size) {
-                // We can move the file into the space.
-                file.index = space.index;
-                space.size -= file.size;
-                space.index += file.size;
+    i64 total = 0;
+    for (size_t index = files.size(); index;) {
+        DiskFile file = files[--index];
+        for (DiskSpan& space : spaces) {
+            if (space.start >= file.span.start) {
+                break;
+            }
+            if (space.length >= file.span.length) {
+                file.span.start = space.start;
+                space.start += file.span.length;
+                space.length -= file.span.length;
                 break;
             }
         }
-    }
-    
-    // Compute checksum
-    u64 part2_answer = 0;
-    for (int i = 0; i < files.size(); ++i) {
-        Span file = files[i];
-        for (int j = 0; j < file.size; ++j) {
-            part2_answer += file.id * (file.index + j);
+        for (i64 block = 0; block < file.span.length; ++block) {
+            if (!AddChecksum(file.span.start + block, file.id, &total)) {
+                return false;
+            }
         }
     }
-
-    fprintf(stdout, "2024: Day 09 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 09 part 2: %llu\n", part2_answer);
-    fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
+    *answer = total;
+    return true;
 }

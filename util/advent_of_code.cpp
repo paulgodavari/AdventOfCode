@@ -318,6 +318,52 @@ bool ReadInteger(String* input, i64* number)
 }
 
 
+bool ConsumeString(String* input, String match)
+{
+    if (!match.size) {
+        return true;
+    }
+    if (match.size > input->size || memcmp(input->start, match.start, match.size)) {
+        return false;
+    }
+
+    input->start += match.size;
+    input->size -= match.size;
+    return true;
+}
+
+
+bool ReadGrid(const File* file, GridView* grid)
+{
+    String input = { file->data, file->size };
+    String first = ReadLine(&input);
+    if (!first.size || first.size > INT32_MAX) {
+        return false;
+    }
+
+    size_t stride = file->size - input.size;
+    size_t rows = 1;
+    while (input.size) {
+        if (rows == INT32_MAX || file->size - input.size != rows * stride || ReadLine(&input).size != first.size) {
+            return false;
+        }
+        ++rows;
+    }
+
+    *grid = { first.start, stride, (i32) rows, (i32) first.size };
+    return true;
+}
+
+
+char GridCell(const GridView& grid, i64 row, i64 col)
+{
+    if (row < 0 || row >= grid.rows || col < 0 || col >= grid.cols) {
+        return '\0';
+    }
+    return grid.data[(size_t) row * grid.stride + col];
+}
+
+
 i64 ParseSignedNumber(ParseState* parser)
 {
     i64 result = ParseNumberInternal(parser, true);

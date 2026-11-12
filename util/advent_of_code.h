@@ -47,6 +47,9 @@ String ReadLine(String* input);
 // Reads a signed decimal integer and advances input when the read succeeds.
 bool ReadInteger(String* input, i64* number);
 
+// Advances input when it starts with match.
+bool ConsumeString(String* input, String match);
+
 struct StringHash
 {
     size_t operator()(const String& s) const;
@@ -65,6 +68,19 @@ struct File
 
 void CloseFile(File* file);
 File ReadFile(const char* file_name);
+
+
+struct GridView
+{
+    const char* data;
+    size_t stride;
+    i32 rows;
+    i32 cols;
+};
+
+
+bool ReadGrid(const File* file, GridView* grid);
+char GridCell(const GridView& grid, i64 row, i64 col);
 
 
 struct ParseState

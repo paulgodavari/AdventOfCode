@@ -51,25 +51,38 @@ bool Day22Part1(const File* input_file, i64* answer);
 
 
 // 2024
-void Day01_2024();
-void Day02_2024();
-void Day03_2024();
-void Day04_2024();
-void Day05_2024();
-void Day06_2024();
-void Day07_2024();
-void Day08_2024();
-void Day09_2024();
-void Day10_2024();
-void Day11_2024();
-void Day12_2024();
-void Day13_2024();
-void Day14_2024();
+bool Day01Part1_2024(const File* input_file, i64* answer);
+bool Day01Part2_2024(const File* input_file, i64* answer);
+bool Day02Part1_2024(const File* input_file, i64* answer);
+bool Day02Part2_2024(const File* input_file, i64* answer);
+bool Day03Part1_2024(const File* input_file, i64* answer);
+bool Day03Part2_2024(const File* input_file, i64* answer);
+bool Day04Part1_2024(const File* input_file, i64* answer);
+bool Day04Part2_2024(const File* input_file, i64* answer);
+bool Day05Part1_2024(const File* input_file, i64* answer);
+bool Day05Part2_2024(const File* input_file, i64* answer);
+bool Day06Part1_2024(const File* input_file, i64* answer);
+bool Day06Part2_2024(const File* input_file, i64* answer);
+bool Day07Part1_2024(const File* input_file, i64* answer);
+bool Day07Part2_2024(const File* input_file, i64* answer);
+bool Day08Part1_2024(const File* input_file, i64* answer);
+bool Day08Part2_2024(const File* input_file, i64* answer);
+bool Day09Part1_2024(const File* input_file, i64* answer);
+bool Day09Part2_2024(const File* input_file, i64* answer);
+bool Day10Part1_2024(const File* input_file, i64* answer);
+bool Day10Part2_2024(const File* input_file, i64* answer);
+bool Day11Part1_2024(const File* input_file, i64* answer);
+bool Day11Part2_2024(const File* input_file, i64* answer);
+bool Day12Part1_2024(const File* input_file, i64* answer);
+bool Day13Part1_2024(const File* input_file, i64* answer);
+bool Day13Part2_2024(const File* input_file, i64* answer);
+bool Day14Part1_2024(const File* input_file, i64* answer);
+bool Day14Part1Test_2024(const File* input_file, i64* answer);
 
 
 // 2025
-void Day01_2025();
-void Day02_2025();
-void Day03_2025();
+bool Day01Part1_2025(const File* input_file, i64* answer);
+bool Day01Part2_2025(const File* input_file, i64* answer);
+bool Day03Part1_2025(const File* input_file, i64* answer);
 
 

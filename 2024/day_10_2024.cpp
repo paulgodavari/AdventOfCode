@@ -1,178 +1,77 @@
 // day_10_2024.cpp
 // AdventOfCode
 //
-// Copyright (c) 2024 Paul Godavari. All rights reserved. 
+// Copyright (c) 2024 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
-#include <unordered_set>
-
-
-// static const char* input_file_name = "../../2024/input/day_10.test_input";  // Part 1 = 36, Part 2 = 81
-static const char* input_file_name = "../../2024/input/day_10.input";  // Part 1 = 461, Part 2 = 875
+#include <vector>
 
 
-struct Grid
+static i64 CountTrails(const GridView& grid, i32 row, i32 col, char height, size_t* peak_visits, size_t trailhead)
 {
-    ParseState* parser;
-    i32 rows;
-    i32 cols;  // Includes newline
-};
-
-
-struct Position
-{
-    i32 row;
-    i32 col;
-    
-    bool operator==(const Position& other) const {
-        return col == other.col && row == other.row;
-    }
-};
-
-
-namespace std {
-    template <>
-    struct hash<Position> {
-        std::size_t operator()(const Position& p) const {
-            return std::hash<int>()(p.col) ^ (std::hash<int>()(p.row) << 1);
-        }
-    };
-}
-
-
-static Grid ComputeGrid(ParseState* parser)
-{
-    Grid result = { parser, 0, 0 };
-    
-    while (parser->data[result.cols] != '\n') {
-        result.cols++;
-    }
-    result.cols++;  // Include the newline in calculations.
-    result.rows = (i32) parser->size / result.cols;
-
-    return result;
-}
-
-
-Position PositionFromIndex(Grid* grid, u32 offset)
-{
-    Position result = { -1, -1 };
-    
-    if (offset < grid->parser->size) {
-        result.row = offset / grid->cols;
-        result.col = offset % grid->cols;
-    }
-    
-    return result;
-}
-
-
-u32 OffsetFromPosition(Grid* grid, Position position)
-{
-    u32 result = position.row * grid->cols + position.col;
-    return result;
-}
-
-
-static bool IsValidPosition(Grid* grid, Position position)
-{
-    return (position.col >= 0 && position.col < grid->cols - 1) && (position.row >= 0 && position.row < grid->rows);
-}
-
-
-static i32 ValueAtPosition(Grid* grid, Position position)
-{
-    i32 result = -1;
-    
-    u32 offset = OffsetFromPosition(grid, position);
-    if (offset < grid->parser->size) {
-        char current = grid->parser->data[offset];
-        if (current >= '0' && current <= '9') {
-            result = current - '0';
-        }
-    }
-    
-    return result;
-}
-
-
-u32 ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails);
-
-u32 SearchDirection(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
-{
-    u32 result = 0;
-    
-    if (IsValidPosition(grid, position)) {
-        i32 new_value = ValueAtPosition(grid, position);
-        if (new_value == value + 1) {
-            if (new_value == 9) {
-                trails->insert(position);
-                result = 1;
-            } else {
-                result += ComputeTrailValue(grid, position, new_value, trails);
+    if (height == '9') {
+        if (peak_visits) {
+            size_t peak = (size_t) row * grid.cols + col;
+            if (peak_visits[peak] == trailhead) {
+                return 0;
             }
+            peak_visits[peak] = trailhead;
+        }
+        return 1;
+    }
+
+    const i32 kRowStep[] = { -1, 0, 1, 0 };
+    const i32 kColStep[] = { 0, 1, 0, -1 };
+    i64 count = 0;
+    for (int direction = 0; direction < 4; ++direction) {
+        i32 next_row = row + kRowStep[direction];
+        i32 next_col = col + kColStep[direction];
+        if (GridCell(grid, next_row, next_col) == height + 1) {
+            count += CountTrails(grid, next_row, next_col, height + 1, peak_visits, trailhead);
         }
     }
-    
-    return result;
+    return count;
 }
 
 
-u32 ComputeTrailValue(Grid* grid, Position position, u32 value, std::unordered_set<Position>* trails)
+static bool SolveDay10(const File* input_file, bool count_paths, i64* answer)
 {
-    // Recursively search up, right, down, left.
-    u32 result = 0;
-    
-    Position up = { position.row - 1, position.col };
-    result += SearchDirection(grid, up, value, trails);
-
-    Position right = { position.row, position.col + 1 };
-    result += SearchDirection(grid, right, value, trails);
-
-    Position down = { position.row + 1, position.col };
-    result += SearchDirection(grid, down, value, trails);
-
-    Position left = { position.row, position.col - 1 };
-    result += SearchDirection(grid, left, value, trails);
-    
-    return result;
-}
-
-
-void Day10_2024()
-{
-    u64 run_time_start = TimeNow();
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading %s\n", input_file_name);
-        return;
+    GridView grid = {};
+    if (!ReadGrid(input_file, &grid)) {
+        return false;
     }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    Grid grid = ComputeGrid(&parser);
-    
-    
-    // Search for each trailhead (char == '0') and recursively search it.
-    u64 part1_answer = 0;
-    u64 part2_answer = 0;
 
+    std::vector<size_t> peak_visits;
+    if (!count_paths) {
+        peak_visits.resize((size_t) grid.rows * grid.cols);
+    }
+
+    i64 total = 0;
     for (i32 row = 0; row < grid.rows; ++row) {
-        for (i32 col = 0; col < grid.cols - 1; ++col) {
-            Position position = { row, col };
-            u32 offset = OffsetFromPosition(&grid, position);
-            char current = parser.data[offset];
-            if (current == '0') {
-                std::unordered_set<Position> trails;
-                part2_answer += ComputeTrailValue(&grid, position, 0, &trails);
-                part1_answer += trails.size();
+        for (i32 col = 0; col < grid.cols; ++col) {
+            if (GridCell(grid, row, col) == '0') {
+                size_t trailhead = (size_t) row * grid.cols + col + 1;
+                i64 count = CountTrails(grid, row, col, '0', count_paths ? nullptr : peak_visits.data(), trailhead);
+                if (__builtin_add_overflow(total, count, &total)) {
+                    return false;
+                }
             }
         }
     }
-    
-    fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
-    fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
+    *answer = total;
+    return true;
+}
+
+
+bool Day10Part1_2024(const File* input_file, i64* answer)
+{
+    return SolveDay10(input_file, false, answer);
+}
+
+
+bool Day10Part2_2024(const File* input_file, i64* answer)
+{
+    return SolveDay10(input_file, true, answer);
 }

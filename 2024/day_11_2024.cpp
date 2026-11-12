@@ -1,128 +1,93 @@
 // day_11_2024.cpp
 // AdventOfCode
 //
-// Copyright (c) 2024 Paul Godavari. All rights reserved. 
+// Copyright (c) 2024 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
 
 #include <unordered_map>
-#include <vector>
 
 
-// static const char* input_file_name = "../../2024/input/day_11.test_input";  // Part 1 = 55312, Part 2 =
-static const char* input_file_name = "../../2024/input/day_11.input";  // Part 1 = 198075, Part 2 = 235571309320764
-
-
-struct Digits
+static bool AddStones(std::unordered_map<u64, i64>* stones, u64 value, i64 count)
 {
-    u64 left;
-    u64 right;
-};
-
-
-u32 NumberOfDigits(u64 number)
-{
-    u32 result = 0;
-    
-    while (number > 0) {
-        result += 1;
-        number /= 10;
-    }
-    
-    return result;
+    i64& total = (*stones)[value];
+    return !__builtin_add_overflow(total, count, &total);
 }
 
 
-Digits SplitNumberInHalf(u64 number)
+static bool SolveDay11(const File* input_file, int blinks, i64* answer)
 {
-    Digits result = {};
-    
-    u32 digits = NumberOfDigits(number) / 2;
-    
-    for (int i = 0; i < digits; ++i) {
-        result.right += (number % 10) * std::pow(10, i);
-        number /= 10;
-    }
-    for (int i = 0; i < digits; ++i) {
-        result.left += (number % 10) * std::pow(10, i);
-        number /= 10;
-    }
+    String input = { input_file->data, input_file->size };
+    std::unordered_map<u64, i64> stones;
+    while (input.size) {
+        String line = ReadLine(&input);
+        while (line.size && (line.start[line.size - 1] == ' ' || line.start[line.size - 1] == '\t')) {
+            --line.size;
+        }
 
-    return result;
-}
-
-
-void AddStoneToMap(std::unordered_map<u64, u64>* stone_map, u64 stone, u64 count)
-{
-    auto it = stone_map->find(stone);
-    if (it != stone_map->end()) {
-        it->second += count;
-    } else {
-        (*stone_map)[stone] = count;
-    }
-}
-
-
-u64 ComputeStoneCount(const std::unordered_map<u64, u64>& map, u32 blinks)
-{
-    u64 result = 0;
-
-    std::unordered_map<u64, u64> stone_map = map;
-
-    u32 current_blinks = 0;
-    while (current_blinks < blinks) {
-        std::unordered_map<u64, u64> new_stone_map;
-        for (auto [stone, count] : stone_map) {
-            if (stone == 0) {
-                AddStoneToMap(&new_stone_map, 1, count);
-            } else if (NumberOfDigits(stone) % 2 == 0) {
-                Digits digits = SplitNumberInHalf(stone);
-                AddStoneToMap(&new_stone_map, digits.left, count);
-                AddStoneToMap(&new_stone_map, digits.right, count);
-            } else {
-                AddStoneToMap(&new_stone_map, stone * 2024, count);
+        while (line.size) {
+            i64 value = 0;
+            if (!ReadInteger(&line, &value) || value < 0 || !AddStones(&stones, (u64) value, 1)) {
+                return false;
             }
         }
-        current_blinks++;
-        stone_map = std::move(new_stone_map);
     }
-    
-    for (auto& [stone, count] : stone_map) {
-        result += count;
+    if (stones.empty()) {
+        return false;
     }
-    
-    return result;
+
+    std::unordered_map<u64, i64> next;
+    for (int blink = 0; blink < blinks; ++blink) {
+        next.clear();
+        for (const auto& [value, count] : stones) {
+            if (!value) {
+                if (!AddStones(&next, 1, count)) {
+                    return false;
+                }
+                continue;
+            }
+
+            int digits = 1;
+            for (u64 remaining = value; remaining >= 10; remaining /= 10) {
+                ++digits;
+            }
+            if (digits % 2 == 0) {
+                u64 scale = 1;
+                for (int digit = 0; digit < digits / 2; ++digit) {
+                    scale *= 10;
+                }
+                if (!AddStones(&next, value / scale, count) || !AddStones(&next, value % scale, count)) {
+                    return false;
+                }
+            } else {
+                u64 product = 0;
+                if (__builtin_mul_overflow(value, 2024, &product) || !AddStones(&next, product, count)) {
+                    return false;
+                }
+            }
+        }
+        stones.swap(next);
+    }
+
+    i64 total = 0;
+    for (const auto& [value, count] : stones) {
+        if (__builtin_add_overflow(total, count, &total)) {
+            return false;
+        }
+    }
+    *answer = total;
+    return true;
 }
 
 
-void Day11_2024()
+bool Day11Part1_2024(const File* input_file, i64* answer)
 {
-    u64 run_time_start = TimeNow();
-    
-    File input_file = ReadFile(input_file_name);
-    if (!input_file.handle) {
-        fprintf(stderr, "Error reading %s\n", input_file_name);
-        return;
-    }
-    
-    ParseState parser = { input_file.data, input_file.size, 0 };
-    
-    std::unordered_map<u64, u64> stone_map;
-    while (!AtEndOfLine(&parser)) {
-        u64 number = ParseNumber(&parser);
-        auto it = stone_map.find(number);
-        if (it != stone_map.end()) {
-            it->second++;
-        } else {
-            stone_map[number] = 1;
-        }
-    }
+    return SolveDay11(input_file, 25, answer);
+}
 
-    u64 part1_answer = ComputeStoneCount(stone_map, 25);
-    u64 part2_answer = ComputeStoneCount(stone_map, 75);
 
-    fprintf(stdout, "2024: Day 10 part 1: %llu\n", part1_answer);
-    fprintf(stdout, "2024: Day 10 part 2: %llu\n", part2_answer);
-    fprintf(stdout, "Total time: %.4f ms\n", MillisecondsSince(run_time_start));
+bool Day11Part2_2024(const File* input_file, i64* answer)
+{
+    return SolveDay11(input_file, 75, answer);
 }
