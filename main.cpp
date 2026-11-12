@@ -18,6 +18,7 @@ struct Options
     int year;
     int day;
     int part;
+    bool use_example;
     const char* input_path;
 };
 
@@ -40,9 +41,10 @@ static const Part kParts[] = {
 
 static void PrintUsage(FILE* output)
 {
-    fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--input FILE]\n"
+    fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--test] [--input FILE]\n"
                     "       aoc --help\n"
-                    "Run from the project root. --input requires a year and day and takes a path relative to AdventOfCodeData/.\n");
+                    "Run from the project root. --test uses example.txt, with example-1.txt as a fallback.\n"
+                    "--input overrides the selected input. It requires a year and day and takes a path relative to AdventOfCodeData/.\n");
 }
 
 
@@ -84,14 +86,24 @@ static bool IsRelativeInputPath(const char* path)
 
 static bool ParseOptions(int argc, char* argv[], Options* options)
 {
-    for (int index = 1; index < argc; index += 2) {
+    for (int index = 1; index < argc; ++index) {
         const char* flag = argv[index];
+        if (strcmp(flag, "--test") == 0) {
+            if (options->use_example) {
+                fprintf(stderr, "Repeated option: %s.\n", flag);
+                return false;
+            }
+
+            options->use_example = true;
+            continue;
+        }
+
         if (index + 1 == argc || strncmp(argv[index + 1], "--", 2) == 0) {
             fprintf(stderr, "Missing value for %s.\n", flag);
             return false;
         }
 
-        const char* value = argv[index + 1];
+        const char* value = argv[++index];
         if (strcmp(flag, "--year") == 0 && !options->year && ParsePositiveInteger(value, INT_MAX, &options->year)) {
             continue;
         }
@@ -114,17 +126,24 @@ static bool ParseOptions(int argc, char* argv[], Options* options)
 }
 
 
-static bool RunPart(const Part& part, const char* input_path)
+static bool RunPart(const Part& part, const Options& options)
 {
     char path[PATH_MAX];
     int length = 0;
-    if (input_path) {
-        length = snprintf(path, sizeof(path), "%s/%s", kDataDirectory, input_path);
+    if (options.input_path) {
+        length = snprintf(path, sizeof(path), "%s/%s", kDataDirectory, options.input_path);
     } else {
-        length = snprintf(path, sizeof(path), "%s/%d/%02d/%d.txt", kDataDirectory, part.year, part.day, part.number);
+        const char* filename = part.number == 1 ? "1.txt" : "2.txt";
+        const char* fallback_filename = "input.txt";
+        if (options.use_example) {
+            filename = "example.txt";
+            fallback_filename = "example-1.txt";
+        }
+
+        length = snprintf(path, sizeof(path), "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, filename);
         struct stat file_info = {};
         if (stat(path, &file_info) == -1 && errno == ENOENT) {
-            length = snprintf(path, sizeof(path), "%s/%d/%02d/input.txt", kDataDirectory, part.year, part.day);
+            length = snprintf(path, sizeof(path), "%s/%d/%02d/%s", kDataDirectory, part.year, part.day, fallback_filename);
         }
     }
 
@@ -174,7 +193,7 @@ int main(int argc, char* argv[])
         }
 
         found = true;
-        if (!RunPart(part, options.input_path)) {
+        if (!RunPart(part, options)) {
             success = false;
         }
     }
