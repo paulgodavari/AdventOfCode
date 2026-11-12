@@ -4,6 +4,9 @@
 // Copyright (c) 2023 Paul Godavari. All rights reserved. 
 
 
+#pragma once
+
+
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>

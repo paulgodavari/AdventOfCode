@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "advent_of_code.h"
+
 
 // 2023
 void Day01();
@@ -13,7 +15,8 @@ void Day02();
 void Day03();
 void Day04();
 void Day05();
-void Day06();
+bool Day06Part1(const File* input_file, i64* answer);
+bool Day06Part2(const File* input_file, i64* answer);
 void Day07();
 void Day08();
 void Day09();

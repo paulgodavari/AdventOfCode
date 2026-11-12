@@ -176,7 +176,7 @@ void CloseFile(File* file)
 
 File ReadFile(const char* file_name)
 {
-    File result;
+    File result = {};
     struct stat file_info = {};
     if (!stat(file_name, &file_info)) {
         FILE* f = fopen(file_name, "r");

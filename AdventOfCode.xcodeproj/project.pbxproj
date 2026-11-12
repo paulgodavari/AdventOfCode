@@ -81,7 +81,7 @@
 		665CF1742D122D24007AF325 /* day_14.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.test_input; path = 2024/input/day_14.test_input; sourceTree = "<group>"; };
 		665CF1752D122D24007AF325 /* day_14.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.input; path = 2024/input/day_14.input; sourceTree = "<group>"; };
 		665CF1762D122D36007AF325 /* day_14_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_14_2024.cpp; path = 2024/day_14_2024.cpp; sourceTree = "<group>"; };
-		66612A7F2B1A3A6E0056154B /* AdventOfCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode; sourceTree = BUILT_PRODUCTS_DIR; };
+		66612A7F2B1A3A6E0056154B /* aoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = aoc; sourceTree = BUILT_PRODUCTS_DIR; };
 		666A9CCB2EDE21EA0063C2EA /* day_01_2025.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = day_01_2025.cpp; sourceTree = "<group>"; };
 		666A9CCE2EDE3FB10063C2EA /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = input/day_01.input; sourceTree = "<group>"; };
 		666A9CCF2EDE3FB10063C2EA /* day_01.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input; path = input/day_01.test_input; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 		666A9CD92EE0CE810063C2EA /* day_03.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_03.test_input; path = input/day_03.test_input; sourceTree = "<group>"; };
 		66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = util/advent_of_code.cpp; sourceTree = "<group>"; };
 		66A7DCD92CFE49FA00DA1C6E /* advent_of_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = advent_of_code.h; path = util/advent_of_code.h; sourceTree = "<group>"; };
-		66A7DCE02CFE4B5000DA1C6E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = 2023/main.cpp; sourceTree = "<group>"; };
+		66A7DCE02CFE4B5000DA1C6E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_25.cpp; path = 2023/day_25.cpp; sourceTree = "<group>"; };
 		66A7DCE42CFE4B6A00DA1C6E /* day_04.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_04.cpp; path = 2023/day_04.cpp; sourceTree = "<group>"; };
 		66A7DCE52CFE4B6A00DA1C6E /* day_05.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_05.cpp; path = 2023/day_05.cpp; sourceTree = "<group>"; };
@@ -363,7 +363,7 @@
 		66612A802B1A3A6E0056154B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				66612A7F2B1A3A6E0056154B /* AdventOfCode */,
+				66612A7F2B1A3A6E0056154B /* aoc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -761,8 +761,8 @@
 			dependencies = (
 			);
 			name = AdventOfCode;
-			productName = AdventOfCode;
-			productReference = 66612A7F2B1A3A6E0056154B /* AdventOfCode */;
+			productName = aoc;
+			productReference = 66612A7F2B1A3A6E0056154B /* aoc */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -972,24 +972,24 @@
 		66612A872B1A3A6E0056154B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = B47EZERG93;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = aoc;
 			};
 			name = Debug;
 		};
 		66612A882B1A3A6E0056154B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = B47EZERG93;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = aoc;
 			};
 			name = Release;
 		};

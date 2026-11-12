@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66612A7E2B1A3A6E0056154B"
-               BuildableName = "AdventOfCode"
+               BuildableName = "aoc"
                BlueprintName = "AdventOfCode"
                ReferencedContainer = "container:AdventOfCode.xcodeproj">
             </BuildableReference>
@@ -35,7 +35,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "$(PROJECT_DIR)/2023/input"
+      customWorkingDirectory = "$(PROJECT_DIR)"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -46,11 +46,21 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66612A7E2B1A3A6E0056154B"
-            BuildableName = "AdventOfCode"
+            BuildableName = "aoc"
             BlueprintName = "AdventOfCode"
             ReferencedContainer = "container:AdventOfCode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--year 2023"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--day 6"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,7 +73,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66612A7E2B1A3A6E0056154B"
-            BuildableName = "AdventOfCode"
+            BuildableName = "aoc"
             BlueprintName = "AdventOfCode"
             ReferencedContainer = "container:AdventOfCode.xcodeproj">
          </BuildableReference>
