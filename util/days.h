@@ -12,7 +12,8 @@
 // 2023
 bool Day01Part1(const File* input_file, i64* answer);
 bool Day01Part2(const File* input_file, i64* answer);
-void Day02();
+bool Day02Part1(const File* input_file, i64* answer);
+bool Day02Part2(const File* input_file, i64* answer);
 void Day03();
 void Day04();
 void Day05();

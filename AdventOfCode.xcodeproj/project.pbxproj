@@ -120,7 +120,6 @@
 		66A7DCFA2CFE4B6B00DA1C6E /* day_24.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_24.cpp; path = 2023/day_24.cpp; sourceTree = "<group>"; };
 		66A7DCFB2CFE4B6B00DA1C6E /* day_22.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_22.cpp; path = 2023/day_22.cpp; sourceTree = "<group>"; };
 		66A7DD182CFE4CC900DA1C6E /* day_03.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_03.input; path = 2023/input/day_03.input; sourceTree = "<group>"; };
-		66A7DD192CFE4CC900DA1C6E /* day_02.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_02.input; path = 2023/input/day_02.input; sourceTree = "<group>"; };
 		66A7DD1A2CFE4CC900DA1C6E /* day_03.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_03.test_input; path = 2023/input/day_03.test_input; sourceTree = "<group>"; };
 		66A7DD1B2CFE4CC900DA1C6E /* day_20.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_20.test_input; path = 2023/input/day_20.test_input; sourceTree = "<group>"; };
 		66A7DD1C2CFE4CC900DA1C6E /* day_14.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_14.input; path = 2023/input/day_14.input; sourceTree = "<group>"; };
@@ -153,7 +152,6 @@
 		66A7DD372CFE4CCB00DA1C6E /* day_06.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_06.input; path = 2023/input/day_06.input; sourceTree = "<group>"; };
 		66A7DD382CFE4CCB00DA1C6E /* day_11.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_11.test_input; path = 2023/input/day_11.test_input; sourceTree = "<group>"; };
 		66A7DD392CFE4CCB00DA1C6E /* day_20.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_20.input; path = 2023/input/day_20.input; sourceTree = "<group>"; };
-		66A7DD3A2CFE4CCB00DA1C6E /* day_02.test_input1 */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_02.test_input1; path = 2023/input/day_02.test_input1; sourceTree = "<group>"; };
 		66A7DD3B2CFE4CCB00DA1C6E /* day_24.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_24.test_input; path = 2023/input/day_24.test_input; sourceTree = "<group>"; };
 		66A7DD3C2CFE4CCB00DA1C6E /* day_24.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_24.input; path = 2023/input/day_24.input; sourceTree = "<group>"; };
 		66A7DD3D2CFE4CCC00DA1C6E /* day_05.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_05.input; path = 2023/input/day_05.input; sourceTree = "<group>"; };
@@ -417,8 +415,6 @@
 			isa = PBXGroup;
 			children = (
 				66A7DCE72CFE4B6A00DA1C6E /* day_02.cpp */,
-				66A7DD192CFE4CC900DA1C6E /* day_02.input */,
-				66A7DD3A2CFE4CCB00DA1C6E /* day_02.test_input1 */,
 			);
 			name = "Day 02";
 			sourceTree = "<group>";

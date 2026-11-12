@@ -1,227 +1,189 @@
 // day_02.cpp
 // AdventOfCode
 //
-// Copyright (c) 2023 Paul Godavari. All rights reserved. 
+// Copyright (c) 2023 Paul Godavari. All rights reserved.
 
 
-#include "advent_of_code.h"
+#include "util/days.h"
+
+#include <ctype.h>
+#include <string.h>
 
 
-static const char* input_file = "day_02.input";  // Sum: 2006, Fewest: 84911
-// static const char* input_file = "day_02.test_input1";  // Sum: 8, Fewest: 2286
-
-const int kLineSize = 1024;
-const int kMaxGamesList = 16;
-
-
-struct Game
+struct CubeGame
 {
-    int red;
-    int green;
-    int blue;
+    i64 id;
+    i64 red;
+    i64 green;
+    i64 blue;
 };
 
 
-struct GameList
+static const String kRed = CONST_STRING("red");
+static const String kGreen = CONST_STRING("green");
+static const String kBlue = CONST_STRING("blue");
+
+static const i64 kRedLimit = 12;
+static const i64 kGreenLimit = 13;
+static const i64 kBlueLimit = 14;
+
+
+static void SkipSpace(ParseState* parser)
 {
-    int id;
-    int count;
-    Game games[kMaxGamesList];
-};
-
-
-static String kRed = CONST_STRING("red");
-static String kGreen = CONST_STRING("green");
-static String kBlue = CONST_STRING("blue");
-
-Game test_case = { 12, 13, 14 };
-
-
-GameList ParseLine(const char* line, size_t line_length)
-{
-    GameList results = {};
-    
-    // Parse the game number.
-    int game_id = 0;
-    bool found_game_id = false;
-    const char* current_char = line;
-    while (current_char && !found_game_id) {
-        switch (*current_char) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                int digit = *current_char - '0';
-                game_id = game_id * 10 + digit;
-                break;
-            }
-            case ':': {
-                found_game_id = true;
-                break;
-            }
-                
-        }
-        current_char++;
+    while (!AtEndOfFile(parser) && isspace((unsigned char) parser->data[parser->offset])) {
+        Advance(parser);
     }
-    
-    results.id = game_id;
-    
-    // Parse each game.
-    bool end_of_line = false;
-    while (!end_of_line) {       
-        Game game = {};
-        bool game_complete = false;
-        int value = 0;
-        while (current_char && !game_complete) {
-            int advance = 1;
-            switch (*current_char) {
-                case ';': {
-                    game_complete = true;
-                    break;
-                }
-                case ',': {
-                    value = 0;
-                    break;
-                }
-                case '\n': {
-                    game_complete = true;
-                    end_of_line = true;
-                    advance = 0;
-                    break;
-                }
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    int digit = *current_char - '0';
-                    value = value * 10 + digit;
-                    break;
-                }
-                case 'r': {
-                    if (MatchNumberKeyword(current_char, 0, kRed)) {
-                        advance = (int) kRed.size;
-                        game.red = value;
-                    }
-                    break;
-                }
-                case 'g': {
-                    if (MatchNumberKeyword(current_char, 0, kGreen)) {
-                        advance = (int) kGreen.size;
-                        game.green = value;
-                    }
-                    break;
-                }
-                case 'b': {
-                    if (MatchNumberKeyword(current_char, 0, kBlue)) {
-                        advance = (int) kBlue.size;
-                        game.blue = value;
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            
-            current_char += advance;
-        }
-        
-        results.games[results.count] = game;
-        results.count++;
-    }
-    
-    return results;
 }
 
 
-bool GamesListIsPossible(GameList* game_list, Game test_case)
+static bool ParseCount(ParseState* parser, i64* count)
 {
-    bool result = true;
-    
-    for (int index = 0; index < game_list->count; ++index) {
-        Game current = game_list->games[index];
-        if (current.red > test_case.red ||
-            current.green > test_case.green ||
-            current.blue > test_case.blue) {
-            result = false;
+    SkipSpace(parser);
+    i32 start = parser->offset;
+    i64 value = 0;
+    while (!AtEndOfFile(parser)) {
+        char character = parser->data[parser->offset];
+        if (character < '0' || character > '9') {
             break;
         }
+
+        i64 digit = character - '0';
+        if (value > (INT64_MAX - digit) / 10) {
+            return false;
+        }
+
+        value = value * 10 + digit;
+        Advance(parser);
     }
-    
-    return result;
+
+    if (parser->offset == start) {
+        return false;
+    }
+    *count = value;
+    return true;
 }
 
 
-int FindMinimumValues(GameList* game_list)
+static bool ParseLine(ParseState* parser, CubeGame* game)
 {
-    int result = 0;
-    
-    Game mins = {};
-    
-    for (int index = 0; index < game_list->count; ++index) {
-        Game current = game_list->games[index];
-        if (current.red > mins.red) {
-            mins.red = current.red;
-        }
-        if (current.green > mins.green) {
-            mins.green = current.green;
-        }
-        if (current.blue > mins.blue) {
-            mins.blue = current.blue;
-        }
+    SkipSpace(parser);
+    if (!ConsumeString(parser, CONST_STRING("Game")) || !ParseCount(parser, &game->id)) {
+        return false;
     }
-    
-    result = mins.red * mins.green * mins.blue;
-    
-    return result;
+
+    SkipSpace(parser);
+    if (!ConsumeString(parser, CONST_STRING(":"))) {
+        return false;
+    }
+
+    // Keep the largest count shown for each color.
+    while (true) {
+        i64 count = 0;
+        if (!ParseCount(parser, &count)) {
+            return false;
+        }
+
+        SkipSpace(parser);
+        if (AtEndOfFile(parser) || parser->data[parser->offset] < 'a' || parser->data[parser->offset] > 'z') {
+            return false;
+        }
+
+        String color = ParseWord(parser);
+        i64* maximum = nullptr;
+        if (color == kRed) {
+            maximum = &game->red;
+        } else if (color == kGreen) {
+            maximum = &game->green;
+        } else if (color == kBlue) {
+            maximum = &game->blue;
+        } else {
+            return false;
+        }
+        if (count > *maximum) {
+            *maximum = count;
+        }
+
+        SkipSpace(parser);
+        if (AtEndOfFile(parser)) {
+            return true;
+        }
+
+        char separator = parser->data[parser->offset];
+        if (separator != ',' && separator != ';') {
+            return false;
+        }
+        Advance(parser);
+    }
 }
 
 
-void Day02()
+static bool FindPower(const CubeGame& game, i64* power)
 {
-    FILE* f = fopen(input_file, "r");
-    if (!f) {
-        fprintf(stderr, "Error opening: %s\n", input_file);
-        return;
+    if (game.red == 0 || game.green == 0 || game.blue == 0) {
+        *power = 0;
+        return true;
     }
-    
-    char* line = new char[kLineSize];
-    size_t line_size = kLineSize;
-    
-    int game_id_sum = 0;
-    int fewest_sum = 0;
-    
-    ssize_t bytes_read = 0;
-    while (bytes_read >= 0) {
-        bytes_read = getline(&line, &line_size, f);
-        if (bytes_read >= 0) {
-            GameList results = ParseLine(line, bytes_read);
-            // for (int i = 0; i < results.count; ++i) {
-            //    Game game = results.games[i];
-            //    fprintf(stdout, "id: %d, r: %d, g: %d, b: %d\n", results.id, game.red, game.green, game.blue);
-            // }
-            if (GamesListIsPossible(&results, test_case)) {
-                game_id_sum += results.id;
+
+    if (game.red > INT64_MAX / game.green) {
+        return false;
+    }
+    i64 red_green = game.red * game.green;
+    if (red_green > INT64_MAX / game.blue) {
+        return false;
+    }
+
+    *power = red_green * game.blue;
+    return true;
+}
+
+
+static bool SolveDay02(const File* input_file, bool sum_powers, i64* answer)
+{
+    i64 total = 0;
+    size_t offset = 0;
+    while (offset < input_file->size) {
+        char* line = input_file->data + offset;
+        size_t remaining = input_file->size - offset;
+        const char* line_end = (const char*) memchr(line, '\n', remaining);
+        size_t line_size = line_end ? (size_t) (line_end - line) : remaining;
+        if (line_size > INT32_MAX) {
+            return false;
+        }
+
+        ParseState parser = { line, line_size, 0 };
+        CubeGame game = {};
+        if (!ParseLine(&parser, &game)) {
+            return false;
+        }
+
+        i64 value = 0;
+        if (sum_powers) {
+            if (!FindPower(game, &value)) {
+                return false;
             }
-            fewest_sum += FindMinimumValues(&results);
+        } else if (game.red <= kRedLimit && game.green <= kGreenLimit && game.blue <= kBlueLimit) {
+            value = game.id;
         }
+
+        if (total > INT64_MAX - value) {
+            return false;
+        }
+        total += value;
+        offset += line_size + (line_end ? 1 : 0);
     }
-    
-    fprintf(stdout, "Sum: %d, fewest: %d\n", game_id_sum, fewest_sum);
-    
-    delete [] line;
-    fclose(f);
+
+    *answer = total;
+    return true;
 }
 
 
+bool Day02Part1(const File* input_file, i64* answer)
+{
+    return SolveDay02(input_file, false, answer);
+}
+
+
+bool Day02Part2(const File* input_file, i64* answer)
+{
+    return SolveDay02(input_file, true, answer);
+}

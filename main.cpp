@@ -37,6 +37,8 @@ static const char kDataDirectory[] = "AdventOfCodeData";
 static const Part kParts[] = {
     { 2023, 1, 1, Day01Part1 },
     { 2023, 1, 2, Day01Part2 },
+    { 2023, 2, 1, Day02Part1 },
+    { 2023, 2, 2, Day02Part2 },
     { 2023, 6, 1, Day06Part1 },
     { 2023, 6, 2, Day06Part2 },
 };

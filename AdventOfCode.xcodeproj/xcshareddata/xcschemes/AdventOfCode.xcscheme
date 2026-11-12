@@ -57,12 +57,12 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--day 6"
+            argument = "--day 1"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
