@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,31 +17,6 @@
 		666A9CD72EE0CE200063C2EA /* day_03_2025.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666A9CD62EE0CE200063C2EA /* day_03_2025.cpp */; };
 		66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */; };
 		66A7DCE12CFE4B5000DA1C6E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE02CFE4B5000DA1C6E /* main.cpp */; };
-		66A7DCE32CFE4B6100DA1C6E /* day_25.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */; };
-		66A7DCFC2CFE4B6B00DA1C6E /* day_04.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE42CFE4B6A00DA1C6E /* day_04.cpp */; };
-		66A7DCFD2CFE4B6B00DA1C6E /* day_05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE52CFE4B6A00DA1C6E /* day_05.cpp */; };
-		66A7DCFE2CFE4B6B00DA1C6E /* day_12.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE62CFE4B6A00DA1C6E /* day_12.cpp */; };
-		66A7DCFF2CFE4B6B00DA1C6E /* day_02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE72CFE4B6A00DA1C6E /* day_02.cpp */; };
-		66A7DD002CFE4B6B00DA1C6E /* day_08.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE82CFE4B6A00DA1C6E /* day_08.cpp */; };
-		66A7DD012CFE4B6B00DA1C6E /* day_10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCE92CFE4B6A00DA1C6E /* day_10.cpp */; };
-		66A7DD022CFE4B6B00DA1C6E /* day_11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCEA2CFE4B6A00DA1C6E /* day_11.cpp */; };
-		66A7DD032CFE4B6B00DA1C6E /* day_17.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCEB2CFE4B6A00DA1C6E /* day_17.cpp */; };
-		66A7DD042CFE4B6B00DA1C6E /* day_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCEC2CFE4B6A00DA1C6E /* day_09.cpp */; };
-		66A7DD052CFE4B6B00DA1C6E /* day_13.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCED2CFE4B6A00DA1C6E /* day_13.cpp */; };
-		66A7DD062CFE4B6B00DA1C6E /* day_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCEE2CFE4B6A00DA1C6E /* day_01.cpp */; };
-		66A7DD072CFE4B6B00DA1C6E /* day_14.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCEF2CFE4B6A00DA1C6E /* day_14.cpp */; };
-		66A7DD082CFE4B6B00DA1C6E /* day_18.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF02CFE4B6A00DA1C6E /* day_18.cpp */; };
-		66A7DD092CFE4B6B00DA1C6E /* day_19.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF12CFE4B6B00DA1C6E /* day_19.cpp */; };
-		66A7DD0A2CFE4B6B00DA1C6E /* day_23.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF22CFE4B6B00DA1C6E /* day_23.cpp */; };
-		66A7DD0B2CFE4B6C00DA1C6E /* day_16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF32CFE4B6B00DA1C6E /* day_16.cpp */; };
-		66A7DD0C2CFE4B6C00DA1C6E /* day_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF42CFE4B6B00DA1C6E /* day_07.cpp */; };
-		66A7DD0D2CFE4B6C00DA1C6E /* day_06.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF52CFE4B6B00DA1C6E /* day_06.cpp */; };
-		66A7DD0E2CFE4B6C00DA1C6E /* day_03.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF62CFE4B6B00DA1C6E /* day_03.cpp */; };
-		66A7DD0F2CFE4B6C00DA1C6E /* day_21.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF72CFE4B6B00DA1C6E /* day_21.cpp */; };
-		66A7DD102CFE4B6C00DA1C6E /* day_20.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF82CFE4B6B00DA1C6E /* day_20.cpp */; };
-		66A7DD112CFE4B6C00DA1C6E /* day_15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCF92CFE4B6B00DA1C6E /* day_15.cpp */; };
-		66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCFA2CFE4B6B00DA1C6E /* day_24.cpp */; };
-		66A7DD132CFE4B6C00DA1C6E /* day_22.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DCFB2CFE4B6B00DA1C6E /* day_22.cpp */; };
 		66A7DD5F2CFE528600DA1C6E /* day_01_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */; };
 		66A7DD632D00A56200DA1C6E /* day_04_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DD622D00A56200DA1C6E /* day_04_2024.cpp */; };
 		66A7DD682D020B3900DA1C6E /* day_05_2024.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66A7DD672D020B3900DA1C6E /* day_05_2024.cpp */; };
@@ -94,31 +69,6 @@
 		66A7DCD82CFE49FA00DA1C6E /* advent_of_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = advent_of_code.cpp; path = util/advent_of_code.cpp; sourceTree = "<group>"; };
 		66A7DCD92CFE49FA00DA1C6E /* advent_of_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = advent_of_code.h; path = util/advent_of_code.h; sourceTree = "<group>"; };
 		66A7DCE02CFE4B5000DA1C6E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_25.cpp; path = 2023/day_25.cpp; sourceTree = "<group>"; };
-		66A7DCE42CFE4B6A00DA1C6E /* day_04.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_04.cpp; path = 2023/day_04.cpp; sourceTree = "<group>"; };
-		66A7DCE52CFE4B6A00DA1C6E /* day_05.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_05.cpp; path = 2023/day_05.cpp; sourceTree = "<group>"; };
-		66A7DCE62CFE4B6A00DA1C6E /* day_12.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_12.cpp; path = 2023/day_12.cpp; sourceTree = "<group>"; };
-		66A7DCE72CFE4B6A00DA1C6E /* day_02.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_02.cpp; path = 2023/day_02.cpp; sourceTree = "<group>"; };
-		66A7DCE82CFE4B6A00DA1C6E /* day_08.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_08.cpp; path = 2023/day_08.cpp; sourceTree = "<group>"; };
-		66A7DCE92CFE4B6A00DA1C6E /* day_10.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_10.cpp; path = 2023/day_10.cpp; sourceTree = "<group>"; };
-		66A7DCEA2CFE4B6A00DA1C6E /* day_11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_11.cpp; path = 2023/day_11.cpp; sourceTree = "<group>"; };
-		66A7DCEB2CFE4B6A00DA1C6E /* day_17.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_17.cpp; path = 2023/day_17.cpp; sourceTree = "<group>"; };
-		66A7DCEC2CFE4B6A00DA1C6E /* day_09.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_09.cpp; path = 2023/day_09.cpp; sourceTree = "<group>"; };
-		66A7DCED2CFE4B6A00DA1C6E /* day_13.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_13.cpp; path = 2023/day_13.cpp; sourceTree = "<group>"; };
-		66A7DCEE2CFE4B6A00DA1C6E /* day_01.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_01.cpp; path = 2023/day_01.cpp; sourceTree = "<group>"; };
-		66A7DCEF2CFE4B6A00DA1C6E /* day_14.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_14.cpp; path = 2023/day_14.cpp; sourceTree = "<group>"; };
-		66A7DCF02CFE4B6A00DA1C6E /* day_18.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_18.cpp; path = 2023/day_18.cpp; sourceTree = "<group>"; };
-		66A7DCF12CFE4B6B00DA1C6E /* day_19.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_19.cpp; path = 2023/day_19.cpp; sourceTree = "<group>"; };
-		66A7DCF22CFE4B6B00DA1C6E /* day_23.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_23.cpp; path = 2023/day_23.cpp; sourceTree = "<group>"; };
-		66A7DCF32CFE4B6B00DA1C6E /* day_16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_16.cpp; path = 2023/day_16.cpp; sourceTree = "<group>"; };
-		66A7DCF42CFE4B6B00DA1C6E /* day_07.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_07.cpp; path = 2023/day_07.cpp; sourceTree = "<group>"; };
-		66A7DCF52CFE4B6B00DA1C6E /* day_06.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_06.cpp; path = 2023/day_06.cpp; sourceTree = "<group>"; };
-		66A7DCF62CFE4B6B00DA1C6E /* day_03.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_03.cpp; path = 2023/day_03.cpp; sourceTree = "<group>"; };
-		66A7DCF72CFE4B6B00DA1C6E /* day_21.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_21.cpp; path = 2023/day_21.cpp; sourceTree = "<group>"; };
-		66A7DCF82CFE4B6B00DA1C6E /* day_20.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_20.cpp; path = 2023/day_20.cpp; sourceTree = "<group>"; };
-		66A7DCF92CFE4B6B00DA1C6E /* day_15.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_15.cpp; path = 2023/day_15.cpp; sourceTree = "<group>"; };
-		66A7DCFA2CFE4B6B00DA1C6E /* day_24.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_24.cpp; path = 2023/day_24.cpp; sourceTree = "<group>"; };
-		66A7DCFB2CFE4B6B00DA1C6E /* day_22.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = day_22.cpp; path = 2023/day_22.cpp; sourceTree = "<group>"; };
 		66A7DD5C2CFE524F00DA1C6E /* day_01.input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.input; path = 2024/input/day_01.input; sourceTree = "<group>"; };
 		66A7DD5D2CFE524F00DA1C6E /* day_01.test_input */ = {isa = PBXFileReference; lastKnownFileType = text; name = day_01.test_input; path = 2024/input/day_01.test_input; sourceTree = "<group>"; };
 		66A7DD5E2CFE528600DA1C6E /* day_01_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_01_2024.cpp; path = 2024/day_01_2024.cpp; sourceTree = "<group>"; };
@@ -149,6 +99,10 @@
 		66CEE4C72D05690600573BDC /* day_08_2024.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = day_08_2024.cpp; path = 2024/day_08_2024.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		66995A5B30A64A8100FD6AF3 /* 2023 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = 2023; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		66612A7C2B1A3A6E0056154B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -160,30 +114,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6611D5CF2B332FE100A1C56F /* Day 20 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF82CFE4B6B00DA1C6E /* day_20.cpp */,
-			);
-			name = "Day 20";
-			sourceTree = "<group>";
-		};
-		6611D5D52B348C9700A1C56F /* Day 21 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF72CFE4B6B00DA1C6E /* day_21.cpp */,
-			);
-			name = "Day 21";
-			sourceTree = "<group>";
-		};
-		6611D5DA2B35D66400A1C56F /* Day 22 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCFB2CFE4B6B00DA1C6E /* day_22.cpp */,
-			);
-			name = "Day 22";
-			sourceTree = "<group>";
-		};
 		662128042D0ABA0F00658341 /* Day 12 */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,46 +122,6 @@
 				662128052D0ABA2300658341 /* day_12.test_input */,
 			);
 			name = "Day 12";
-			sourceTree = "<group>";
-		};
-		66539A052B2D6C3C00613227 /* Day 16 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF32CFE4B6B00DA1C6E /* day_16.cpp */,
-			);
-			name = "Day 16";
-			sourceTree = "<group>";
-		};
-		66539A0A2B2F98ED00613227 /* Day 17 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCEB2CFE4B6A00DA1C6E /* day_17.cpp */,
-			);
-			name = "Day 17";
-			sourceTree = "<group>";
-		};
-		66539A0F2B3B6A1D00613227 /* Day 25 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE22CFE4B6100DA1C6E /* day_25.cpp */,
-			);
-			name = "Day 25";
-			sourceTree = "<group>";
-		};
-		66539A122B3B6ADA00613227 /* Day 24 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCFA2CFE4B6B00DA1C6E /* day_24.cpp */,
-			);
-			name = "Day 24";
-			sourceTree = "<group>";
-		};
-		66539A132B3B6AE400613227 /* Day 23 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF22CFE4B6B00DA1C6E /* day_23.cpp */,
-			);
-			name = "Day 23";
 			sourceTree = "<group>";
 		};
 		665CF1492D08ED91007AF325 /* Day 10 */ = {
@@ -277,9 +167,9 @@
 		66612A762B1A3A6E0056154B = {
 			isa = PBXGroup;
 			children = (
+				66995A5B30A64A8100FD6AF3 /* 2023 */,
 				66A7DCDF2CFE4B4100DA1C6E /* AdventOfCode */,
 				66A7DCD72CFE49DA00DA1C6E /* Util */,
-				66A7DD592CFE51CA00DA1C6E /* 2023 */,
 				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
 				666A9CCA2EDE21B20063C2EA /* 2025 */,
 				66612A802B1A3A6E0056154B /* Products */,
@@ -334,142 +224,6 @@
 			name = "Day 03";
 			sourceTree = "<group>";
 		};
-		66797BF72B2A5D5B00777948 /* Day 01 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCEE2CFE4B6A00DA1C6E /* day_01.cpp */,
-			);
-			name = "Day 01";
-			sourceTree = "<group>";
-		};
-		66797BF82B2A5DB300777948 /* Day 02 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE72CFE4B6A00DA1C6E /* day_02.cpp */,
-			);
-			name = "Day 02";
-			sourceTree = "<group>";
-		};
-		66797BF92B2A5DBB00777948 /* Day 03 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF62CFE4B6B00DA1C6E /* day_03.cpp */,
-			);
-			name = "Day 03";
-			sourceTree = "<group>";
-		};
-		66797BFA2B2A5DC500777948 /* Day 04 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE42CFE4B6A00DA1C6E /* day_04.cpp */,
-			);
-			name = "Day 04";
-			sourceTree = "<group>";
-		};
-		66797BFB2B2A5DCC00777948 /* Day 05 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE52CFE4B6A00DA1C6E /* day_05.cpp */,
-			);
-			name = "Day 05";
-			sourceTree = "<group>";
-		};
-		66797BFC2B2A5DD200777948 /* Day 06 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF52CFE4B6B00DA1C6E /* day_06.cpp */,
-			);
-			name = "Day 06";
-			sourceTree = "<group>";
-		};
-		66797BFD2B2A5DDA00777948 /* Day 07 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF42CFE4B6B00DA1C6E /* day_07.cpp */,
-			);
-			name = "Day 07";
-			sourceTree = "<group>";
-		};
-		66797BFE2B2A5DE300777948 /* Day 08 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE82CFE4B6A00DA1C6E /* day_08.cpp */,
-			);
-			name = "Day 08";
-			sourceTree = "<group>";
-		};
-		66797BFF2B2A5DE800777948 /* Day 09 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCEC2CFE4B6A00DA1C6E /* day_09.cpp */,
-			);
-			name = "Day 09";
-			sourceTree = "<group>";
-		};
-		66797C002B2A5DEF00777948 /* Day 10 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE92CFE4B6A00DA1C6E /* day_10.cpp */,
-			);
-			name = "Day 10";
-			sourceTree = "<group>";
-		};
-		66797C012B2A5DF400777948 /* Day 11 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCEA2CFE4B6A00DA1C6E /* day_11.cpp */,
-			);
-			name = "Day 11";
-			sourceTree = "<group>";
-		};
-		66797C022B2A5DF900777948 /* Day 12 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCE62CFE4B6A00DA1C6E /* day_12.cpp */,
-			);
-			name = "Day 12";
-			sourceTree = "<group>";
-		};
-		66797C032B2A5DFF00777948 /* Day 13 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCED2CFE4B6A00DA1C6E /* day_13.cpp */,
-			);
-			name = "Day 13";
-			sourceTree = "<group>";
-		};
-		66797C1F2B2B8B1B00777948 /* Day 14 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCEF2CFE4B6A00DA1C6E /* day_14.cpp */,
-			);
-			name = "Day 14";
-			sourceTree = "<group>";
-		};
-		66797C242B2CAC0A00777948 /* Day 15 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF92CFE4B6B00DA1C6E /* day_15.cpp */,
-			);
-			name = "Day 15";
-			sourceTree = "<group>";
-		};
-		66797C292B30A98000777948 /* Day 18 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF02CFE4B6A00DA1C6E /* day_18.cpp */,
-			);
-			name = "Day 18";
-			sourceTree = "<group>";
-		};
-		66797C2E2B31ECEC00777948 /* Day 19 */ = {
-			isa = PBXGroup;
-			children = (
-				66A7DCF12CFE4B6B00DA1C6E /* day_19.cpp */,
-			);
-			name = "Day 19";
-			sourceTree = "<group>";
-		};
 		66A7DCD72CFE49DA00DA1C6E /* Util */ = {
 			isa = PBXGroup;
 			children = (
@@ -486,38 +240,6 @@
 				66A7DCE02CFE4B5000DA1C6E /* main.cpp */,
 			);
 			name = AdventOfCode;
-			sourceTree = "<group>";
-		};
-		66A7DD592CFE51CA00DA1C6E /* 2023 */ = {
-			isa = PBXGroup;
-			children = (
-				66539A0F2B3B6A1D00613227 /* Day 25 */,
-				66539A122B3B6ADA00613227 /* Day 24 */,
-				66539A132B3B6AE400613227 /* Day 23 */,
-				6611D5DA2B35D66400A1C56F /* Day 22 */,
-				6611D5D52B348C9700A1C56F /* Day 21 */,
-				6611D5CF2B332FE100A1C56F /* Day 20 */,
-				66797C2E2B31ECEC00777948 /* Day 19 */,
-				66797C292B30A98000777948 /* Day 18 */,
-				66539A0A2B2F98ED00613227 /* Day 17 */,
-				66539A052B2D6C3C00613227 /* Day 16 */,
-				66797C242B2CAC0A00777948 /* Day 15 */,
-				66797C1F2B2B8B1B00777948 /* Day 14 */,
-				66797C032B2A5DFF00777948 /* Day 13 */,
-				66797C022B2A5DF900777948 /* Day 12 */,
-				66797C012B2A5DF400777948 /* Day 11 */,
-				66797C002B2A5DEF00777948 /* Day 10 */,
-				66797BFF2B2A5DE800777948 /* Day 09 */,
-				66797BFE2B2A5DE300777948 /* Day 08 */,
-				66797BFD2B2A5DDA00777948 /* Day 07 */,
-				66797BFC2B2A5DD200777948 /* Day 06 */,
-				66797BFB2B2A5DCC00777948 /* Day 05 */,
-				66797BFA2B2A5DC500777948 /* Day 04 */,
-				66797BF92B2A5DBB00777948 /* Day 03 */,
-				66797BF82B2A5DB300777948 /* Day 02 */,
-				66797BF72B2A5D5B00777948 /* Day 01 */,
-			);
-			name = 2023;
 			sourceTree = "<group>";
 		};
 		66A7DD5A2CFE51EB00DA1C6E /* 2024 */ = {
@@ -646,6 +368,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				66995A5B30A64A8100FD6AF3 /* 2023 */,
+			);
 			name = AdventOfCode;
 			productName = aoc;
 			productReference = 66612A7F2B1A3A6E0056154B /* aoc */;
@@ -691,47 +416,22 @@
 				666A9CD72EE0CE200063C2EA /* day_03_2025.cpp in Sources */,
 				66A7DCE12CFE4B5000DA1C6E /* main.cpp in Sources */,
 				66A7DCDE2CFE4AC400DA1C6E /* advent_of_code.cpp in Sources */,
-				66A7DD092CFE4B6B00DA1C6E /* day_19.cpp in Sources */,
-				66A7DD0F2CFE4B6C00DA1C6E /* day_21.cpp in Sources */,
-				66A7DD002CFE4B6B00DA1C6E /* day_08.cpp in Sources */,
 				665CF1772D122D36007AF325 /* day_14_2024.cpp in Sources */,
 				66A7DD5F2CFE528600DA1C6E /* day_01_2024.cpp in Sources */,
-				66A7DD082CFE4B6B00DA1C6E /* day_18.cpp in Sources */,
-				66A7DD122CFE4B6C00DA1C6E /* day_24.cpp in Sources */,
 				66CEE4B72CFFAEF100573BDC /* day_02_2024.cpp in Sources */,
 				662128082D0ABA4600658341 /* day_12_2024.cpp in Sources */,
 				66CEE4C12D041ED300573BDC /* day_07_2024.cpp in Sources */,
 				665CF1522D0A0440007AF325 /* day_11_2024.cpp in Sources */,
 				66A7DD682D020B3900DA1C6E /* day_05_2024.cpp in Sources */,
 				66A7DD6F2D035F6700DA1C6E /* day_06_2024.cpp in Sources */,
-				66A7DD0C2CFE4B6C00DA1C6E /* day_07.cpp in Sources */,
 				665CF14D2D08EDB4007AF325 /* day_10_2024.cpp in Sources */,
-				66A7DCFC2CFE4B6B00DA1C6E /* day_04.cpp in Sources */,
-				66A7DCFE2CFE4B6B00DA1C6E /* day_12.cpp in Sources */,
 				66CEE4C82D05690600573BDC /* day_08_2024.cpp in Sources */,
-				66A7DD012CFE4B6B00DA1C6E /* day_10.cpp in Sources */,
-				66A7DD0B2CFE4B6C00DA1C6E /* day_16.cpp in Sources */,
-				66A7DD032CFE4B6B00DA1C6E /* day_17.cpp in Sources */,
-				66A7DD102CFE4B6C00DA1C6E /* day_20.cpp in Sources */,
 				66A7DD632D00A56200DA1C6E /* day_04_2024.cpp in Sources */,
-				66A7DD0A2CFE4B6B00DA1C6E /* day_23.cpp in Sources */,
 				66CEE4BC2CFFC4FC00573BDC /* day_03_2024.cpp in Sources */,
-				66A7DD052CFE4B6B00DA1C6E /* day_13.cpp in Sources */,
-				66A7DD0E2CFE4B6C00DA1C6E /* day_03.cpp in Sources */,
-				66A7DD042CFE4B6B00DA1C6E /* day_09.cpp in Sources */,
 				666A9CCC2EDE21EA0063C2EA /* day_01_2025.cpp in Sources */,
-				66A7DD072CFE4B6B00DA1C6E /* day_14.cpp in Sources */,
-				66A7DCFF2CFE4B6B00DA1C6E /* day_02.cpp in Sources */,
-				66A7DD112CFE4B6C00DA1C6E /* day_15.cpp in Sources */,
 				665CF1722D10F072007AF325 /* day_13_2024.cpp in Sources */,
-				66A7DD132CFE4B6C00DA1C6E /* day_22.cpp in Sources */,
-				66A7DCFD2CFE4B6B00DA1C6E /* day_05.cpp in Sources */,
 				666A9CD22EDF7AC60063C2EA /* day_02_2025.cpp in Sources */,
-				66A7DD062CFE4B6B00DA1C6E /* day_01.cpp in Sources */,
-				66A7DD022CFE4B6B00DA1C6E /* day_11.cpp in Sources */,
 				66B7F4A82D0757E500A113E8 /* day_09_2024.cpp in Sources */,
-				66A7DCE32CFE4B6100DA1C6E /* day_25.cpp in Sources */,
-				66A7DD0D2CFE4B6C00DA1C6E /* day_06.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
