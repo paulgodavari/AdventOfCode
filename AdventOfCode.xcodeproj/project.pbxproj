@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		66612A7F2B1A3A6E0056154B /* aoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = aoc; sourceTree = BUILT_PRODUCTS_DIR; };
 		66A7DCE02CFE4B5000DA1C6E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		66D87CF730AE0377005B7C1E /* Problems.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Problems.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -53,6 +54,7 @@
 				66A7DCD72CFE49DA00DA1C6E /* util */,
 				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
 				666A9CCA2EDE21B20063C2EA /* 2025 */,
+				66D87CF730AE0377005B7C1E /* Problems.md */,
 				66612A802B1A3A6E0056154B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -81,10 +83,10 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				66995A5B30A64A8100FD6AF3 /* 2023 */,
-				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
 				666A9CCA2EDE21B20063C2EA /* 2025 */,
+				66995A5B30A64A8100FD6AF3 /* 2023 */,
 				66A7DCD72CFE49DA00DA1C6E /* util */,
+				66A7DD5A2CFE51EB00DA1C6E /* 2024 */,
 			);
 			name = AdventOfCode;
 			productName = aoc;
