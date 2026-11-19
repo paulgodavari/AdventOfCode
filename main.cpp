@@ -5,6 +5,11 @@
 
 
 #include "util/days.h"
+#include "AdventOfCode-Swift.h"
+
+#include <algorithm>
+#include <tuple>
+#include <vector>
 
 #include <ctype.h>
 #include <errno.h>
@@ -14,6 +19,22 @@
 #include <sys/stat.h>
 
 
+enum class Language
+{
+    All,
+    Cpp,
+    Swift,
+};
+
+
+enum class SolveStatus
+{
+    Answer,
+    Unfinished,
+    InvalidInput,
+};
+
+
 struct Options
 {
     int year;
@@ -21,6 +42,7 @@ struct Options
     int part;
     bool use_example;
     const char* input_path;
+    Language language;
 };
 
 
@@ -31,11 +53,12 @@ struct Part
     int number;
     bool (*solve)(const File* input_file, i64* answer);
     bool (*solve_test)(const File* input_file, i64* answer) = nullptr;
+    Language language = Language::Cpp;
 };
 
 
 static const char kDataDirectory[] = "AdventOfCodeData";
-static const Part kParts[] = {
+static const Part kCppParts[] = {
     { 2023, 1, 1, Day01Part1 },
     { 2023, 1, 2, Day01Part2 },
     { 2023, 2, 1, Day02Part1 },
@@ -59,7 +82,6 @@ static const Part kParts[] = {
     { 2023, 11, 1, Day11Part1 },
     { 2023, 11, 2, Day11Part2, Day11Part2Test },
     { 2023, 12, 1, Day12Part1 },
-    { 2023, 12, 2, nullptr },
     { 2023, 13, 1, Day13Part1 },
     { 2023, 13, 2, Day13Part2 },
     { 2023, 14, 1, Day14Part1 },
@@ -68,24 +90,11 @@ static const Part kParts[] = {
     { 2023, 15, 2, Day15Part2 },
     { 2023, 16, 1, Day16Part1 },
     { 2023, 16, 2, Day16Part2 },
-    { 2023, 17, 1, nullptr },
-    { 2023, 17, 2, nullptr },
     { 2023, 18, 1, Day18Part1 },
-    { 2023, 18, 2, nullptr },
     { 2023, 19, 1, Day19Part1 },
     { 2023, 19, 2, Day19Part2 },
-    { 2023, 20, 1, nullptr },
-    { 2023, 20, 2, nullptr },
     { 2023, 21, 1, Day21Part1, Day21Part1Test },
-    { 2023, 21, 2, nullptr },
     { 2023, 22, 1, Day22Part1 },
-    { 2023, 22, 2, nullptr },
-    { 2023, 23, 1, nullptr },
-    { 2023, 23, 2, nullptr },
-    { 2023, 24, 1, nullptr },
-    { 2023, 24, 2, nullptr },
-    { 2023, 25, 1, nullptr },
-    { 2023, 25, 2, nullptr },
     { 2024, 1, 1, Day01Part1_2024 },
     { 2024, 1, 2, Day01Part2_2024 },
     { 2024, 2, 1, Day02Part1_2024 },
@@ -109,29 +118,28 @@ static const Part kParts[] = {
     { 2024, 11, 1, Day11Part1_2024 },
     { 2024, 11, 2, Day11Part2_2024 },
     { 2024, 12, 1, Day12Part1_2024 },
-    { 2024, 12, 2, nullptr },
     { 2024, 13, 1, Day13Part1_2024 },
     { 2024, 13, 2, Day13Part2_2024 },
     { 2024, 14, 1, Day14Part1_2024, Day14Part1Test_2024 },
-    { 2024, 14, 2, nullptr },
     { 2025, 1, 1, Day01Part1_2025 },
     { 2025, 1, 2, Day01Part2_2025 },
-    { 2025, 2, 1, nullptr },
-    { 2025, 2, 2, nullptr },
     { 2025, 3, 1, Day03Part1_2025 },
-    { 2025, 3, 2, nullptr },
 };
 
 
 static void PrintUsage(FILE* output)
 {
-    fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--test] [--input FILE]\n"
+    fprintf(output, "Usage: aoc [--year YEAR [--day DAY [--part PART]]] [--lang c++|swift] [--test] [--input FILE]\n"
                     "       aoc --help\n"
+                    "Without filters, run every registered year, day, part, and language.\n"
+                    "--lang selects one language; without it, run all registered implementations.\n"
                     "Run from the project root. --test selects test_input.txt. A regular run selects input.txt.\n"
                     "Part-specific files such as test_input2.txt or input2.txt take priority.\n"
                     "aoc checks results against answers.txt when an answer is available for the selected input.\n"
                     "--input overrides the selected input and skips that check.\n"
-                    "It requires a year and day and takes a path relative to AdventOfCodeData/.\n");
+                    "It requires a year and day and takes a path relative to AdventOfCodeData/.\n"
+                    "ERROR marks a failed run or wrong answer. UNVERIFIED marks a result with no saved answer.\n"
+                    "UNFINISHED marks a registered solver that has not been implemented yet.\n");
 }
 
 
@@ -203,6 +211,16 @@ static bool ParseOptions(int argc, char* argv[], Options* options)
         if (strcmp(flag, "--input") == 0 && !options->input_path && IsRelativeInputPath(value)) {
             options->input_path = value;
             continue;
+        }
+        if (strcmp(flag, "--lang") == 0 && options->language == Language::All) {
+            if (strcmp(value, "c++") == 0) {
+                options->language = Language::Cpp;
+                continue;
+            }
+            if (strcmp(value, "swift") == 0) {
+                options->language = Language::Swift;
+                continue;
+            }
         }
 
         fprintf(stderr, "Invalid or repeated option: %s.\n", flag);
@@ -281,44 +299,98 @@ static int FindInputPath(const Part& part, const Options& options, char* path, s
 }
 
 
-static bool RunPart(const Part& part, const Options& options)
+static std::vector<Part> RegisteredParts()
 {
-    if (!part.solve) {
-        printf("%d Day %02d Part %d: unfinished\n", part.year, part.day, part.number);
-        return options.part == 0;
+    std::vector<Part> parts;
+    for (const Part& part : kCppParts) {
+        parts.push_back(part);
     }
 
+    intptr_t swift_part_count = AdventOfCode::swiftPartCount();
+    for (intptr_t index = 0; index < swift_part_count; ++index) {
+        auto part = AdventOfCode::swiftPart(index);
+        parts.push_back({ part.getYear(), part.getDay(), part.getPart(), nullptr, nullptr, Language::Swift });
+    }
+
+    std::sort(parts.begin(), parts.end(), [](const Part& lhs, const Part& rhs) {
+        return std::tie(lhs.year, lhs.day, lhs.number, lhs.language) < std::tie(rhs.year, rhs.day, rhs.number, rhs.language);
+    });
+    return parts;
+}
+
+
+static void PrintPartPrefix(const Part& part)
+{
+    const char* language = part.language == Language::Swift ? "Swift" : "C++";
+    printf("%d Day %d part %d (%s): ", part.year, part.day, part.number, language);
+}
+
+
+static SolveStatus SolvePart(const Part& part, const Options& options, const File* input_file, i64* answer)
+{
+    if (part.language == Language::Swift) {
+        auto result = AdventOfCode::solveSwiftPart(part.year, part.day, part.number, (const u8*) input_file->data,
+                                                 (intptr_t) input_file->size, options.use_example);
+        switch (result) {
+            case AdventOfCode::SwiftSolveResult::answer:
+                *answer = result.getAnswer();
+                return SolveStatus::Answer;
+            case AdventOfCode::SwiftSolveResult::unfinished:
+                return SolveStatus::Unfinished;
+            default:
+                return SolveStatus::InvalidInput;
+        }
+    }
+
+    auto solve = options.use_example && part.solve_test ? part.solve_test : part.solve;
+    return solve(input_file, answer) ? SolveStatus::Answer : SolveStatus::InvalidInput;
+}
+
+
+static bool RunPart(const Part& part, const Options& options)
+{
     char path[PATH_MAX];
     int length = FindInputPath(part, options, path, sizeof(path));
     if (length < 0 || (size_t) length >= sizeof(path)) {
-        fprintf(stderr, "Could not form the input path.\n");
+        PrintPartPrefix(part);
+        printf("ERROR could not form the input path\n");
         return false;
     }
 
     File input_file = ReadFile(path);
     if (!input_file.handle) {
+        PrintPartPrefix(part);
+        printf("ERROR could not read input\n");
         return false;
     }
 
     i64 answer = 0;
-    auto solve = options.use_example && part.solve_test ? part.solve_test : part.solve;
-    bool solved = solve(&input_file, &answer);
+    u64 start_time = TimeNow();
+    SolveStatus status = SolvePart(part, options, &input_file, &answer);
+    f64 elapsed_ms = MillisecondsSince(start_time);
     CloseFile(&input_file);
-    if (!solved) {
-        fprintf(stderr, "%d Day %02d Part %d: invalid input or answer out of range in %s.\n", part.year, part.day, part.number, path);
+
+    PrintPartPrefix(part);
+    if (status == SolveStatus::Unfinished) {
+        printf("UNFINISHED %.3f ms\n", elapsed_ms);
+        return true;
+    }
+    if (status == SolveStatus::InvalidInput) {
+        printf("ERROR %.3f ms (invalid input or answer out of range)\n", elapsed_ms);
+        fprintf(stderr, "Input: %s\n", path);
         return false;
     }
 
-    printf("%d Day %02d Part %d: %" PRId64, part.year, part.day, part.number, answer);
+    printf("%" PRId64 " %.3f ms", answer, elapsed_ms);
     i64 expected = 0;
     bool success = true;
     if (!options.input_path && ReadSavedAnswer(part, options.use_example, &expected)) {
         success = answer == expected;
-        if (success) {
-            printf(" (matches saved answer)");
-        } else {
-            printf(" (expected %" PRId64 ")", expected);
+        if (!success) {
+            printf(" ERROR expected=%" PRId64, expected);
         }
+    } else {
+        printf(" UNVERIFIED");
     }
     putchar('\n');
     return success;
@@ -340,10 +412,11 @@ int main(int argc, char* argv[])
 
     bool found = false;
     bool success = true;
-    for (const Part& part : kParts) {
+    for (const Part& part : RegisteredParts()) {
         if ((options.year && options.year != part.year) ||
             (options.day && options.day != part.day) ||
-            (options.part && options.part != part.number)) {
+            (options.part && options.part != part.number) ||
+            (options.language != Language::All && options.language != part.language)) {
             continue;
         }
 
@@ -354,7 +427,7 @@ int main(int argc, char* argv[])
     }
 
     if (!found) {
-        fprintf(stderr, "No registered parts match the selected year, day, and part.\n");
+        fprintf(stderr, "No registered implementations match the selected year, day, part, and language.\n");
         return 1;
     }
 

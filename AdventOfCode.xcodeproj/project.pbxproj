@@ -263,6 +263,11 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
 				PRODUCT_NAME = aoc;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "AdventOfCode-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_MODULE_NAME = AdventOfCode;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -275,6 +280,11 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
 				PRODUCT_NAME = aoc;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "AdventOfCode-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_MODULE_NAME = AdventOfCode;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

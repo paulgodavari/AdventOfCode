@@ -54,11 +54,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--year 2023"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--lang swift"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--day 21"
-            isEnabled = "NO">
+            argument = "--day 1"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--test"
