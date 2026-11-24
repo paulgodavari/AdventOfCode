@@ -66,6 +66,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--test"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--part 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--part 2"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
