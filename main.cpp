@@ -8,6 +8,7 @@
 #include "AdventOfCode-Swift.h"
 
 #include <algorithm>
+#include <string_view>
 #include <tuple>
 #include <vector>
 
@@ -182,10 +183,10 @@ static bool IsRelativeInputPath(const char* path)
 static bool ParseOptions(int argc, char* argv[], Options* options)
 {
     for (int index = 1; index < argc; ++index) {
-        const char* flag = argv[index];
-        if (strcmp(flag, "--test") == 0) {
+        std::string_view flag = argv[index];
+        if (flag == "--test") {
             if (options->use_example) {
-                fprintf(stderr, "Repeated option: %s.\n", flag);
+                fprintf(stderr, "Repeated option: %s.\n", flag.data());
                 return false;
             }
 
@@ -193,37 +194,37 @@ static bool ParseOptions(int argc, char* argv[], Options* options)
             continue;
         }
 
-        if (index + 1 == argc || strncmp(argv[index + 1], "--", 2) == 0) {
-            fprintf(stderr, "Missing value for %s.\n", flag);
+        if (index + 1 == argc || std::string_view(argv[index + 1]).starts_with("--")) {
+            fprintf(stderr, "Missing value for %s.\n", flag.data());
             return false;
         }
 
-        const char* value = argv[++index];
-        if (strcmp(flag, "--year") == 0 && !options->year && ParsePositiveInteger(value, INT_MAX, &options->year)) {
+        std::string_view value = argv[++index];
+        if (flag == "--year" && !options->year && ParsePositiveInteger(value.data(), INT_MAX, &options->year)) {
             continue;
         }
-        if (strcmp(flag, "--day") == 0 && !options->day && ParsePositiveInteger(value, 25, &options->day)) {
+        if (flag == "--day" && !options->day && ParsePositiveInteger(value.data(), 25, &options->day)) {
             continue;
         }
-        if (strcmp(flag, "--part") == 0 && !options->part && ParsePositiveInteger(value, 2, &options->part)) {
+        if (flag == "--part" && !options->part && ParsePositiveInteger(value.data(), 2, &options->part)) {
             continue;
         }
-        if (strcmp(flag, "--input") == 0 && !options->input_path && IsRelativeInputPath(value)) {
-            options->input_path = value;
+        if (flag == "--input" && !options->input_path && IsRelativeInputPath(value.data())) {
+            options->input_path = value.data();
             continue;
         }
-        if (strcmp(flag, "--lang") == 0 && options->language == Language::All) {
-            if (strcmp(value, "c++") == 0) {
+        if (flag == "--lang" && options->language == Language::All) {
+            if (value == "c++") {
                 options->language = Language::Cpp;
                 continue;
             }
-            if (strcmp(value, "swift") == 0) {
+            if (value == "swift") {
                 options->language = Language::Swift;
                 continue;
             }
         }
 
-        fprintf(stderr, "Invalid or repeated option: %s.\n", flag);
+        fprintf(stderr, "Invalid or repeated option: %s.\n", flag.data());
         return false;
     }
 
@@ -399,7 +400,7 @@ static bool RunPart(const Part& part, const Options& options)
 
 int main(int argc, char* argv[])
 {
-    if (argc == 2 && strcmp(argv[1], "--help") == 0) {
+    if (argc == 2 && std::string_view(argv[1]) == "--help") {
         PrintUsage(stdout);
         return 0;
     }
