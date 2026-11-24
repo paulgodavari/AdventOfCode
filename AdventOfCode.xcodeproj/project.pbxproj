@@ -100,7 +100,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 2720;
 				TargetAttributes = {
 					66612A7E2B1A3A6E0056154B = {
 						CreatedOnToolsVersion = 15.0;
@@ -196,6 +196,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
 		};
@@ -251,6 +252,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
@@ -262,10 +265,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = aoc;
+				SWIFT_MODULE_NAME = AdventOfCode;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "AdventOfCode-Swift.h";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
-				SWIFT_MODULE_NAME = AdventOfCode;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 			};
@@ -279,10 +283,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = aoc;
+				SWIFT_MODULE_NAME = AdventOfCode;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "AdventOfCode-Swift.h";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
-				SWIFT_MODULE_NAME = AdventOfCode;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
 			};
