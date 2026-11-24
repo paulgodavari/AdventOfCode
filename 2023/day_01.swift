@@ -33,7 +33,7 @@ func day01Part1_2023(input: String, useExample: Bool) -> SwiftSolveResult {
 }
 
 
-let numbers = [
+private let numberWords = [
     "zero",
     "one",
     "two",
@@ -47,54 +47,39 @@ let numbers = [
 ]
 
 
-func calibration2Value(for line: Substring) -> Int64? {
-    let isDigit: (Character) -> Bool = { ("0"..."9").contains($0) }
-
-    var first: Int?
-    var last: Int?
-    var calibrationValue: Int64?
+func digitValue(at index: String.Index, in line: Substring) -> Int? {
+    let character = line[index]
+    if ("0"..."9").contains(character) {
+        return character.wholeNumberValue
+    }
     
+    let remaining = line[index...]
+    return numberWords.firstIndex { remaining.hasPrefix($0) }
+}
+
+
+func calibration2Value(for line: Substring) -> Int64? {
+    var first: Int?
     for index in line.indices {
-        let character = line[index]
-        if isDigit(character) {
-            first = character.wholeNumberValue!
-        } else {
-            let remaining = line[index...]
-            for numIndex in numbers.indices {
-                if remaining.hasPrefix(numbers[numIndex]) {
-                    first = numIndex
-                    break
-                }
-            }
-        }
-        if first != nil {
+        if let value = digitValue(at: index, in: line) {
+            first = value
             break
         }
     }
 
+    var last: Int?
     for index in line.indices.reversed() {
-        let character = line[index]
-        if isDigit(character) {
-            last = character.wholeNumberValue!
-        } else {
-            let remaining = line[index...]
-            for numIndex in numbers.indices {
-                if remaining.hasPrefix(numbers[numIndex]) {
-                    last = numIndex
-                    break
-                }
-            }
-        }
-        if last != nil {
+        if let value = digitValue(at: index, in: line) {
+            last = value
             break
         }
     }
     
     if let first, let last {
-        calibrationValue = Int64(first * 10 + last)
+        return Int64(first * 10 + last)
     }
 
-    return calibrationValue
+    return nil
 }
 
 
