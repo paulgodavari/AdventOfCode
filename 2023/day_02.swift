@@ -7,12 +7,16 @@
 
 
 struct Draw {
-    let red: Int
-    let green: Int
-    let blue: Int
+    var red: Int = 0
+    var green: Int = 0
+    var blue: Int = 0
     
     func isPossibleFor(_ draw: Draw) -> Bool {
         red <= draw.red && green <= draw.green && blue <= draw.blue
+    }
+    
+    func power() -> Int64 {
+        Int64(red * green * blue)
     }
     
     static let configPart1 = Draw(red: 12, green: 13, blue: 14)
@@ -76,6 +80,17 @@ struct Game {
         self.id = gameID
         self.draws = parsedDraws
     }
+    
+    func power() -> Int64 {
+        var fewest = Draw()
+        for draw in draws {
+            fewest.red = max(fewest.red, draw.red)
+            fewest.green = max(fewest.green, draw.green)
+            fewest.blue = max(fewest.blue, draw.blue)
+        }
+        
+        return fewest.power()
+    }
 }
 
 
@@ -97,5 +112,15 @@ func day02Part1_2023(input: String, useExample: Bool) -> SwiftSolveResult {
 
 
 func day02Part2_2023(input: String, useExample: Bool) -> SwiftSolveResult {
-    return .unfinished
+    var sum: Int64 = 0
+    
+    for gameLine in input.split(whereSeparator: \.isNewline) {
+        guard let game = Game(gameLine) else {
+            return .invalidInput
+        }
+        
+        sum += game.power()
+    }
+    
+    return .answer(sum)
 }
