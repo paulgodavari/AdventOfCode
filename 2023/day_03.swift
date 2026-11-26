@@ -95,13 +95,15 @@ func day03Part1_2023(input: String, useExample: Bool) -> SwiftSolveResult {
                 }
             }
         }
+        if parsingNumber {
+            numbers.append(number)
+            number.length = 0
+        }
     }
     
     var sum: Int64 = 0
     for number in numbers {
-        let value = grid.numberValue(for: number)
-        // print("\(value)")
-        sum += value
+        sum += grid.numberValue(for: number)
     }
     
     return .answer(sum)
