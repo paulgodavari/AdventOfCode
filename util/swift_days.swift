@@ -26,7 +26,9 @@ private struct SwiftPartRegistration: Sendable {
 
 private let swiftParts: [SwiftPartRegistration] = [
     SwiftPartRegistration(part: SwiftPart(year: 2023, day: 1, part: 1), solve: day01Part1_2023),
-    SwiftPartRegistration(part: SwiftPart(year: 2023, day: 1, part: 2), solve: day01Part2_2023)
+    SwiftPartRegistration(part: SwiftPart(year: 2023, day: 1, part: 2), solve: day01Part2_2023),
+    SwiftPartRegistration(part: SwiftPart(year: 2023, day: 2, part: 1), solve: day02Part1_2023),
+    SwiftPartRegistration(part: SwiftPart(year: 2023, day: 2, part: 2), solve: day02Part2_2023)
 ]
 
 
